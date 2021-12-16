@@ -33,12 +33,6 @@ namespace tower_admin_portal
                     );
             
             services.AddControllersWithViews();
-            services.AddAuthentication()
-                .AddGoogle(options =>
-                {
-                    options.ClientId = PlatformEnvironment.Variable(name: "GOOGLE_CLIENT_ID");
-                    options.ClientSecret = PlatformEnvironment.Variable(name: "GOOGLE_CLIENT_SECRET");
-                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

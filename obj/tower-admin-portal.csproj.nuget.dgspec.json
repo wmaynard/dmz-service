@@ -43,13 +43,13 @@
               "target": "Package",
               "version": "[3.1.2, )"
             },
-            "Microsoft.AspNetCore.Authentication.Google": {
+            "Google.Apis.Auth.Mvc": {
               "target": "Package",
-              "version": "[5.0.12, )"
+              "version": "[1.55.0, )"
             },
-            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
+            "Google.Apis.Oauth2.v2": {
               "target": "Package",
-              "version": "[5.0.2, )"
+              "version": "[1.55.0.1869, )"
             },
             "platform-csharp-common": {
               "target": "Package",
