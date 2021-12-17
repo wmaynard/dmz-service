@@ -8,9 +8,11 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Rumble.Platform.Common.Utilities;
 using tower_admin_portal.Models;
 using tower_admin_portal.Settings;
+using tower_admin_portal.Utilities;
 
 namespace tower_admin_portal
 {
@@ -33,6 +35,20 @@ namespace tower_admin_portal
                     );
             
             services.AddControllersWithViews();
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = "Cookies";
+                options.DefaultChallengeScheme = "Google";
+            })
+                .AddCookie("Cookies")
+                .AddGoogleOpenIdConnect("Google", options =>
+                {
+                    var clientInfo = (ClientInfo) services.First(x => x.ServiceType == typeof(ClientInfo))
+                        .ImplementationInstance;
+                    options.ClientId = clientInfo.ClientId;
+                    options.ClientSecret = clientInfo.ClientSecret;
+                    options.Scope.Add("profile");
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

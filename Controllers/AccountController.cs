@@ -1,8 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using RestSharp;
 using tower_admin_portal.Models;
 
 namespace tower_admin_portal.Controllers
@@ -56,7 +58,8 @@ namespace tower_admin_portal.Controllers
         [Authorize]
         public async Task<IActionResult> Logout()
         {
-            await _signInManager.SignOutAsync();
+            // await _signInManager.SignOutAsync();
+            await HttpContext.SignOutAsync(); // for oauth(?)
             return RedirectToAction("Index", "Home");
         }
     }

@@ -2,10 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using tower_admin_portal.Utilities;
 
 namespace tower_admin_portal
 {
@@ -16,7 +19,21 @@ namespace tower_admin_portal
             CreateHostBuilder(args).Build().Run();
         }
 
+        public static IWebHost BuildWebHost(string[] args)
+        {
+            ClientInfo clientInfo = ClientInfo.Load();
+
+            return WebHost.CreateDefaultBuilder(args)
+                .UseStartup<Startup>()
+                .ConfigureServices(services =>
+                {
+                    services.AddSingleton(clientInfo);
+                })
+                .Build();
+        }
+        
         public static IHostBuilder CreateHostBuilder(string[] args) =>
+            
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
     }
