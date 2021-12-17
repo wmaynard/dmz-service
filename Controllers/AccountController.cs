@@ -58,8 +58,8 @@ namespace tower_admin_portal.Controllers
         [Authorize]
         public async Task<IActionResult> Logout()
         {
-            // await _signInManager.SignOutAsync();
-            await HttpContext.SignOutAsync(); // for oauth(?)
+            await _signInManager.SignOutAsync();
+            await HttpContext.SignOutAsync(); // for oauth(?) redundant?
             return RedirectToAction("Index", "Home");
         }
     }
