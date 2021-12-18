@@ -1,10 +1,12 @@
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using tower_admin_portal.Models;
 
 namespace tower_admin_portal.Controllers
 {
+    [Authorize]
     public class UserController : Controller
     {
         private UserManager<ApplicationUser> _userManager;

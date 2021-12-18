@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace tower_admin_portal.Controllers
 {
+    [Authorize]
     public class SecuredController : Controller
     {
         // GET

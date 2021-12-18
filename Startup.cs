@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -34,21 +35,35 @@ namespace tower_admin_portal
                     mongoDbSettings.ConnectionString, mongoDbSettings.Name
                     );
             
-            services.AddControllersWithViews();
+            // services.AddControllersWithViews();
             services.AddAuthentication(options =>
-            {
-                options.DefaultScheme = "Cookies";
-                options.DefaultChallengeScheme = "Google";
-            })
-                .AddCookie("Cookies")
-                .AddGoogleOpenIdConnect("Google", options =>
                 {
-                    var clientInfo = (ClientInfo) services.First(x => x.ServiceType == typeof(ClientInfo))
-                        .ImplementationInstance;
-                    options.ClientId = clientInfo.ClientId;
-                    options.ClientSecret = clientInfo.ClientSecret;
-                    options.Scope.Add("profile");
+                    // options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultScheme = "Cookies";
+                    options.DefaultChallengeScheme = "Google";
+                })
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/account/google-login";
+                })
+                .AddGoogle(options =>
+                {
+                    options.ClientId = PlatformEnvironment.Variable(name: "GOOGLE_CLIENT_ID");
+                    options.ClientSecret = PlatformEnvironment.Variable(name: "GOOGLE_CLIENT_SECRET");
                 });
+            
+            services.AddControllersWithViews();
+            /*
+            .AddCookie("Cookies")
+            .AddGoogleOpenIdConnect("Google", options =>
+            {
+                var clientInfo = (ClientInfo) services.First(x => x.ServiceType == typeof(ClientInfo))
+                    .ImplementationInstance;
+                options.ClientId = clientInfo.ClientId;
+                options.ClientSecret = clientInfo.ClientSecret;
+                options.Scope.Add("profile");
+            });
+            */
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

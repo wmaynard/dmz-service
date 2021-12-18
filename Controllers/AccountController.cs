@@ -1,6 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -9,8 +12,38 @@ using tower_admin_portal.Models;
 
 namespace tower_admin_portal.Controllers
 {
+    [AllowAnonymous]
     public class AccountController : Controller
     {
+        [Route("google-login")]
+        public IActionResult GoogleLogin()
+        {
+            var properties = new AuthenticationProperties
+            {
+                RedirectUri = Url.Action("GoogleResponse")
+            };
+
+            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+        }
+
+        [Route("google-response")]
+        public async Task<IActionResult> GoogleResponse()
+        {
+            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var claims = result.Principal.Identities.FirstOrDefault()
+                .Claims.Select(claim => new
+                {
+                    claim.Issuer,
+                    claim.OriginalIssuer,
+                    claim.Type,
+                    claim.Value
+                });
+
+            return Json(claims);
+        }
+        
+        /*
         private UserManager<ApplicationUser> _userManager;
         private SignInManager<ApplicationUser> _signInManager;
 
@@ -35,7 +68,7 @@ namespace tower_admin_portal.Controllers
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login([Required] [EmailAddress] string email, [Required] string password,
-            string returnurl)
+            string returnUrl)
         {
             if (ModelState.IsValid)
             {
@@ -46,7 +79,7 @@ namespace tower_admin_portal.Controllers
                         await _signInManager.PasswordSignInAsync(appUser, password, false, false);
                     if (result.Succeeded)
                     {
-                        return Redirect(returnurl ?? "/");
+                        return Redirect(returnUrl ?? "/");
                     }
                 }
                 ModelState.AddModelError(nameof(email), "Login Failed: Invalid Email or Password");
@@ -62,5 +95,6 @@ namespace tower_admin_portal.Controllers
             await HttpContext.SignOutAsync(); // for oauth(?) redundant?
             return RedirectToAction("Index", "Home");
         }
+        */
     }
 }
