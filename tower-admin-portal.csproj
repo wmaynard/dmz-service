@@ -13,4 +13,12 @@
       <PackageReference Include="platform-csharp-common" Version="1.0.55" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Views\User\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\User\CreateRole.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Secured\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Account\AccessDenied.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Account\Login.cshtml" />
+    </ItemGroup>
+
 </Project>

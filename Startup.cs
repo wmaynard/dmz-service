@@ -13,7 +13,6 @@ using Microsoft.Extensions.Options;
 using Rumble.Platform.Common.Utilities;
 using tower_admin_portal.Models;
 using tower_admin_portal.Settings;
-using tower_admin_portal.Utilities;
 
 namespace tower_admin_portal
 {
@@ -29,21 +28,11 @@ namespace tower_admin_portal
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            MongoDbConfig mongoDbSettings = Configuration.GetSection(nameof(MongoDbConfig)).Get<MongoDbConfig>();
-            services.AddIdentity<ApplicationUser, ApplicationRole>()
-                .AddMongoDbStores<ApplicationUser, ApplicationRole, Guid>(
-                    mongoDbSettings.ConnectionString, mongoDbSettings.Name
-                    );
-            
-            // services.AddControllersWithViews();
-
-            services.ConfigureApplicationCookie(options => options.LoginPath = "/account/google-login");
+            // services.ConfigureApplicationCookie(options => options.LoginPath = "/account/google-login");
             
             services.AddAuthentication(options =>
                 {
-                    // options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    options.DefaultScheme = "Cookies";
-                    options.DefaultChallengeScheme = "Google";
+                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 })
                 .AddCookie(options =>
                 {
@@ -56,17 +45,6 @@ namespace tower_admin_portal
                 });
             
             services.AddControllersWithViews();
-            /*
-            .AddCookie("Cookies")
-            .AddGoogleOpenIdConnect("Google", options =>
-            {
-                var clientInfo = (ClientInfo) services.First(x => x.ServiceType == typeof(ClientInfo))
-                    .ImplementationInstance;
-                options.ClientId = clientInfo.ClientId;
-                options.ClientSecret = clientInfo.ClientSecret;
-                options.Scope.Add("profile");
-            });
-            */
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

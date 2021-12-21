@@ -8,7 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using tower_admin_portal.Utilities;
 
 namespace tower_admin_portal
 {
@@ -20,19 +19,6 @@ namespace tower_admin_portal
             // BuildWebHost(args).Run();
         }
 
-        public static IWebHost BuildWebHost(string[] args)
-        {
-            ClientInfo clientInfo = ClientInfo.Load();
-
-            return WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .ConfigureServices(services =>
-                {
-                    services.AddSingleton(clientInfo);
-                })
-                .Build();
-        }
-        
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             
             Host.CreateDefaultBuilder(args)
