@@ -6,7 +6,7 @@ using tower_admin_portal.Models;
 
 namespace tower_admin_portal.Controllers
 {
-    [Authorize]
+    // [Authorize]
     public class UserController : Controller
     {
         private UserManager<ApplicationUser> _userManager;

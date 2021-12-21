@@ -36,6 +36,9 @@ namespace tower_admin_portal
                     );
             
             // services.AddControllersWithViews();
+
+            services.ConfigureApplicationCookie(options => options.LoginPath = "/account/google-login");
+            
             services.AddAuthentication(options =>
                 {
                     // options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;

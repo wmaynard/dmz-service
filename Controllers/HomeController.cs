@@ -10,7 +10,7 @@ using tower_admin_portal.Models;
 
 namespace tower_admin_portal.Controllers
 {
-    [Authorize]
+    // [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

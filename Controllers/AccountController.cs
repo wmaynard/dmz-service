@@ -43,7 +43,6 @@ namespace tower_admin_portal.Controllers
             return Json(claims);
         }
         
-        /*
         private UserManager<ApplicationUser> _userManager;
         private SignInManager<ApplicationUser> _signInManager;
 
@@ -92,9 +91,8 @@ namespace tower_admin_portal.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            await HttpContext.SignOutAsync(); // for oauth(?) redundant?
+            // await HttpContext.SignOutAsync(); // for oauth(?) redundant?
             return RedirectToAction("Index", "Home");
         }
-        */
     }
 }
