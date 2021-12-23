@@ -26,6 +26,7 @@ namespace tower_admin_portal.Controllers
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
 
+        [Authorize]
         [Route("google-response")]
         public async Task<IActionResult> GoogleResponse()
         {

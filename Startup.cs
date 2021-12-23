@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -13,6 +14,7 @@ using Microsoft.Extensions.Options;
 using Rumble.Platform.Common.Utilities;
 using tower_admin_portal.Models;
 using tower_admin_portal.Settings;
+using tower_admin_portal.Utilities;
 
 namespace tower_admin_portal
 {
@@ -43,6 +45,13 @@ namespace tower_admin_portal
                     options.ClientId = PlatformEnvironment.Variable(name: "GOOGLE_CLIENT_ID");
                     options.ClientSecret = PlatformEnvironment.Variable(name: "GOOGLE_CLIENT_SECRET");
                 });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("CompanyStaffOnly",
+                    policy => policy.RequireClaim(ClaimTypes.Email)
+                        .AddRequirements(new DomainRequirement("rumbleentertainment.com")));
+            });
             
             services.AddControllersWithViews();
         }
