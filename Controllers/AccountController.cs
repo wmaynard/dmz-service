@@ -1,20 +1,19 @@
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using RestSharp;
-using tower_admin_portal.Models;
+using tower_admin_portal.Services;
 
 namespace tower_admin_portal.Controllers
 {
     [AllowAnonymous, Route("account")]
     public class AccountController : Controller
     {
+        private readonly AccountService _accountService;
+        
         [Route("google-login")]
         public IActionResult GoogleLogin()
         {
@@ -26,7 +25,7 @@ namespace tower_admin_portal.Controllers
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
 
-        [Authorize]
+        [Authorize(Policy = "CompanyStaffOnly")]
         [Route("google-response")]
         public async Task<IActionResult> GoogleResponse()
         {

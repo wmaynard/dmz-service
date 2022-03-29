@@ -1,19 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Rumble.Platform.Common.Utilities;
-using tower_admin_portal.Models;
-using tower_admin_portal.Settings;
 using tower_admin_portal.Utilities;
 
 namespace tower_admin_portal
@@ -42,12 +35,15 @@ namespace tower_admin_portal
                 })
                 .AddGoogle(options =>
                 {
-                    options.ClientId = PlatformEnvironment.Variable(name: "GOOGLE_CLIENT_ID");
-                    options.ClientSecret = PlatformEnvironment.Variable(name: "GOOGLE_CLIENT_SECRET");
+                    options.ClientId = PlatformEnvironment.Require("GOOGLE_CLIENT_ID");
+                    options.ClientSecret = PlatformEnvironment.Require("GOOGLE_CLIENT_SECRET");
                 });
 
             services.AddAuthorization(options =>
             {
+                options.AddPolicy("Admin",
+                    policy => policy.RequireClaim(ClaimTypes.Name)
+                        .AddRequirements(new NameAuthorizationRequirement("Nathan Mac"))); // TODO flush out later
                 options.AddPolicy("CompanyStaffOnly",
                     policy => policy.RequireClaim(ClaimTypes.Email)
                         .AddRequirements(new DomainRequirement("rumbleentertainment.com")));

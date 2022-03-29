@@ -1,0 +1,40 @@
+@{
+    ViewData["Title"] = "Search";
+}
+<h2>@ViewData["Title"]</h2>
+<h3>@ViewData["Message"]</h3>
+
+@if (ViewData["Query"] != null)
+{
+    <p>Search Query: @ViewData["Query"]</p>
+    
+    <table>
+        <tr>
+            <td>AccountId</td>
+            <td>Username</td>
+        </tr>
+        @foreach (List<string> data in (List<List<string>>)ViewData["Data"])
+        {
+            <tr>
+                <td>
+                    @Html.ActionLink(linkText: @data[0], actionName: "Details", controllerName: "Player", routeValues: new { id = data[0]}, htmlAttributes: new { id = data[0]})
+                </td>
+                <td>
+                    @data[1]
+                </td>
+            </tr>
+        }
+    </table>
+    
+    <h4>@ViewData["Response"]</h4>
+}
+else
+{
+    <div>
+        <form action="/player/search" method="get">
+            <label for="query">Search query: </label>
+            <input type="text" id="query" name="query"/>
+            <button type="submit">Search</button>
+        </form>
+    </div>
+}
