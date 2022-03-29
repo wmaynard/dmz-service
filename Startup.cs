@@ -1,16 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Rumble.Platform.Common.Utilities;
-using tower_admin_portal.Models;
-using tower_admin_portal.Settings;
+using tower_admin_portal.Utilities;
 
 namespace tower_admin_portal
 {
@@ -26,19 +23,33 @@ namespace tower_admin_portal
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            MongoDbConfig mongoDbSettings = Configuration.GetSection(nameof(MongoDbConfig)).Get<MongoDbConfig>();
-            services.AddIdentity<ApplicationUser, ApplicationRole>()
-                .AddMongoDbStores<ApplicationUser, ApplicationRole, Guid>(
-                    mongoDbSettings.ConnectionString, mongoDbSettings.Name
-                    );
+            // services.ConfigureApplicationCookie(options => options.LoginPath = "/account/google-login");
             
-            services.AddControllersWithViews();
-            services.AddAuthentication()
+            services.AddAuthentication(options =>
+                {
+                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                })
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/account/google-login";
+                })
                 .AddGoogle(options =>
                 {
-                    options.ClientId = PlatformEnvironment.Variable(name: "GOOGLE_CLIENT_ID");
-                    options.ClientSecret = PlatformEnvironment.Variable(name: "GOOGLE_CLIENT_SECRET");
+                    options.ClientId = PlatformEnvironment.Require("GOOGLE_CLIENT_ID");
+                    options.ClientSecret = PlatformEnvironment.Require("GOOGLE_CLIENT_SECRET");
                 });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Admin",
+                    policy => policy.RequireClaim(ClaimTypes.Name)
+                        .AddRequirements(new NameAuthorizationRequirement("Nathan Mac"))); // TODO flush out later
+                options.AddPolicy("CompanyStaffOnly",
+                    policy => policy.RequireClaim(ClaimTypes.Email)
+                        .AddRequirements(new DomainRequirement("rumbleentertainment.com")));
+            });
+            
+            services.AddControllersWithViews();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

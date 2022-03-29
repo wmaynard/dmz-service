@@ -28,14 +28,18 @@
                         if (User?.Identity?.IsAuthenticated ?? false)
                         {
                             <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Player" asp-action="Search">Player Service</a>
+                            </li>
+                            
+                            <li class="nav-item">
                                 <u>Welcome: @User.Identity.Name</u>
-                                <a asp-controller="Account" asp-action="Logout" class="btn btn-danger">Logout</a>
+                                <a asp-controller="Account" class="btn btn-danger">Logout</a>
                             </li>
                         }
                         else
                         {
                             <li class="nav-item">
-                                <a href="/Account/Login" class="btn btn-danger">Login</a>
+                                <a href="/account/google-login" class="btn btn-danger">Login</a>
                             </li>
                         }
                     }
