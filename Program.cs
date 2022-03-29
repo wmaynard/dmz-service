@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -15,6 +16,12 @@ namespace tower_admin_portal
     {
         public static void Main(string[] args)
         {
+            if (args.Contains("-version"))
+            {
+                AssemblyName assembly = Assembly.GetExecutingAssembly().GetName();
+                Console.WriteLine($"{assembly.Name}:{assembly.Version}");
+                return;
+            }
             CreateHostBuilder(args).Build().Run();
             // BuildWebHost(args).Run();
         }

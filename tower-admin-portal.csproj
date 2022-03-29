@@ -3,6 +3,8 @@
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <AssemblyName>tower-admin-portal</AssemblyName>
+        <AssemblyVersion>1.0.*</AssemblyVersion>
+        <Deterministic>false</Deterministic>
         <RootNamespace>tower_admin_portal</RootNamespace>
         <LangVersion>10</LangVersion>
     </PropertyGroup>
