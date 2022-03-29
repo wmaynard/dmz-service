@@ -36,5 +36,11 @@ namespace tower_admin_portal.Controllers
         {
             return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
         }
+
+        [AllowAnonymous]
+        public IActionResult health()
+        {
+            return Ok();
+        }
     }
 }
