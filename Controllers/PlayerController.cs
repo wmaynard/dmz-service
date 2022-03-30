@@ -11,7 +11,7 @@ using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
 
-namespace tower_admin_portal.Controllers
+namespace TowerPortal.Controllers
 {
     [Authorize]
     public class PlayerController : Controller

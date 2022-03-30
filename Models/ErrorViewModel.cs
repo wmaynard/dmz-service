@@ -1,6 +1,6 @@
 using System;
 
-namespace tower_admin_portal.Models
+namespace TowerPortal.Models
 {
     public class ErrorViewModel
     {

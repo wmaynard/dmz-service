@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Web;
 
-namespace tower_admin_portal.Models
+namespace TowerPortal.Models
 {
     public class Account : PlatformCollectionDocument
     {

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 
-namespace tower_admin_portal.Utilities
+namespace TowerPortal.Utilities
 {
     public class DomainRequirement : IAuthorizationRequirement
     {

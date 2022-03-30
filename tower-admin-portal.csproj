@@ -5,7 +5,7 @@
         <AssemblyName>tower-admin-portal</AssemblyName>
         <AssemblyVersion>1.0.*</AssemblyVersion>
         <Deterministic>false</Deterministic>
-        <RootNamespace>tower_admin_portal</RootNamespace>
+        <RootNamespace>TowerPortal</RootNamespace>
         <LangVersion>10</LangVersion>
     </PropertyGroup>
 

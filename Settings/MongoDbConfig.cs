@@ -1,4 +1,4 @@
-namespace tower_admin_portal.Settings
+namespace TowerPortal.Settings
 {
     public class MongoDbConfig
     {

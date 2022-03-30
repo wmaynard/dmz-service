@@ -1,7 +1,7 @@
 using Rumble.Platform.Common.Web;
-using tower_admin_portal.Models;
+using TowerPortal.Models;
 
-namespace tower_admin_portal.Services
+namespace TowerPortal.Services
 {
     public class AccountService : PlatformMongoService<Account>
     {

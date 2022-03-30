@@ -2,7 +2,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 
-namespace tower_admin_portal.Utilities
+namespace TowerPortal.Utilities
 {
     public class DomainHandler : AuthorizationHandler<DomainRequirement>
     {
