@@ -23,7 +23,6 @@ namespace tower_admin_portal
                 return;
             }
             CreateHostBuilder(args).Build().Run();
-            // BuildWebHost(args).Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
