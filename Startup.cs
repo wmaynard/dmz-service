@@ -1,16 +1,27 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MongoDB.Bson.Serialization;
+using Rumble.Platform.Common.Filters;
+using Rumble.Platform.Common.Interfaces;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
+using Rumble.Platform.Common.Utilities.Serializers;
 using Rumble.Platform.Common.Web;
+using Rumble.Platform.Common.Web.Routing;
 using tower_admin_portal.Utilities;
 
 namespace tower_admin_portal
@@ -23,20 +34,24 @@ namespace tower_admin_portal
             
             services.ConfigureApplicationCookie(options => options.LoginPath = "/account/google-login");
             
-            services.AddAuthentication(options =>
+            services.AddAuthentication(configureOptions: options =>
                 {
                     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 })
                 .AddCookie(options =>
                 {
                     options.LoginPath = "/account/google-login";
+                    options.LogoutPath = "/account/google-logout";
                 })
                 .AddGoogle(options =>
                 {
                     options.ClientId = PlatformEnvironment.Require("GOOGLE_CLIENT_ID");
                     options.ClientSecret = PlatformEnvironment.Require("GOOGLE_CLIENT_SECRET");
+                    options.SaveTokens = true;
+                    
+                    // options.CallbackPath = "/account/signin-google";
                 });
-
+    
             services.AddAuthorization(options =>
             {
                 options.AddPolicy(
@@ -52,8 +67,10 @@ namespace tower_admin_portal
                         .AddRequirements(new DomainRequirement("rumbleentertainment.com"))
                 );
             });
+    
+            services.AddControllersWithViews();
         }
-
+    
         protected override void ConfigureRoutes(IEndpointRouteBuilder builder)
         {
             builder.MapControllerRoute(

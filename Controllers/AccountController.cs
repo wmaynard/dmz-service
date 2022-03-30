@@ -17,22 +17,22 @@ namespace tower_admin_portal.Controllers
         [Route("google-login")]
         public IActionResult GoogleLogin()
         {
-            var properties = new AuthenticationProperties
+            AuthenticationProperties properties = new AuthenticationProperties
             {
                 RedirectUri = Url.Action("GoogleResponse")
             };
 
-            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+            return Challenge(properties, authenticationSchemes: GoogleDefaults.AuthenticationScheme);
         }
 
         [Authorize(Policy = "CompanyStaffOnly")]
         [Route("google-response")]
         public async Task<IActionResult> GoogleResponse()
         {
-            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            AuthenticateResult result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-            var claims = result.Principal.Identities.FirstOrDefault()
-                .Claims.Select(claim => new
+            var claims = result?.Principal?.Identities?.FirstOrDefault()
+                ?.Claims.Select(claim => new
                 {
                     claim.Issuer,
                     claim.OriginalIssuer,
