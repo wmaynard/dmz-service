@@ -29,7 +29,6 @@ public class HomeController : PlatformController
     public IActionResult Error() => View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
 
     [AllowAnonymous]
-    [Route("health")]
     public override ActionResult HealthCheck() => Ok(
         _apiService.HealthCheckResponseObject, 
         _dynamicConfigService.HealthCheckResponseObject
