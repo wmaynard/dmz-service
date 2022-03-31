@@ -6,7 +6,6 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
@@ -14,21 +13,15 @@ using Rumble.Platform.Common.Web;
 namespace TowerPortal.Controllers
 {
     [Authorize]
-    public class PlayerController : Controller
+    public class PlayerController : PlatformController
     {
-// #pragma warning disable CS0169
+#pragma warning disable CS0649
         private ApiService _apiService;
         private DynamicConfigService _dynamicConfigService;
-// #pragma warning restore CS0169
+#pragma warning restore CS0649
         
         public readonly HttpClient client = new HttpClient(); // should be used for all
 
-        public PlayerController(ApiService api, DynamicConfigService dynamicConfig)
-        {
-            _apiService = api;
-            _dynamicConfigService = dynamicConfig; // Dynamic config service may be changing soon, or rewritten as part of portal, TBD.
-        }
-        
         public async Task<IActionResult> Search(string query)
         {
             ViewData["Message"] = "Player search";
@@ -92,23 +85,24 @@ namespace TowerPortal.Controllers
         {
             string requestUrl = "https://dev.nonprod.tower.cdrentertainment.com/player/v2/admin/details?accountId=" + id;
 
-            object response = null;
-                
-            string token = PlatformEnvironment.Require("PLAYER_TOKEN");
+            string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                
-            HttpResponseMessage httpResponse = await client.GetAsync(requestUrl);
-
-            if (httpResponse.StatusCode == HttpStatusCode.OK)
-            {
-                string responseBody = await httpResponse.Content.ReadAsStringAsync();
-                response = JsonConvert.DeserializeObject<object>(responseBody);
-            }
-            else
-            {
-                // Log.Error(owner: Owner.Nathan, message: "Request to player service v2 failed.", data: $"Response code {httpResponse.StatusCode}");
-                response = httpResponse.StatusCode;
-            }
+            
+            _apiService
+                .Request(requestUrl)
+                .AddAuthorization(token)
+                .OnSuccess(((sender, apiResponse) =>
+                {
+                    Log.Local(Owner.Nathan, "Request to player-service-v2 details succeeded.");
+                }))
+                .OnFailure(((sender, apiResponse) =>
+                {
+                    Log.Error(Owner.Nathan, "Request to player-service-v2 details failed.", data: new
+                    {
+                        Response = apiResponse
+                    });
+                }))
+                .Get(out GenericData response, out int code);
 
             ViewData["accountId"] = id;
             ViewData["Response"] = response;
@@ -116,9 +110,6 @@ namespace TowerPortal.Controllers
             return View();
         }
 
-        public ActionResult HealthCheck()
-        {
-            return Ok();
-        }
+        public override ActionResult HealthCheck() => Ok();
     }
 }

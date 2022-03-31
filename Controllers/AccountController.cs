@@ -5,14 +5,17 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using tower_admin_portal.Services;
+using Rumble.Platform.Common.Web;
+using TowerPortal.Services;
 
-namespace tower_admin_portal.Controllers
+namespace TowerPortal.Controllers
 {
     [AllowAnonymous, Route("account")]
-    public class AccountController : Controller
+    public class AccountController : PlatformController
     {
+#pragma warning disable CS0649
         private readonly AccountService _accountService;
+#pragma warning restore CS0649
         
         [Route("google-login")]
         public IActionResult GoogleLogin()
@@ -42,5 +45,7 @@ namespace tower_admin_portal.Controllers
 
             return Json(claims);
         }
+        
+        public override ActionResult HealthCheck() => Ok(_accountService.HealthCheckResponseObject);
     }
 }

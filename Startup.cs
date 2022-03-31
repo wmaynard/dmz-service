@@ -22,9 +22,9 @@ using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Utilities.Serializers;
 using Rumble.Platform.Common.Web;
 using Rumble.Platform.Common.Web.Routing;
-using tower_admin_portal.Utilities;
+using TowerPortal.Utilities;
 
-namespace tower_admin_portal
+namespace TowerPortal
 {
     public class Startup : PlatformStartup
     {

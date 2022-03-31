@@ -6,17 +6,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using tower_admin_portal.Models;
+using Rumble.Platform.Common.Web;
+using TowerPortal.Models;
 
-namespace tower_admin_portal.Controllers
+namespace TowerPortal.Controllers
 {
     [Authorize]
-    public class HomeController : Controller
+    public class HomeController : PlatformController
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger) => _logger = logger;
-
         [AllowAnonymous]
         public IActionResult Index() => View();
 
@@ -27,5 +24,7 @@ namespace tower_admin_portal.Controllers
 
         [AllowAnonymous]
         public IActionResult health() => Ok();
+        
+        public override ActionResult HealthCheck() => Ok();
     }
 }
