@@ -73,7 +73,7 @@ namespace TowerPortal.Controllers
                 ViewData["Query"] = query;
                 ViewData["Data"] = searchList;
 
-                ViewData["Response"] = response;
+                ViewData["Response"] = response.JSON;
                 
                 return View();
             }
