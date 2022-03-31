@@ -1,14 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 
-namespace TowerPortal.Utilities
+namespace TowerPortal.Utilities;
+public class DomainRequirement : IAuthorizationRequirement
 {
-    public class DomainRequirement : IAuthorizationRequirement
-    {
-        public string Domain { get; }
+    public string Domain { get; }
 
-        public DomainRequirement(string domain)
-        {
-            Domain = domain;
-        }
+    public DomainRequirement(string domain)
+    {
+        Domain = domain;
     }
 }
