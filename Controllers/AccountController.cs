@@ -10,7 +10,8 @@ using TowerPortal.Services;
 
 namespace TowerPortal.Controllers
 {
-    [AllowAnonymous, Route("account")]
+    [AllowAnonymous]
+    [Route("portal/account")]
     public class AccountController : PlatformController
     {
 #pragma warning disable CS0649

@@ -32,7 +32,7 @@ namespace TowerPortal
         {
             base.ConfigureServices(services, Owner.Nathan, warnMS: 30_000, errorMS: 60_000, criticalMS: 90_000, webServerEnabled: true);
             
-            services.ConfigureApplicationCookie(options => options.LoginPath = "/account/google-login");
+            services.ConfigureApplicationCookie(options => options.LoginPath = "/portal/account/google-login");
             
             services.AddAuthentication(configureOptions: options =>
                 {
@@ -40,8 +40,8 @@ namespace TowerPortal
                 })
                 .AddCookie(options =>
                 {
-                    options.LoginPath = "/account/google-login";
-                    options.LogoutPath = "/account/google-logout";
+                    options.LoginPath = "/portal/account/google-login";
+                    options.LogoutPath = "/portal/account/google-logout";
                 })
                 .AddGoogle(options =>
                 {
@@ -73,10 +73,10 @@ namespace TowerPortal
     
         protected override void ConfigureRoutes(IEndpointRouteBuilder builder)
         {
-            builder.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}"
-            );
+            // builder.MapControllerRoute(
+            //     name: "default",
+            //     pattern: "{controller=Home}/{action=Index}/{id?}"
+            // );
         }
     }
 }

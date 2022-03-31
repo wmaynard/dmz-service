@@ -13,15 +13,18 @@ using Rumble.Platform.Common.Web;
 namespace TowerPortal.Controllers
 {
     [Authorize]
+    [Route("portal/player")]
     public class PlayerController : PlatformController
     {
 #pragma warning disable CS0649
-        private ApiService _apiService;
-        private DynamicConfigService _dynamicConfigService;
+        private readonly ApiService _apiService;
+        private readonly DynamicConfigService _dynamicConfigService;
 #pragma warning restore CS0649
         
         public readonly HttpClient client = new HttpClient(); // should be used for all
 
+        [Route("search")]
+        // [Route("search/{query=query}")]
         public async Task<IActionResult> Search(string query)
         {
             ViewData["Message"] = "Player search";
@@ -81,6 +84,7 @@ namespace TowerPortal.Controllers
             return View();
         }
         
+        [Route("details")]
         public async Task<IActionResult> Details(string id)
         {
             string requestUrl = "https://dev.nonprod.tower.cdrentertainment.com/player/v2/admin/details?accountId=" + id;
@@ -110,6 +114,7 @@ namespace TowerPortal.Controllers
             return View();
         }
 
-        public override ActionResult HealthCheck() => Ok();
+        [Route("health")]
+        public override ActionResult HealthCheck() => Ok(_apiService.HealthCheckResponseObject, _dynamicConfigService.HealthCheckResponseObject);
     }
 }
