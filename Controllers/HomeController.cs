@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Web;
 using TowerPortal.Models;
-using TowerPortal.Services;
 
 namespace TowerPortal.Controllers
 {
@@ -17,10 +11,10 @@ namespace TowerPortal.Controllers
     [Route("portal")]
     public class HomeController : PlatformController
     {
-#pragma warning disable CS0169
+#pragma warning disable CS0649
 	    private readonly ApiService _apiService;
 	    private readonly DynamicConfigService _dynamicConfigService;
-#pragma warning restore CS0169
+#pragma warning restore CS0649
         
         [AllowAnonymous]
         [Route("")]
