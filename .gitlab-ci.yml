@@ -120,7 +120,7 @@ commit_scan_results:
     - echo "$(echo -e $OUTPUT; cat securityscans/SecurityScans.md)" > securityscans/SecurityScans.md
     - git config --global user.email "platform-ops@rumbleentertainment.com"
     - git config --global user.name "Gitlab"
-    - git add .; git commit -m "securityscan for image $CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA"; git push
+    - git add .; git commit -m "securityscan for image $CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA"; git push --set-upstream origin master
   needs:
     - job: build_image
       artifacts: true
