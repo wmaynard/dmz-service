@@ -6,9 +6,11 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
+using TowerPortal.Models;
 
 namespace TowerPortal.Controllers;
 
@@ -76,7 +78,11 @@ public class PlayerController : PlatformController
             ViewData["Query"] = query;
             ViewData["Data"] = searchList;
 
-            ViewData["Response"] = response.JSON;
+            string responseString = response.JSON;
+
+            SearchResponse searchResponse = JsonConvert.DeserializeObject<SearchResponse>(responseString);
+            
+            ViewData["Response"] = searchResponse;
             
             return View();
         }
