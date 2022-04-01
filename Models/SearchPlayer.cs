@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Web;
@@ -18,6 +19,7 @@ public class SearchPlayer : PlatformDataModel
     internal const string DB_KEY_LAST_UPDATED = "lastUpdate";
     internal const string DB_KEY_DISCRIMINATOR = "dsc";
     internal const string DB_KEY_USERNAME = "usrname";
+    internal const string DB_KEY_LINKED_ACCOUNTS = "linkAcc";
     internal const string DB_KEY_SEARCH_WEIGHT = "srchWeight";
     internal const string DB_KEY_ID = "id";
     
@@ -33,6 +35,7 @@ public class SearchPlayer : PlatformDataModel
     public const string FRIENDLY_KEY_LAST_UPDATED = "lastUpdated";
     public const string FRIENDLY_KEY_DISCRIMINATOR = "discriminator";
     public const string FRIENDLY_KEY_USERNAME = "username";
+    public const string FRIENDLY_KEY_LINKED_ACCOUNTS = "linkedAccounts";
     public const string FRIENDLY_KEY_SEARCH_WEIGHT = "searchWeight";
     public const string FRIENDLY_KEY_ID = "id";
     
@@ -78,23 +81,27 @@ public class SearchPlayer : PlatformDataModel
     
     [BsonElement(DB_KEY_DISCRIMINATOR)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_DISCRIMINATOR)]
-    public int Discriminator { get; private set; }
+    public int Discriminator { get; set; }
     
     [BsonElement(DB_KEY_USERNAME)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_USERNAME)]
-    public string Username { get; private set; }
+    public string Username { get; set; }
+    
+    [BsonElement(DB_KEY_LINKED_ACCOUNTS)]
+    [JsonInclude, JsonPropertyName(FRIENDLY_KEY_LINKED_ACCOUNTS)]
+    public List<LinkedAccount> LinkedAccounts { get; set; }
     
     [BsonElement(DB_KEY_SEARCH_WEIGHT)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_SEARCH_WEIGHT)]
-    public decimal SearchWeight { get; private set; }
+    public decimal SearchWeight { get; set; }
     
     [BsonElement(DB_KEY_ID)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_ID)]
-    public string Id { get; private set; }
+    public string Id { get; set; }
 
     public SearchPlayer(string clientVersion, long dateCreated, string dataVersion, string deviceType,
         string lastSavedInstallId, string mergeVersion, long lastChanged, string lastDataVersion, string screenname,
-        long lastUpdated, int discriminator, string username, decimal searchWeight, string id)
+        long lastUpdated, int discriminator, string username, List<LinkedAccount> linkedAccounts, decimal searchWeight, string id)
     {
         ClientVersion = clientVersion;
         DateCreated = dateCreated;
@@ -108,6 +115,7 @@ public class SearchPlayer : PlatformDataModel
         LastUpdated = lastUpdated;
         Discriminator = discriminator;
         Username = username;
+        LinkedAccounts = linkedAccounts;
         SearchWeight = searchWeight;
         Id = id;
     }

@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
-using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
 
 namespace TowerPortal.Models;
@@ -22,13 +20,13 @@ public class DetailsResponse : PlatformDataModel
     
     [BsonElement(DB_KEY_PROFILES)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_PROFILES)]
-    public DetailsProfiles Profiles { get; set; }
+    public object Profiles { get; set; } // TODO use model later
     
     [BsonElement(DB_KEY_ITEMS)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_ITEMS)]
-    public DetailsItems Items { get; set; }
+    public object Items { get; set; } // TODO use model later
 
-    public DetailsResponse(DetailsPlayer player, DetailsProfiles profiles, DetailsItems items)
+    public DetailsResponse(DetailsPlayer player, object profiles, object items)
     {
         Player = player;
         Profiles = profiles;

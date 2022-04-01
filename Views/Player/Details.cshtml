@@ -2,12 +2,29 @@
     ViewData["Title"] = "Details";
 }
 <h2>@ViewData["Title"]</h2>
-<h3>@ViewData["accountId"]</h3>
+<h3>Player Data</h3>
 
-<p>Player ID: @ViewData["accountId"]</p>
+<h4>Player @ViewData["Username"]</h4>
+<p>Player ID: @ViewData["Id"]</p>
+<p>Screenname: @ViewData["Screenname"]</p>
 
+<p>Client Version: @ViewData["ClientVersion"]</p>
+<p>Date Created: @ViewData["DateCreated"]</p>
+<p>Data Version: @ViewData["DataVersion"]</p>
+<p>Device Type: @ViewData["DeviceType"]</p>
+<p>Last Saved Install Id: @ViewData["LastSavedInstallId"]</p>
+<p>Merge Version: @ViewData["MergeVersion"]</p>
+<p>Last Changed: @ViewData["LastChanged"]</p>
+<p>Last Data Version: @ViewData["LastDataVersion"]</p>
+<p>Last Updated: @ViewData["LastUpdated"]</p>
+
+
+<h4>Raw Data (To be formatted later)</h4>
+<h5>Player</h5>
 <p>@ViewData["Player"]</p>
 
+<h5>Profiles</h5>
 <p>@ViewData["Profiles"]</p>
 
+<h6>Items</h6>
 <p>@ViewData["Items"]</p>
