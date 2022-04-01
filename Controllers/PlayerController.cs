@@ -116,8 +116,6 @@ public class PlayerController : PlatformController
         string responseString = response.JSON;
         
         DetailsResponse detailsResponse = JsonConvert.DeserializeObject<DetailsResponse>(responseString);
-        
-        ViewData["Player"] = detailsResponse.Player;
 
         ViewData["ClientVersion"] = detailsResponse.Player.ClientVersion;
         ViewData["DateCreated"] = detailsResponse.Player.DateCreated;
