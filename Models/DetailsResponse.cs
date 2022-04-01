@@ -22,13 +22,13 @@ public class DetailsResponse : PlatformDataModel
     
     [BsonElement(DB_KEY_PROFILES)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_PROFILES)]
-    public object Profiles { get; set; }
+    public DetailsProfiles Profiles { get; set; }
     
     [BsonElement(DB_KEY_ITEMS)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_ITEMS)]
-    public object Items { get; set; }
+    public DetailsItems Items { get; set; }
 
-    public DetailsResponse(DetailsPlayer player, object profiles, object items)
+    public DetailsResponse(DetailsPlayer player, DetailsProfiles profiles, DetailsItems items)
     {
         Player = player;
         Profiles = profiles;
