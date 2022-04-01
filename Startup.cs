@@ -51,7 +51,7 @@ public class Startup : PlatformStartup
                 options.ClientSecret = PlatformEnvironment.Require("GOOGLE_CLIENT_SECRET");
                 options.SaveTokens = true;
                 
-                // options.CallbackPath = "/account/signin-google";
+                options.CallbackPath = $"{baseRoute}/account/signin-google";
             });
 
         services.AddAuthorization(options =>
