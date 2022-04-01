@@ -29,8 +29,12 @@ public class Startup : PlatformStartup
         {
             string route = attribute.Route;
         }
+
+        string baseRoute = this.HasAttribute(out BaseRoute att)
+            ? $"/{att.Route}"
+            : "";
         
-        services.ConfigureApplicationCookie(options => options.LoginPath = "/account/google-login");
+        services.ConfigureApplicationCookie(options => options.LoginPath = $"{baseRoute}/account/google-login");
         
         services.AddAuthentication(configureOptions: options =>
             {
@@ -38,8 +42,8 @@ public class Startup : PlatformStartup
             })
             .AddCookie(options =>
             {
-                options.LoginPath = "/account/google-login";
-                options.LogoutPath = "/account/google-logout";
+                options.LoginPath = $"{baseRoute}/account/google-login";
+                options.LogoutPath = $"{baseRoute}/account/google-logout";
             })
             .AddGoogle(options =>
             {
