@@ -127,6 +127,7 @@ public class PlayerController : PlatformController
         ViewData["LastDataVersion"] = detailsResponse.Player.LastDataVersion;
         ViewData["Screenname"] = detailsResponse.Player.Screenname;
         ViewData["LastUpdated"] = detailsResponse.Player.LastUpdated;
+        ViewData["Discriminator"] = detailsResponse.Player.Discriminator;
         ViewData["Username"] = detailsResponse.Player.Username;
         ViewData["Id"] = detailsResponse.Player.Id;
         

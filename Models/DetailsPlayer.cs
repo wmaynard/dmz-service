@@ -15,6 +15,7 @@ public class DetailsPlayer
     internal const string DB_KEY_LAST_DATA_VERSION = "lastDataVer";
     internal const string DB_KEY_SCREENNAME = "scrnname";
     internal const string DB_KEY_LAST_UPDATED = "lastUpdate";
+    internal const string DB_KEY_DISCRIMINATOR = "dsc";
     internal const string DB_KEY_USERNAME = "usrName";
     internal const string DB_KEY_ID = "id";
     
@@ -28,6 +29,7 @@ public class DetailsPlayer
     public const string FRIENDLY_KEY_LAST_DATA_VERSION = "lastDataVersion";
     public const string FRIENDLY_KEY_SCREENNAME = "screenname";
     public const string FRIENDLY_KEY_LAST_UPDATED = "lastUpdated";
+    public const string FRIENDLY_KEY_DISCRIMINATOR = "discriminator";
     public const string FRIENDLY_KEY_USERNAME = "userName";
     public const string FRIENDLY_KEY_ID = "id";
     
@@ -70,6 +72,10 @@ public class DetailsPlayer
     [BsonElement(DB_KEY_LAST_UPDATED)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_LAST_UPDATED)]
     public long LastUpdated { get; set; }
+    
+    [BsonElement(DB_KEY_DISCRIMINATOR)]
+    [JsonInclude, JsonPropertyName(FRIENDLY_KEY_DISCRIMINATOR)]
+    public int Discriminator { get; set; }
 
     [BsonElement(DB_KEY_USERNAME)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_USERNAME)]
@@ -81,7 +87,7 @@ public class DetailsPlayer
 
     public DetailsPlayer(string clientVersion, long dateCreated, string dataVersion, string deviceType,
         string lastSavedInstallId, string mergeVersion, long lastChanged, string lastDataVersion, string screenname,
-        long lastUpdated, string username, string id)
+        long lastUpdated, int discriminator, string username, string id)
     {
         ClientVersion = clientVersion;
         DateCreated = dateCreated;
@@ -93,6 +99,7 @@ public class DetailsPlayer
         LastDataVersion = lastDataVersion;
         Screenname = screenname;
         LastUpdated = lastUpdated;
+        Discriminator = discriminator;
         Username = username;
         Id = id;
     }
