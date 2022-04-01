@@ -37,8 +37,6 @@ public class PlayerController : PlatformController
             List<string> searchId = new List<string>();
             List<string> searchUser = new List<string>();
 
-            string requestUrl = "https://dev.nonprod.tower.cdrentertainment.com/player/v2/admin/search?term=" + query;
-            
             string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
 
             // Use the API Service to simplify web requests
@@ -58,14 +56,18 @@ public class PlayerController : PlatformController
                 }))
                 .Get(out GenericData response, out int code);
             
-            // string token = PlatformEnvironment.Require("PLAYER_TOKEN");
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            searchId.Add("id");
-            searchId.Add("id2");
-            searchUser.Add("user");
-            searchUser.Add("user2");
+            string responseString = response.JSON;
 
+            SearchResponse searchResponse = JsonConvert.DeserializeObject<SearchResponse>(responseString);
+
+            foreach (SearchResult result in searchResponse.Results)
+            {
+                searchId.Add(result.Player.Id);
+                searchUser.Add(result.Player.Username);
+            }
+            
             List<List<string>> searchList = new List<List<string>>();
             for (int i = 0; i < searchId.Count; i++)
             {
@@ -78,14 +80,6 @@ public class PlayerController : PlatformController
 
             ViewData["Query"] = query;
             ViewData["Data"] = searchList;
-
-            string responseString = response.JSON;
-
-            SearchResponse searchResponse = JsonConvert.DeserializeObject<SearchResponse>(responseString);
-
-            //List<SearchResult> searchResults = JsonConvert.DeserializeObject<List<SearchResult>>(response.ToList()[1].Value);
-            
-            ViewData["Response"] = searchResponse.Results;
             
             return View();
         }

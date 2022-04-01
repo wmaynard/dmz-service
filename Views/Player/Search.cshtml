@@ -4,6 +4,14 @@
 <h2>@ViewData["Title"]</h2>
 <h3>@ViewData["Message"]</h3>
 
+<div>
+    <form action="/portal/player/search" method="get">
+        <label for="query">Search for player: </label>
+        <input type="text" id="query" name="query"/>
+        <button type="submit">Search</button>
+    </form>
+</div>
+
 @if (ViewData["Query"] != null)
 {
     <p>Search Query: @ViewData["Query"]</p>
@@ -25,19 +33,4 @@
             </tr>
         }
     </table>
-    
-    @foreach (SearchResult result in (List<SearchResult>)ViewData["Response"])
-    {
-        <h4>@result.Player.JSON</h4>
-    }
-}
-else
-{
-    <div>
-        <form action="/portal/player/search" method="get">
-            <label for="query">Search query: </label>
-            <input type="text" id="query" name="query"/>
-            <button type="submit">Search</button>
-        </form>
-    </div>
 }
