@@ -38,43 +38,43 @@ public class SearchPlayer : PlatformDataModel
     
     [BsonElement(DB_KEY_CLIENT_VERSION)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_CLIENT_VERSION)]
-    public string ClientVersion { get; private set; }
+    public string ClientVersion { get; set; }
     
     [BsonElement(DB_KEY_DATE_CREATED)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_DATE_CREATED)]
-    public long DateCreated { get; private set; }
+    public long DateCreated { get; set; }
     
     [BsonElement(DB_KEY_DATA_VERSION)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_DATA_VERSION)]
-    public string DataVersion { get; private set; }
+    public string DataVersion { get; set; }
     
     [BsonElement(DB_KEY_DEVICE_TYPE)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_DEVICE_TYPE)]
-    public string DeviceType { get; private set; }
+    public string DeviceType { get; set; }
     
     [BsonElement(DB_KEY_LAST_SAVED_INSTALL_ID)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_LAST_SAVED_INSTALL_ID)]
-    public string LastSavedInstallId { get; private set; }
+    public string LastSavedInstallId { get; set; }
     
     [BsonElement(DB_KEY_MERGE_VERSION)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_MERGE_VERSION)]
-    public string MergeVersion { get; private set; }
+    public string MergeVersion { get; set; }
     
     [BsonElement(DB_KEY_LAST_CHANGED)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_LAST_CHANGED)]
-    public long LastChanged { get; private set; }
+    public long LastChanged { get; set; }
     
     [BsonElement(DB_KEY_LAST_DATA_VERSION)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_LAST_DATA_VERSION)]
-    public string LastDataVersion { get; private set; }
+    public string LastDataVersion { get; set; }
     
     [BsonElement(DB_KEY_SCREENNAME)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_SCREENNAME)]
-    public string Screenname { get; private set; }
+    public string Screenname { get; set; }
     
     [BsonElement(DB_KEY_LAST_UPDATED)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_LAST_UPDATED)]
-    public long LastUpdated { get; private set; }
+    public long LastUpdated { get; set; }
     
     [BsonElement(DB_KEY_DISCRIMINATOR)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_DISCRIMINATOR)]
@@ -86,7 +86,7 @@ public class SearchPlayer : PlatformDataModel
     
     [BsonElement(DB_KEY_SEARCH_WEIGHT)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_SEARCH_WEIGHT)]
-    public int SearchWeight { get; private set; }
+    public decimal SearchWeight { get; private set; }
     
     [BsonElement(DB_KEY_ID)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_ID)]
@@ -94,7 +94,7 @@ public class SearchPlayer : PlatformDataModel
 
     public SearchPlayer(string clientVersion, long dateCreated, string dataVersion, string deviceType,
         string lastSavedInstallId, string mergeVersion, long lastChanged, string lastDataVersion, string screenname,
-        long lastUpdated, int discriminator, string username, int searchWeight, string id)
+        long lastUpdated, int discriminator, string username, decimal searchWeight, string id)
     {
         ClientVersion = clientVersion;
         DateCreated = dateCreated;

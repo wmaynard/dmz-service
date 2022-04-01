@@ -26,7 +26,10 @@
         }
     </table>
     
-    <h4>@ViewData["Response"]</h4>
+    @foreach (SearchResult result in (List<SearchResult>)ViewData["Response"])
+    {
+        <h4>@result.Player.JSON</h4>
+    }
 }
 else
 {

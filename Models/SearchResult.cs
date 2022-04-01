@@ -16,17 +16,17 @@ public class SearchResult : PlatformDataModel
     
     [BsonElement(DB_KEY_PLAYER)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_PLAYER)]
-    public SearchPlayer Player { get; private set; }
+    public SearchPlayer Player { get; set; }
     
     [BsonElement(DB_KEY_SCORE)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_SCORE)]
-    public int Score { get; private set; }
+    public decimal Score { get; set; }
     
     [BsonElement(DB_KEY_CONFIDENCE)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_CONFIDENCE)]
-    public decimal Confidence { get; private set; }
+    public decimal Confidence { get; set; }
 
-    public SearchResult(SearchPlayer player, int score, decimal confidence)
+    public SearchResult(SearchPlayer player, decimal score, decimal confidence)
     {
         Player = player;
         Score = score;

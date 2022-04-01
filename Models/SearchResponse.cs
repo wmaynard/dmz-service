@@ -16,11 +16,11 @@ public class SearchResponse : PlatformDataModel
     
     [BsonElement(DB_KEY_SUCCESS)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_SUCCESS)]
-    public bool Success { get; private set; }
+    public bool Success { get; set; }
     
     [BsonElement(DB_KEY_RESULTS)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_RESULTS)]
-    public List<SearchResult> Results { get; private set; }
+    public List<SearchResult> Results { get; set; }
 
     public SearchResponse(bool success, List<SearchResult> searchResults)
     {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -81,8 +82,10 @@ public class PlayerController : PlatformController
             string responseString = response.JSON;
 
             SearchResponse searchResponse = JsonConvert.DeserializeObject<SearchResponse>(responseString);
+
+            //List<SearchResult> searchResults = JsonConvert.DeserializeObject<List<SearchResult>>(response.ToList()[1].Value);
             
-            ViewData["Response"] = searchResponse;
+            ViewData["Response"] = searchResponse.Results;
             
             return View();
         }
