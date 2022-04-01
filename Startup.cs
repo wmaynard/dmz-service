@@ -2,6 +2,8 @@ using System;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MongoDB.Bson.Serialization;
@@ -25,10 +27,10 @@ public class Startup : PlatformStartup
     {
         base.ConfigureServices(services, Owner.Nathan, warnMS: 30_000, errorMS: 60_000, criticalMS: 90_000, webServerEnabled: true);
 
-        if (this.HasAttribute(out BaseRoute attribute))
+        services.Configure<ForwardedHeadersOptions>(options =>
         {
-            string route = attribute.Route;
-        }
+            options.ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedFor;
+        });
 
         string baseRoute = this.HasAttribute(out BaseRoute att)
             ? $"/{att.Route}"
