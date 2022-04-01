@@ -5,13 +5,14 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
 using TowerPortal.Services;
 
 namespace TowerPortal.Controllers;
 
 [AllowAnonymous]
-[Route("account")]
+[Route("portal/account")]
 public class AccountController : PlatformController
 {
 #pragma warning disable CS0649
@@ -27,6 +28,16 @@ public class AccountController : PlatformController
         };
 
         return Challenge(properties, authenticationSchemes: GoogleDefaults.AuthenticationScheme);
+    }
+
+    public async Task<IActionResult> GoogleSignin()
+    {
+        Log.Info(Owner.Will, "SSO Sign in detected.", data: new
+        {
+            Context = HttpContext
+        });
+        
+        return Ok();
     }
 
     [Authorize(Policy = "CompanyStaffOnly")]

@@ -2,6 +2,8 @@ using System;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MongoDB.Bson.Serialization;
@@ -25,12 +27,13 @@ public class Startup : PlatformStartup
     {
         base.ConfigureServices(services, Owner.Nathan, warnMS: 30_000, errorMS: 60_000, criticalMS: 90_000, webServerEnabled: true);
 
-        if (this.HasAttribute(out BaseRoute attribute))
-        {
-            string route = attribute.Route;
-        }
         
-        services.ConfigureApplicationCookie(options => options.LoginPath = "/account/google-login");
+
+        string baseRoute = this.HasAttribute(out BaseRoute att)
+            ? $"/{att.Route}"
+            : "";
+        
+        services.ConfigureApplicationCookie(options => options.LoginPath = $"{baseRoute}/account/google-login");
         
         services.AddAuthentication(configureOptions: options =>
             {
@@ -38,8 +41,8 @@ public class Startup : PlatformStartup
             })
             .AddCookie(options =>
             {
-                options.LoginPath = "/account/google-login";
-                options.LogoutPath = "/account/google-logout";
+                options.LoginPath = $"{baseRoute}/account/google-login";
+                options.LogoutPath = $"{baseRoute}/account/google-logout";
             })
             .AddGoogle(options =>
             {
@@ -47,7 +50,7 @@ public class Startup : PlatformStartup
                 options.ClientSecret = PlatformEnvironment.Require("GOOGLE_CLIENT_SECRET");
                 options.SaveTokens = true;
                 
-                // options.CallbackPath = "/account/signin-google";
+                options.CallbackPath = $"{baseRoute}/account/signin-google";
             });
 
         services.AddAuthorization(options =>
