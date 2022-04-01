@@ -112,7 +112,14 @@ public class PlayerController : PlatformController
             .Get(out GenericData response, out int code);
 
         ViewData["accountId"] = id;
-        ViewData["Response"] = response;
+
+        string responseString = response.JSON;
+        
+        DetailsResponse detailsResponse = JsonConvert.DeserializeObject<DetailsResponse>(responseString);
+        
+        ViewData["Player"] = detailsResponse.Player;
+        ViewData["Profiles"] = detailsResponse.Profiles;
+        ViewData["Items"] = detailsResponse.Items;
 
         return View();
     }
