@@ -13,7 +13,7 @@ using Rumble.Platform.Common.Web;
 namespace TowerPortal.Controllers;
 
 [Authorize]
-[Route("portal/player")]
+[Route("player")]
 public class PlayerController : PlatformController
 {
 #pragma warning disable CS0649
