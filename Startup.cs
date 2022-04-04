@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -41,6 +42,7 @@ public class Startup : PlatformStartup
             {
                 options.LoginPath = $"{baseRoute}/account/google-login";
                 options.LogoutPath = $"{baseRoute}/account/google-logout";
+                options.Cookie.SameSite = SameSiteMode.None; // Suggestion from SO to resolve Correlation failed Exception
             })
             .AddGoogle(options =>
             {
