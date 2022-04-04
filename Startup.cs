@@ -46,7 +46,7 @@ public class Startup : PlatformStartup
             {
                 options.LoginPath = $"{baseRoute}/account/google-login";
                 options.LogoutPath = $"{baseRoute}/account/google-logout";
-                options.Cookie.SameSite = SameSiteMode.Unspecified; // Suggestion from SO to resolve Correlation failed Exception
+                options.Cookie.SameSite = SameSiteMode.Lax; // Suggestion from SO to resolve Correlation failed Exception
                 options.Events.OnSignedIn = (context) =>
                 {
                     Log.Dev(Owner.Will, $"{context.Principal.Identity.Name} signed in.");
