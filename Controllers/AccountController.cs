@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
 using TowerPortal.Models;
@@ -37,7 +38,7 @@ public class AccountController : PlatformController
 
         return Challenge(properties, authenticationSchemes: GoogleDefaults.AuthenticationScheme);
     }
-
+    
     [Route("google-logout")]
     public async Task<IActionResult> GoogleLogout()
     {
@@ -49,7 +50,6 @@ public class AccountController : PlatformController
     [Route("signin-google")]
     public async Task<IActionResult> GoogleSignin()
     {
-        
         return Ok();
     }
 

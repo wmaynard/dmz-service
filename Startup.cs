@@ -1,5 +1,7 @@
 using System;
 using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Builder;
@@ -26,6 +28,8 @@ public class Startup : PlatformStartup
 {
     public void ConfigureServices(IServiceCollection services)
     {
+        BypassFilter<PlatformPerformanceFilter>();
+        
         base.ConfigureServices(services, Owner.Nathan, warnMS: 30_000, errorMS: 60_000, criticalMS: 90_000, webServerEnabled: true);
 
         string baseRoute = this.HasAttribute(out BaseRoute att)
@@ -42,7 +46,37 @@ public class Startup : PlatformStartup
             {
                 options.LoginPath = $"{baseRoute}/account/google-login";
                 options.LogoutPath = $"{baseRoute}/account/google-logout";
-                options.Cookie.SameSite = SameSiteMode.None; // Suggestion from SO to resolve Correlation failed Exception
+                options.Cookie.SameSite = SameSiteMode.Strict; // Suggestion from SO to resolve Correlation failed Exception
+                options.Events.OnSignedIn = (context) =>
+                {
+                    Log.Dev(Owner.Will, $"{context.Principal.Identity.Name} signed in.");
+                    
+                    return Task.CompletedTask;
+                };
+                options.Events.OnRedirectToLogin = (context) =>
+                {
+                    Log.Dev(Owner.Will, $"Redirect login to '{context.RedirectUri}'.");
+                    
+                    return Task.CompletedTask;
+                };
+                options.Events.OnSigningIn = (context) =>
+                {
+                    Log.Dev(Owner.Will, $"{context?.Principal?.Identity?.Name ?? "(unknown)"} is signing in.");
+                    
+                    return Task.CompletedTask;
+                };
+                options.Events.OnSigningOut = (context) =>
+                {
+                    Log.Dev(Owner.Will, $"User is signing out.");
+
+                    return Task.CompletedTask;
+                };
+                options.Events.OnRedirectToReturnUrl = (context) =>
+                {
+                    Log.Dev(Owner.Will, $"Redirecting to {context.RedirectUri}");
+
+                    return Task.CompletedTask;
+                };
             })
             .AddGoogle(options =>
             {
