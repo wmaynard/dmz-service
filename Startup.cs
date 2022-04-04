@@ -20,7 +20,7 @@ using TowerPortal.Utilities;
 
 namespace TowerPortal;
 
-[BaseRoute("portal")]
+// [BaseRoute("portal")]
 public class Startup : PlatformStartup
 {
     public void ConfigureServices(IServiceCollection services)
