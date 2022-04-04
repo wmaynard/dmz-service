@@ -23,7 +23,7 @@ dev:
   stage: dev
   environment:
     name: dev
-    url: https://dev.nonprod.tower.cdrentertainment.com/
+    url: https://portal-eng.tower.cdrentertainment.com/
 
 # stage-a:
 #   extends: .auto-deploy

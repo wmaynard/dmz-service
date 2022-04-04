@@ -112,7 +112,27 @@ public class PlayerController : PlatformController
             .Get(out GenericData response, out int code);
 
         ViewData["accountId"] = id;
-        ViewData["Response"] = response;
+
+        string responseString = response.JSON;
+        
+        DetailsResponse detailsResponse = JsonConvert.DeserializeObject<DetailsResponse>(responseString);
+
+        ViewData["ClientVersion"] = detailsResponse.Player.ClientVersion;
+        ViewData["DateCreated"] = detailsResponse.Player.DateCreated;
+        ViewData["DataVersion"] = detailsResponse.Player.DataVersion;
+        ViewData["DeviceType"] = detailsResponse.Player.DeviceType;
+        ViewData["LastSavedInstallId"] = detailsResponse.Player.LastSavedInstallId;
+        ViewData["MergeVersion"] = detailsResponse.Player.MergeVersion;
+        ViewData["LastChanged"] = detailsResponse.Player.LastChanged;
+        ViewData["LastDataVersion"] = detailsResponse.Player.LastDataVersion;
+        ViewData["Screenname"] = detailsResponse.Player.Screenname;
+        ViewData["LastUpdated"] = detailsResponse.Player.LastUpdated;
+        ViewData["Discriminator"] = detailsResponse.Player.Discriminator;
+        ViewData["Username"] = detailsResponse.Player.Username;
+        ViewData["Id"] = detailsResponse.Player.Id;
+        
+        ViewData["Profiles"] = detailsResponse.Profiles;
+        ViewData["Items"] = detailsResponse.Items;
 
         return View();
     }
