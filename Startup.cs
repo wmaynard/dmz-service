@@ -27,8 +27,6 @@ public class Startup : PlatformStartup
     {
         base.ConfigureServices(services, Owner.Nathan, warnMS: 30_000, errorMS: 60_000, criticalMS: 90_000, webServerEnabled: true);
 
-        
-
         string baseRoute = this.HasAttribute(out BaseRoute att)
             ? $"/{att.Route}"
             : "";

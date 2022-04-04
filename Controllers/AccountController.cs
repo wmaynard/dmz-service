@@ -29,8 +29,21 @@ public class AccountController : PlatformController
         {
             RedirectUri = Url.Action("GoogleResponse")
         };
+        
+        Log.Dev(Owner.Will, "Issuing Challenge.", data: new
+        {
+            AuthenticationProperties = properties
+        });
 
         return Challenge(properties, authenticationSchemes: GoogleDefaults.AuthenticationScheme);
+    }
+
+    [Route("google-logout")]
+    public async Task<IActionResult> GoogleLogout()
+    {
+        await HttpContext.SignOutAsync();
+
+        return Redirect("/");
     }
 
     [Route("signin-google")]
@@ -45,10 +58,10 @@ public class AccountController : PlatformController
     public async Task<IActionResult> GoogleResponse()
     {
         
-        Log.Info(Owner.Will, "SSO Sign in detected.");
+        Log.Dev(Owner.Will, "SSO Sign in detected.");
         AuthenticateResult result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         
-        Log.Info(Owner.Will, "SSO authenticated.");
+        Log.Dev(Owner.Will, "SSO authenticated.");
         
         IEnumerable<Claim> claims = result?.Principal?.Identities?.FirstOrDefault()?.Claims;
         
@@ -56,12 +69,12 @@ public class AccountController : PlatformController
 
         ViewData["account"] = output;
         
-        Log.Info(Owner.Will, "Account logged in successfully.", data: new
+        Log.Dev(Owner.Will, "Account logged in successfully.", data: new
         {
             PortalAccount = output
         });
 
-        return Ok(output);
+        return Redirect("/");
     }
     
     public override ActionResult HealthCheck() => Ok(_accountService.HealthCheckResponseObject);
