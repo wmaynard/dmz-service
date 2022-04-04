@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -7,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
+using TowerPortal.Models;
 using TowerPortal.Services;
 
 namespace TowerPortal.Controllers;
@@ -30,12 +33,9 @@ public class AccountController : PlatformController
         return Challenge(properties, authenticationSchemes: GoogleDefaults.AuthenticationScheme);
     }
 
+    [Route("signin-google")]
     public async Task<IActionResult> GoogleSignin()
     {
-        Log.Info(Owner.Will, "SSO Sign in detected.", data: new
-        {
-            Context = HttpContext
-        });
         
         return Ok();
     }
@@ -44,18 +44,24 @@ public class AccountController : PlatformController
     [Route("google-response")]
     public async Task<IActionResult> GoogleResponse()
     {
+        
+        Log.Info(Owner.Will, "SSO Sign in detected.");
         AuthenticateResult result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        
+        Log.Info(Owner.Will, "SSO authenticated.");
+        
+        IEnumerable<Claim> claims = result?.Principal?.Identities?.FirstOrDefault()?.Claims;
+        
+        Account output = Account.FromGoogleClaims(claims);
 
-        var claims = result?.Principal?.Identities?.FirstOrDefault()
-            ?.Claims.Select(claim => new
-            {
-                claim.Issuer,
-                claim.OriginalIssuer,
-                claim.Type,
-                claim.Value
-            });
+        ViewData["account"] = output;
+        
+        Log.Info(Owner.Will, "Account logged in successfully.", data: new
+        {
+            PortalAccount = output
+        });
 
-        return Json(claims);
+        return Ok(output);
     }
     
     public override ActionResult HealthCheck() => Ok(_accountService.HealthCheckResponseObject);
