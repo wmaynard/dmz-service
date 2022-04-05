@@ -56,6 +56,7 @@ public class Startup : PlatformStartup
                     } 
                 } 
             };
+            options.Secure = CookieSecurePolicy.Always;
         });
         
         services.AddAuthentication(configureOptions: options =>
@@ -64,6 +65,7 @@ public class Startup : PlatformStartup
             })
             .AddCookie(options =>
             {
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                 options.LoginPath = $"{baseRoute}/account/google-login";
                 options.LogoutPath = $"{baseRoute}/account/google-logout";
                 options.Cookie.SameSite = SameSiteMode.Lax; // Suggestion from SO to resolve Correlation failed Exception
@@ -103,7 +105,7 @@ public class Startup : PlatformStartup
                 options.ClientId = PlatformEnvironment.Require("GOOGLE_CLIENT_ID");
                 options.ClientSecret = PlatformEnvironment.Require("GOOGLE_CLIENT_SECRET");
                 options.SaveTokens = true;
-                
+
                 // options.CallbackPath = $"{baseRoute}/account/google-response";
             });
 
