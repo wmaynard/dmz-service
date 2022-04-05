@@ -31,8 +31,7 @@ public class Startup : PlatformStartup
     {
         BypassFilter<PlatformPerformanceFilter>();
         
-        base.ConfigureServices(services, Owner.Nathan, warnMS: 30_000, errorMS: 60_000, criticalMS: 90_000, webServerEnabled: true);
-
+        
         string baseRoute = this.HasAttribute(out BaseRoute att)
             ? $"/{att.Route}"
             : "";
@@ -42,6 +41,7 @@ public class Startup : PlatformStartup
         services.Configure<CookiePolicyOptions>(options =>
         {
             options.MinimumSameSitePolicy = SameSiteMode.Unspecified;
+            options.Secure = CookieSecurePolicy.Always;
             options.OnAppendCookie = (cookieContext) =>
             {
                 CookieOptions cookieOptions = cookieContext.CookieOptions;
@@ -56,7 +56,6 @@ public class Startup : PlatformStartup
                     } 
                 } 
             };
-            options.Secure = CookieSecurePolicy.Always;
         });
         
         services.AddAuthentication(configureOptions: options =>
@@ -126,6 +125,9 @@ public class Startup : PlatformStartup
         });
 
         services.AddControllersWithViews();
+        
+        base.ConfigureServices(services, Owner.Nathan, warnMS: 30_000, errorMS: 60_000, criticalMS: 90_000, webServerEnabled: true);
+
     }
     
     // More debugging on cookie conflicts
