@@ -1,9 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,10 +19,7 @@ public class PlayerController : PlatformController
     private readonly DynamicConfigService _dynamicConfigService;
 #pragma warning restore CS0649
     
-    public readonly HttpClient client = new HttpClient(); // should be used for all
-
     [Route("search")]
-    // [Route("search/{query=query}")]
     public async Task<IActionResult> Search(string query)
     {
         ViewData["Message"] = "Player search";
@@ -56,8 +48,6 @@ public class PlayerController : PlatformController
                 }))
                 .Get(out GenericData response, out int code);
             
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
             string responseString = response.JSON;
 
             SearchResponse searchResponse = JsonConvert.DeserializeObject<SearchResponse>(responseString);
@@ -93,7 +83,6 @@ public class PlayerController : PlatformController
         string requestUrl = "https://dev.nonprod.tower.cdrentertainment.com/player/v2/admin/details?accountId=" + id;
 
         string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         
         _apiService
             .Request(requestUrl)
