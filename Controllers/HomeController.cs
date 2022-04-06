@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Web;
 using TowerPortal.Models;
@@ -8,7 +9,7 @@ using TowerPortal.Models;
 namespace TowerPortal.Controllers;
 
 [Authorize]
-[Route("portal")]
+[Route("")]
 public class HomeController : PlatformController
 {
 #pragma warning disable CS0649
@@ -29,6 +30,8 @@ public class HomeController : PlatformController
     public IActionResult Error() => View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
 
     [AllowAnonymous]
+    [Route("health")]
+    [Route("portal/health")]
     public override ActionResult HealthCheck() => Ok(
         _apiService.HealthCheckResponseObject, 
         _dynamicConfigService.HealthCheckResponseObject

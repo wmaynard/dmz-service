@@ -1,18 +1,22 @@
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
+using TowerPortal.Models;
 using TowerPortal.Services;
 
 namespace TowerPortal.Controllers;
 
 [AllowAnonymous]
-[Route("portal/account")]
+[Route("account")]
 public class AccountController : PlatformController
 {
 #pragma warning disable CS0649
@@ -26,17 +30,26 @@ public class AccountController : PlatformController
         {
             RedirectUri = Url.Action("GoogleResponse")
         };
+        
+        Log.Dev(Owner.Will, "Issuing Challenge.", data: new
+        {
+            AuthenticationProperties = properties
+        });
 
         return Challenge(properties, authenticationSchemes: GoogleDefaults.AuthenticationScheme);
     }
+    
+    [Route("google-logout")]
+    public async Task<IActionResult> GoogleLogout()
+    {
+        await HttpContext.SignOutAsync();
 
+        return Redirect("/");
+    }
+
+    [Route("signin-google")]
     public async Task<IActionResult> GoogleSignin()
     {
-        Log.Info(Owner.Will, "SSO Sign in detected.", data: new
-        {
-            Context = HttpContext
-        });
-        
         return Ok();
     }
 
@@ -44,18 +57,24 @@ public class AccountController : PlatformController
     [Route("google-response")]
     public async Task<IActionResult> GoogleResponse()
     {
+        
+        Log.Dev(Owner.Will, "SSO Sign in detected.");
         AuthenticateResult result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        
+        Log.Dev(Owner.Will, "SSO authenticated.");
+        
+        IEnumerable<Claim> claims = result?.Principal?.Identities?.FirstOrDefault()?.Claims;
+        
+        Account output = Account.FromGoogleClaims(claims);
 
-        var claims = result?.Principal?.Identities?.FirstOrDefault()
-            ?.Claims.Select(claim => new
-            {
-                claim.Issuer,
-                claim.OriginalIssuer,
-                claim.Type,
-                claim.Value
-            });
+        ViewData["account"] = output;
+        
+        Log.Dev(Owner.Will, "Account logged in successfully.", data: new
+        {
+            PortalAccount = output
+        });
 
-        return Json(claims);
+        return Redirect("/");
     }
     
     public override ActionResult HealthCheck() => Ok(_accountService.HealthCheckResponseObject);
