@@ -52,6 +52,8 @@ public class MailboxController : PlatformController
         return View();
     }
     
+    
+    
     [Route("health")]
     public override ActionResult HealthCheck() => Ok(_apiService.HealthCheckResponseObject, _dynamicConfigService.HealthCheckResponseObject);
 }
