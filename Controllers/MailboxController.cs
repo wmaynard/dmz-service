@@ -11,7 +11,7 @@ using TowerPortal.Models;
 namespace TowerPortal.Controllers;
 
 [Authorize]
-[Route("portal/mailbox")]
+[Route("mailbox")]
 public class MailboxController : PlatformController
 {
     private readonly ApiService _apiService;
