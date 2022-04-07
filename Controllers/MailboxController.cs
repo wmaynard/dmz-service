@@ -20,7 +20,7 @@ public class MailboxController : PlatformController
     [Route("global")]
     public async Task<IActionResult> Global()
     {
-        string token = _dynamicConfigService.GameConfig.Require<string>("mailServiceToken");
+        string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
         
         _apiService
             .Request($"https://dev.nonprod.tower.cdrentertainment.com/mail/admin/global/messages")
@@ -37,17 +37,34 @@ public class MailboxController : PlatformController
                 });
             }))
             .Get(out GenericData response, out int code);
-
+        
         string responseString = response.JSON;
+        
+        //GenericData.require<model>("key")
+        List<GlobalMessage> globalMessages = response.Require<List<GlobalMessage>>("globalMessages");
 
-        GlobalMessageResponse globalMessageResponse =
-            JsonConvert.DeserializeObject<GlobalMessageResponse>(responseString);
+        List<GlobalMessage> activeGlobalMessagesList = new List<GlobalMessage>();
+        List<GlobalMessage> expiredGlobalMessagesList = new List<GlobalMessage>();
 
-        List<List<string>> globalMessages = new List<List<string>>();
+        foreach (GlobalMessage globalMessage in globalMessages)
+        {
+            if (!globalMessage.IsExpired)
+            {
+                activeGlobalMessagesList.Add(globalMessage);
+            } else if (globalMessage.IsExpired)
+            {
+                expiredGlobalMessagesList.Add(globalMessage);
+            }
+        }
+        
+        // GlobalMessageResponse globalMessageResponse = JsonConvert.DeserializeObject<GlobalMessageResponse>(responseString);
+
+        // List<List<string>> globalMessages = new List<List<string>>();
         
         
 
-        ViewData["GlobalMessages"] = globalMessages;
+        ViewData["ActiveGlobalMessages"] = activeGlobalMessagesList;
+        ViewData["ExpiredGlobalMessages"] = expiredGlobalMessagesList;
         
         return View();
     }
