@@ -66,6 +66,10 @@ ingress:
   annotations:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/client-body-buffer-size: 1m
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/session-cookie-expires: "60"
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "60"
+    nginx.ingress.kubernetes.io/session-cookie-name: "RUMBLEPORTAL"
   modSecurity:
     enabled: false
     secRuleEngine: "DetectionOnly"
@@ -103,6 +107,7 @@ postgresql:
 
 resources:
   limits:
+    cpu: 256m
     memory: 128Mi
   requests:
     cpu: 128m
