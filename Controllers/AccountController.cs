@@ -30,11 +30,6 @@ public class AccountController : PlatformController
         {
             RedirectUri = Url.Action("GoogleResponse")
         };
-        
-        Log.Dev(Owner.Will, "Issuing Challenge.", data: new
-        {
-            AuthenticationProperties = properties
-        });
 
         return Challenge(properties, authenticationSchemes: GoogleDefaults.AuthenticationScheme);
     }
@@ -58,18 +53,17 @@ public class AccountController : PlatformController
     public async Task<IActionResult> GoogleResponse()
     {
         
-        Log.Dev(Owner.Will, "SSO Sign in detected.");
+        Log.Info(Owner.Will, "SSO Sign in detected.");
         AuthenticateResult result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         
-        Log.Dev(Owner.Will, "SSO authenticated.");
-        
+        Log.Info(Owner.Will, "SSO authenticated.");
         IEnumerable<Claim> claims = result?.Principal?.Identities?.FirstOrDefault()?.Claims;
         
         Account output = Account.FromGoogleClaims(claims);
 
         ViewData["account"] = output;
         
-        Log.Dev(Owner.Will, "Account logged in successfully.", data: new
+        Log.Info(Owner.Will, "Account logged in successfully.", data: new
         {
             PortalAccount = output
         });
