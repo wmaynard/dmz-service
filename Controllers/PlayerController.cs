@@ -39,7 +39,7 @@ public class PlayerController : PlatformController
             List<string> searchUser = new List<string>();
 
             string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
-            string url = PlatformEnvironment.Url(endpoint: $"/player/v2/admin/search?term={query}");
+            string url =  $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/search?term={query}";
             
             
             // Use the API Service to simplify web requests
@@ -94,7 +94,7 @@ public class PlayerController : PlatformController
     [Route("details")]
     public async Task<IActionResult> Details(string id)
     {
-        string requestUrl = PlatformEnvironment.Url(endpoint: $"/player/v2/admin/details?accountId={id}");
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/details?accountId={id}";
 
         string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
