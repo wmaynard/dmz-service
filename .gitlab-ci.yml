@@ -16,7 +16,7 @@ variables:
   # parsed by PlatformEnvironment.
   K8S_SECRET_PLATFORM_COMMON: "$PLATFORM_COMMON"
     
-  K&S_SECRET_PLATFORM_URL: "$PLATFORM_URL"
+  K8S_SECRET_PLATFORM_URL: "$PLATFORM_URL"
   
   # Overrides for Platform Common CI
   # These variables are not inherently necessary for your project to run successfully in environments.  A value from these will always come from PLATFORM_COMMON.
