@@ -32,12 +32,12 @@ stage-a:
     name: stage-a
     url: https://portal.tower.cdrentertainment.com/
 
-# production:
-#   extends: .auto-deploy
-#   stage: production
-#   tags:
-#     - production
-#   environment:
-#     name: production/platform
-#     url: https://portal.tower.rumblegames.com/
+production:
+  extends: .auto-deploy
+  stage: production
+  tags:
+    - production
+  environment:
+    name: production/platform
+    url: https://portal.tower.rumblegames.com/
 
