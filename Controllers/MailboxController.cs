@@ -38,8 +38,6 @@ public class MailboxController : PlatformController
             }))
             .Get(out GenericData response, out int code);
         
-        string responseString = response.JSON;
-        
         //GenericData.require<model>("key")
         List<GlobalMessage> globalMessages = response.Require<List<GlobalMessage>>("globalMessages");
 
@@ -56,21 +54,26 @@ public class MailboxController : PlatformController
                 expiredGlobalMessagesList.Add(globalMessage);
             }
         }
-        
-        // GlobalMessageResponse globalMessageResponse = JsonConvert.DeserializeObject<GlobalMessageResponse>(responseString);
-
-        // List<List<string>> globalMessages = new List<List<string>>();
-        
-        
 
         ViewData["ActiveGlobalMessages"] = activeGlobalMessagesList;
         ViewData["ExpiredGlobalMessages"] = expiredGlobalMessagesList;
         
         return View();
     }
-    
-    
-    
+
+    [HttpPost]
+    public async Task<IActionResult> Global(string subject, string body, List<Attachment> attachments, long visibleFrom, long expiration,
+        string icon, string banner, string internalNote, long forAccountsBefore)
+    {
+        Log.Local(owner: Owner.Nathan, message: "post request");
+        //ViewData["Request"] = new GlobalMessage(subject: subject, body: body, attachments: attachments,
+        //    expiration: expiration, visibleFrom: visibleFrom, icon: icon, banner: banner,
+        //    status: Message.StatusType.UNCLAIMED, internalNote: internalNote, forAccountsBefore: forAccountsBefore);
+        ViewData["Test"] = subject;
+        Log.Local(owner: Owner.Nathan, message: "post success");
+        return View();
+    }
+
     [Route("health")]
     public override ActionResult HealthCheck() => Ok(_apiService.HealthCheckResponseObject, _dynamicConfigService.HealthCheckResponseObject);
 }
