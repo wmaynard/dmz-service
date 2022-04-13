@@ -94,9 +94,13 @@ public class MailboxController : PlatformController
             status: Message.StatusType.UNCLAIMED, internalNote: internalNote, forAccountsBefore: forAccountsBeforeUnix);
 
         _apiService
-            .Request($"https://dev.nonprod.tower.cdrentertainment.com/mail/admin/global/messages/send")
+            //.Request($"https://dev.nonprod.tower.cdrentertainment.com/mail/admin/global/messages/send")
+            .Request($"https://localhost:5001/mail/admin/global/messages/send")
             .AddAuthorization(token)
-            //.SetPayload((GenericData)newGlobal)
+            .SetPayload(new GenericData
+            {
+                {"globalMessage", newGlobal}
+            })
             .OnSuccess(((sender, apiResponse) =>
             {
                 Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
@@ -108,7 +112,7 @@ public class MailboxController : PlatformController
                     Response = apiResponse
                 });
             }))
-            .Get(out GenericData sendResponse, out int sendCode);
+            .Post(out GenericData sendResponse, out int sendCode);
         
         _apiService
             .Request($"https://dev.nonprod.tower.cdrentertainment.com/mail/admin/global/messages")
