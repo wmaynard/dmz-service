@@ -15,6 +15,8 @@ variables:
   # Common Platform CI variables - contains information for several environments,
   # parsed by PlatformEnvironment.
   K8S_SECRET_PLATFORM_COMMON: "$PLATFORM_COMMON"
+    
+  K8S_SECRET_PLATFORM_URL: "$PLATFORM_URL"
   
   # Overrides for Platform Common CI
   # These variables are not inherently necessary for your project to run successfully in environments.  A value from these will always come from PLATFORM_COMMON.
@@ -50,12 +52,12 @@ build_app:
   image: mcr.microsoft.com/dotnet/sdk:6.0
   allow_failure: false
   script:
-    - dotnet nuget add source --username eric.sheris --password $NUGET_PAT --store-password-in-clear-text --name gitlab "https://gitlab.cdrentertainment.com/api/v4/projects/14/packages/nuget/index.json"
+    - dotnet nuget add source --username $BOT_USER --password $BOT_PAT --store-password-in-clear-text --name gitlab "https://gitlab.cdrentertainment.com/api/v4/projects/14/packages/nuget/index.json"
     - dotnet restore
     - dotnet build --no-restore --configuration Release
     - dotnet publish --configuration Release -o publish
     - CURRENTVERSION="$(dotnet ./bin/Release/net6.0/tower-admin-portal.dll -version | cut -d':' -f2)"
-    - git tag $CURRENTVERSION; git push https://eric.sheris:${NUGET_PAT}@gitlab.cdrentertainment.com/platform-services/$CI_PROJECT_NAME.git --tags
+    - git tag $CURRENTVERSION; git push https://$BOT_USER:${BOT_PAT}@gitlab.cdrentertainment.com/platform-services/$CI_PROJECT_NAME.git --tags
     - echo "$CURRENTVERSION"
   artifacts:
     paths:
@@ -99,38 +101,5 @@ build_image:
   needs:
     - job: build_app
       artifacts: true
-  artifacts:
-    paths:
-      - $CI_PROJECT_DIR/trivy/$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHA.html
-    expire_in: 1 week
-
-# commit_scan_results:
-#   stage: scan
-#   allow_failure: false
-#   image:
-#     name: ubuntu
-#   script:
-#     - apt update
-#     - apt install -y git
-#     - git clone https://eric.sheris:${NUGET_PAT}@gitlab.cdrentertainment.com/platform-services/$CI_PROJECT_NAME.wiki.git
-#     - mkdir -p $CI_PROJECT_DIR/$CI_PROJECT_NAME.wiki/securityscans/
-#     - cp $CI_PROJECT_DIR/trivy/$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHA.html $CI_PROJECT_NAME.wiki/securityscans/$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHA.md
-#     - cd $CI_PROJECT_NAME.wiki
-#     - export TZ=":America/Los_Angeles"
-#     - export OUTPUT="[`date +\"%m-%d-%y %r\"`]\(securityscans/$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHA\)\n\n"
-#     - echo "$(echo -e $OUTPUT; cat securityscans/SecurityScans.md)" > securityscans/SecurityScans.md
-#     - 
-#     # - git config --global user.email "platform-ops@rumbleentertainment.com"
-#     # - git config --global user.name "Gitlab"
-#     # - git add .; git commit -m "securityscan for image $CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA"; git push --set-upstream origin master
-#   needs:
-#     - job: build_image
-#       artifacts: true
-#   rules:
-#     - if: $CI_COMMIT_TAG
-#       when: never
-#     - when: on_success
-
-
 include:
   - '/.gitlab/deploy-k8s.yaml'

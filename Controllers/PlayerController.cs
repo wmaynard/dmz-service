@@ -1,4 +1,9 @@
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,10 +35,12 @@ public class PlayerController : PlatformController
             List<string> searchUser = new List<string>();
 
             string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
-
+            string url =  $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/search?term={query}";
+            
+            
             // Use the API Service to simplify web requests
             _apiService
-                .Request($"https://dev.nonprod.tower.cdrentertainment.com/player/v2/admin/search?term={query}")
+                .Request(url)
                 .AddAuthorization(token)
                 .OnSuccess(((sender, apiResponse) =>
                 {
@@ -43,6 +50,7 @@ public class PlayerController : PlatformController
                 {
                     Log.Error(Owner.Nathan, "Request to player-service-v2 failed.", data: new
                     {
+                        Url = url,
                         Response = apiResponse
                     });
                 }))
@@ -80,7 +88,7 @@ public class PlayerController : PlatformController
     [Route("details")]
     public async Task<IActionResult> Details(string id)
     {
-        string requestUrl = "https://dev.nonprod.tower.cdrentertainment.com/player/v2/admin/details?accountId=" + id;
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/details?accountId={id}";
 
         string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
         

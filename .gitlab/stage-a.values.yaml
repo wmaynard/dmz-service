@@ -30,12 +30,12 @@ application:
 hpa:
   enabled: false
   minReplicas: 2
-  maxReplicas: 5
+  maxReplicas: 2
   CPUUtilizationPercentage: 60
   MemUtilizationPercentage: 60
   keda:
     enabled: true
-    requestsPerSecond: "100"
+    requestsPerSecond: "50"
     serverAddress: http://prometheus-prometheus-server.gitlab-managed-apps.svc:80
     filter: "eng"
 gitlab:
@@ -47,24 +47,29 @@ gitlab:
 service:
   enabled: true
   annotations: {}
-  name: lb-stage-a # 15 character limit..
+  name: ap-eng # 15 character limit..
   type: NodePort
-  url: https://stage-a.nonprod.tower.cdrentertainment.com/
+  url: https://portal.tower.cdrentertainment.com/
   additionalHosts:
-  commonName: stage-a.nonprod.tower.cdrentertainment.com
+  commonName: 
   externalPort: 5000
   internalPort: 80
 ingress:
   enabled: true
   paths: 
-    - "/leaderboard"
+    - "/"
   tls:
     enabled: false
     acme: false
-    secretName: "leaderboard-service-stage-a"
+    secretName: "admin-portal-eng"
     useDefaultSecret: false
   annotations:
     kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/client-body-buffer-size: 1m
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/session-cookie-expires: "3600"
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "3600"
+    nginx.ingress.kubernetes.io/session-cookie-name: "RUMBLEPORTAL"
   modSecurity:
     enabled: false
     secRuleEngine: "DetectionOnly"
@@ -77,21 +82,21 @@ ingress:
 prometheus:
   metrics: false
 livenessProbe:
-  path: "/leaderboard/health"
+  path: "/health"
   initialDelaySeconds: 30
   timeoutSeconds: 3
   scheme: "HTTP"
   probeType: "httpGet"
 readinessProbe:
-  path: "/leaderboard/health"
+  path: "/health"
   initialDelaySeconds: 30
   timeoutSeconds: 3
   scheme: "HTTP"
   probeType: "httpGet"
 startupProbe:
-  path: "/leaderboard/health"
+  path: "/health"
   failureThreshold: 30
-  timeoutSeconds: 10
+  timeoutSeconds: 2
   scheme: "HTTP"
   probeType: "httpGet"
 postgresql:

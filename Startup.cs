@@ -70,31 +70,31 @@ public class Startup : PlatformStartup
                 options.Cookie.SameSite = SameSiteMode.Lax; // Suggestion from SO to resolve Correlation failed Exception
                 options.Events.OnSignedIn = (context) =>
                 {
-                    Log.Dev(Owner.Will, $"{context.Principal.Identity.Name} signed in.");
+                    Log.Info(Owner.Will, $"{context.Principal.Identity.Name} signed in.");
                     
                     return Task.CompletedTask;
                 };
                 options.Events.OnRedirectToLogin = (context) =>
                 {
-                    Log.Dev(Owner.Will, $"Redirect login to '{context.RedirectUri}'.");
+                    Log.Info(Owner.Will, $"Redirect login to '{context.RedirectUri}'.");
                     
                     return Task.CompletedTask;
                 };
                 options.Events.OnSigningIn = (context) =>
                 {
-                    Log.Dev(Owner.Will, $"{context?.Principal?.Identity?.Name ?? "(unknown)"} is signing in.");
+                    Log.Info(Owner.Will, $"{context?.Principal?.Identity?.Name ?? "(unknown)"} is signing in.");
                     
                     return Task.CompletedTask;
                 };
                 options.Events.OnSigningOut = (context) =>
                 {
-                    Log.Dev(Owner.Will, $"User is signing out.");
+                    Log.Info(Owner.Will, $"User is signing out.");
 
                     return Task.CompletedTask;
                 };
                 options.Events.OnRedirectToReturnUrl = (context) =>
                 {
-                    Log.Dev(Owner.Will, $"Redirecting to {context.RedirectUri}");
+                    Log.Info(Owner.Will, $"Redirecting to {context.RedirectUri}");
 
                     return Task.CompletedTask;
                 };
