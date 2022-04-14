@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
@@ -79,50 +78,47 @@ public class MailboxController : PlatformController
         
         ViewData["Exist"] = "";
         
-        List<Attachment> attachmentsList = null;
-        long expirationUnix = 0;
-        long visibleFromUnix = 0;
-        long? forAccountsBeforeUnix = null;
-        
         try
         {
-            attachmentsList = ParseMessageData.ParseAttachments(attachments);
+            List<Attachment> attachmentsList = ParseMessageData.ParseAttachments(attachments);
             icon = ParseMessageData.ParseEmpty(icon);
             banner = ParseMessageData.ParseEmpty(banner);
-            expirationUnix = ParseMessageData.ParseDateTime(expiration);
-            visibleFromUnix = ParseMessageData.ParseDateTime(visibleFrom);
-            forAccountsBeforeUnix = ParseMessageData.ParseDateTime(forAccountsBefore);
+            long expirationUnix = ParseMessageData.ParseDateTime(expiration);
+            long visibleFromUnix = ParseMessageData.ParseDateTime(visibleFrom);
+            long? forAccountsBeforeUnix = ParseMessageData.ParseDateTime(forAccountsBefore);
+            
+            GlobalMessage newGlobal = new GlobalMessage(subject: subject, body: body, attachments: attachmentsList,
+                expiration: expirationUnix, visibleFrom: visibleFromUnix, icon: icon, banner: banner,
+                status: Message.StatusType.UNCLAIMED, internalNote: internalNote, forAccountsBefore: forAccountsBeforeUnix);
+
+            _apiService
+                .Request($"https://dev.nonprod.tower.cdrentertainment.com/mail/admin/global/messages/send")
+                //.Request($"https://localhost:5071/mail/admin/messages/send") // local
+                .AddAuthorization(token)
+                .SetPayload(new GenericData
+                {
+                    {"globalMessage", newGlobal}
+                })
+                .OnSuccess(((sender, apiResponse) =>
+                {
+                    ViewData["Success"] = "Successfully sent message.";
+                    Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
+                }))
+                .OnFailure(((sender, apiResponse) =>
+                {
+                    ViewData["Success"] = "Failed to send message.";
+                    Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
+                    {
+                        Response = apiResponse
+                    });
+                }))
+                .Post(out GenericData sendResponse, out int sendCode);
         }
         catch (Exception e)
         {
+            ViewData["Success"] = "Failed to send message. Some fields may be malformed.";
             Log.Error(owner: Owner.Nathan, message: "Error occurred when sending global message.", data: e.Message);
         }
-
-        GlobalMessage newGlobal = new GlobalMessage(subject: subject, body: body, attachments: attachmentsList,
-            expiration: expirationUnix, visibleFrom: visibleFromUnix, icon: icon, banner: banner,
-            status: Message.StatusType.UNCLAIMED, internalNote: internalNote, forAccountsBefore: forAccountsBeforeUnix);
-
-        _apiService
-            .Request(requestUrl + "/send")
-            .AddAuthorization(token)
-            .SetPayload(new GenericData
-            {
-                {"globalMessage", newGlobal}
-            })
-            .OnSuccess(((sender, apiResponse) =>
-            {
-                ViewData["Success"] = "Successfully sent message.";
-                Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
-            }))
-            .OnFailure(((sender, apiResponse) =>
-            {
-                ViewData["Success"] = "Failed to send message.";
-                Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
-                {
-                    Response = apiResponse
-                });
-            }))
-            .Post(out GenericData sendResponse, out int sendCode);
         
         _apiService
             .Request(requestUrl)
@@ -180,52 +176,49 @@ public class MailboxController : PlatformController
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
         string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/messages/send";
 
-        List<string> playerIdsList = null;
-        List<Attachment> attachmentsList = null;
-        long expirationUnix = 0;
-        long visibleFromUnix = 0;
-        
         try
         {
-            playerIdsList = ParseMessageData.ParseIds(playerIds);
-            attachmentsList = ParseMessageData.ParseAttachments(attachments);
+            List<string> playerIdsList = ParseMessageData.ParseIds(playerIds);
+            List<Attachment> attachmentsList = ParseMessageData.ParseAttachments(attachments);
             icon = ParseMessageData.ParseEmpty(icon);
             banner = ParseMessageData.ParseEmpty(banner);
-            expirationUnix = ParseMessageData.ParseDateTime(expiration);
-            visibleFromUnix = ParseMessageData.ParseDateTime(visibleFrom);
+            long expirationUnix = ParseMessageData.ParseDateTime(expiration);
+            long visibleFromUnix = ParseMessageData.ParseDateTime(visibleFrom);
+            
+            Message newMessage = new Message(subject: subject, body: body, attachments: attachmentsList,
+                expiration: expirationUnix, visibleFrom: visibleFromUnix, icon: icon, banner: banner,
+                status: Message.StatusType.UNCLAIMED, internalNote: internalNote);
+
+            _apiService
+                .Request($"https://dev.nonprod.tower.cdrentertainment.com/mail/admin/messages/send")
+                //.Request($"https://localhost:5071/mail/admin/messages/send") // local
+                .AddAuthorization(token)
+                .SetPayload(new GenericData
+                {
+                    {"accountIds", playerIdsList},
+                    {"message", newMessage}
+                })
+                .OnSuccess(((sender, apiResponse) =>
+                {
+                    ViewData["Success"] = "Successfully sent message.";
+                    Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
+                }))
+                .OnFailure(((sender, apiResponse) =>
+                {
+                    ViewData["Success"] = "Failed to send message.";
+                    Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
+                    {
+                        Response = apiResponse
+                    });
+                }))
+                .Post(out GenericData sendResponse, out int sendCode);
         }
         catch (Exception e)
         {
+            ViewData["Success"] = "Failed to send message. Some fields may be malformed.";
             Log.Error(owner: Owner.Nathan, message: "Error occurred when sending group message.", data: e.Message);
         }
-        
-        Message newMessage = new Message(subject: subject, body: body, attachments: attachmentsList,
-            expiration: expirationUnix, visibleFrom: visibleFromUnix, icon: icon, banner: banner,
-            status: Message.StatusType.UNCLAIMED, internalNote: internalNote);
 
-        _apiService
-            .Request(requestUrl)
-            .AddAuthorization(token)
-            .SetPayload(new GenericData
-            {
-                {"accountIds", playerIdsList},
-                {"message", newMessage}
-            })
-            .OnSuccess(((sender, apiResponse) =>
-            {
-                ViewData["Success"] = "Successfully sent message.";
-                Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
-            }))
-            .OnFailure(((sender, apiResponse) =>
-            {
-                ViewData["Success"] = "Failed to send message.";
-                Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
-                {
-                    Response = apiResponse
-                });
-            }))
-            .Post(out GenericData sendResponse, out int sendCode);
-        
         return View();
     }
 
