@@ -73,7 +73,10 @@
             <td>@data.Id</td>
             <td>@data.Subject</td>
             <td>@data.Body</td>
-            <td>@data.Attachments</td>
+                @foreach (Attachment attachment in data.Attachments)
+                {
+                    <p>{"type": @attachment.Type, "rewardId": @attachment.RewardId, "quantity": @attachment.Quantity}</p>
+                }
             <td>@data.VisibleFrom</td>
             <td>@data.Expiration</td>
             <td>@data.Icon</td>
