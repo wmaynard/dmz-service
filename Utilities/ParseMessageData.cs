@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TowerPortal.Models;
 
 namespace TowerPortal.Utilities;
@@ -17,10 +18,7 @@ public class ParseMessageData
         {
             return "";
         }
-        else
-        {
-            return input;
-        }
+        return input;
     }
 
     public static List<Attachment> ParseAttachments(string attachments)
@@ -38,10 +36,29 @@ public class ParseMessageData
         {
             string[] properties = entry.Split(" ");
             Attachment attachment = new Attachment(type: properties[0], rewardId: properties[1],
-                quantity: int.Parse(properties[2]));
+                quantity: properties.Length == 3 ? int.Parse(properties[2]) : 1);
             parsedAttachments.Add(attachment);
         }
 
         return parsedAttachments;
+    }
+
+    public static List<string> ParseIds(string playerIds)
+    {
+        char[] delimiters = {'|', ','};
+        string[] split = playerIds.Split(delimiters);
+        for (int i = 0; i < split.Length; i++)
+        {
+            split[i] = split[i].Trim();
+        }
+
+        List<string> parsedIds = new List<string>();
+
+        foreach (string entry in split)
+        {
+            parsedIds.Add(entry);
+        }
+
+        return parsedIds;
     }
 }

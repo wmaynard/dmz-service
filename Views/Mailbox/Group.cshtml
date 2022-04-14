@@ -1,0 +1,48 @@
+@{
+    ViewData["Title"] = "Group Messages";
+}
+
+@Html.ActionLink(linkText: "Global", actionName: "Global", controllerName: "Mailbox", routeValues: new { }, htmlAttributes: new { })
+<br />
+
+<h2>@ViewData["Title"]</h2>
+
+<p>@ViewData["Success"]</p>
+
+<form method="post" asp-controller="Mailbox" asp-action="Group">
+    <label for="newPlayerIds" class="playerIds">Player IDs* (separated by "," or "|")</label>
+    <input id="newPlayerIds" class="playerIds" type="text" name="playerIds" placeholder="ex: 6140bd998caf79f468e6f8a6, 60e7ea01907cf6e93a7578c2" required>
+    <br />
+    <label for="newSubject" class="subject">Subject*</label>
+    <input id="newSubject" class="subject" type="text" name="subject" placeholder="Subject" maxlength="29" required>
+    <br/>
+    <label for="newBody" class="body">Body*</label>
+    <textarea id="newBody" class="body" type="text" name="body" placeholder="Body" rows="3" required></textarea>
+    <br/>
+    <label for="newAttachments" class="attachments">Attachments (separated by "," or "|")</label>
+    <input id="newAttachments" class="attachments" type="text" name="attachments" placeholder="ex: currency soft_currency 1500 | hero warlord">
+    <br/>
+    <label for="newVisibleFrom" class="visibleFrom">Visible From (UTC)*</label>
+    <input id="newVisibleFrom" class="visibleFrom" name="visibleFrom" type="datetime-local" required>
+    <br/>
+    <label for="newExpiration" class="expiration">Expiration (UTC)*</label>
+    <input id="newExpiration" class="expiration" name="expiration" type="datetime-local" required>
+    <br/>
+    <label for="newIcon" class="icon">Icon</label>
+    <select id="newIcon" class="icon" name="icon" placeholder="Icon">
+        <option value="">default (empty)</option>
+        <option value="atlas-icons[pvp]">atlas-icons[pvp]</option>
+    </select>
+    <br/>
+    <label for="newBanner" class="banner">Banner</label>
+    <select id="newBanner" class="banner" name="banner" placeholder="Banner">
+        <option value="">default (empty)</option>
+        <option value="atlas-events[gold_blitz]">atlas-events[gold_blitz]</option>
+        <option value="atlas-dialog_banners[star_rewards_dialog_banner]">atlas-dialog_banners[star_rewards_dialog_banner]</option>
+    </select>
+    <br/>
+    <label for="newInternalNote" class="internalNote">Internal Note</label>
+    <input id="newInternalNote" class="internalNote" type="text" name="internalNote" placeholder="Internal Note">
+    <br/>
+    <button id="sendGlobalMessageButton" type="submit">Send</button>
+</form>

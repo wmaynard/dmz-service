@@ -1,7 +1,13 @@
 @{
     ViewData["Title"] = "Global Messages";
 }
+
+@Html.ActionLink(linkText: "Group", actionName: "Group", controllerName: "Mailbox", routeValues: new { }, htmlAttributes: new { })
+<br />
+
 <h2>@ViewData["Title"]</h2>
+
+<p>@ViewData["Success"]</p>
 
 <form method="post" asp-controller="Mailbox" asp-action="Global">
     <label for="newSubject" class="subject">Subject*</label>
@@ -40,6 +46,10 @@
     <br />
     <button id="sendGlobalMessageButton" type="submit">Send</button>
 </form>
+
+<br />
+
+<p>@ViewData["Exist"]</p>
 
 <h3>Active Global Messages</h3>
 <table>

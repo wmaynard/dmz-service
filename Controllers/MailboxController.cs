@@ -24,15 +24,20 @@ public class MailboxController : PlatformController
     {
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
         
+        ViewData["Success"] = "";
+        ViewData["Exist"] = "";
+        
         _apiService
             .Request($"https://dev.nonprod.tower.cdrentertainment.com/mail/admin/global/messages")
             .AddAuthorization(token)
             .OnSuccess(((sender, apiResponse) =>
             {
+                ViewData["Exist"] = "Successfully fetched global messages.";
                 Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
             }))
             .OnFailure(((sender, apiResponse) =>
             {
+                ViewData["Exist"] = "Failed to fetch global messages.";
                 Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
                 {
                     Response = apiResponse
@@ -70,6 +75,8 @@ public class MailboxController : PlatformController
     {
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
         
+        ViewData["Exist"] = "";
+        
         List<Attachment> attachmentsList = null;
         long expirationUnix = 0;
         long visibleFromUnix = 0;
@@ -94,8 +101,8 @@ public class MailboxController : PlatformController
             status: Message.StatusType.UNCLAIMED, internalNote: internalNote, forAccountsBefore: forAccountsBeforeUnix);
 
         _apiService
-            //.Request($"https://dev.nonprod.tower.cdrentertainment.com/mail/admin/global/messages/send")
-            .Request($"https://localhost:5001/mail/admin/global/messages/send")
+            .Request($"https://dev.nonprod.tower.cdrentertainment.com/mail/admin/global/messages/send")
+            //.Request($"https://localhost:5071/mail/admin/messages/send") // local
             .AddAuthorization(token)
             .SetPayload(new GenericData
             {
@@ -103,10 +110,12 @@ public class MailboxController : PlatformController
             })
             .OnSuccess(((sender, apiResponse) =>
             {
+                ViewData["Success"] = "Successfully sent message.";
                 Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
             }))
             .OnFailure(((sender, apiResponse) =>
             {
+                ViewData["Success"] = "Failed to send message.";
                 Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
                 {
                     Response = apiResponse
@@ -119,10 +128,12 @@ public class MailboxController : PlatformController
             .AddAuthorization(token)
             .OnSuccess(((sender, apiResponse) =>
             {
+                ViewData["Exist"] = "Successfully fetched global messages.";
                 Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
             }))
             .OnFailure(((sender, apiResponse) =>
             {
+                ViewData["Exist"] = "Failed to fetch global messages.";
                 Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
                 {
                     Response = apiResponse
@@ -149,6 +160,70 @@ public class MailboxController : PlatformController
 
         ViewData["ActiveGlobalMessages"] = activeGlobalMessagesList;
         ViewData["ExpiredGlobalMessages"] = expiredGlobalMessagesList;
+        
+        return View();
+    }
+    
+    [Route("group")]
+    public async Task<IActionResult> Group()
+    {
+        ViewData["Success"] = "";
+        return View();
+    }
+
+    [HttpPost]
+    [Route("group")]
+    public async Task<IActionResult> Group(string playerIds, string subject, string body, string attachments,
+        string visibleFrom, string expiration, string icon, string banner, string internalNote)
+    {
+        string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
+
+        List<string> playerIdsList = null;
+        List<Attachment> attachmentsList = null;
+        long expirationUnix = 0;
+        long visibleFromUnix = 0;
+        
+        try
+        {
+            playerIdsList = ParseMessageData.ParseIds(playerIds);
+            attachmentsList = ParseMessageData.ParseAttachments(attachments);
+            icon = ParseMessageData.ParseEmpty(icon);
+            banner = ParseMessageData.ParseEmpty(banner);
+            expirationUnix = ParseMessageData.ParseDateTime(expiration);
+            visibleFromUnix = ParseMessageData.ParseDateTime(visibleFrom);
+        }
+        catch (Exception e)
+        {
+            Log.Error(owner: Owner.Nathan, message: "Error occurred when sending group message.", data: e.Message);
+        }
+        
+        Message newMessage = new Message(subject: subject, body: body, attachments: attachmentsList,
+            expiration: expirationUnix, visibleFrom: visibleFromUnix, icon: icon, banner: banner,
+            status: Message.StatusType.UNCLAIMED, internalNote: internalNote);
+
+        _apiService
+            .Request($"https://dev.nonprod.tower.cdrentertainment.com/mail/admin/messages/send")
+            //.Request($"https://localhost:5071/mail/admin/messages/send") // local
+            .AddAuthorization(token)
+            .SetPayload(new GenericData
+            {
+                {"accountIds", playerIdsList},
+                {"message", newMessage}
+            })
+            .OnSuccess(((sender, apiResponse) =>
+            {
+                ViewData["Success"] = "Successfully sent message.";
+                Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
+            }))
+            .OnFailure(((sender, apiResponse) =>
+            {
+                ViewData["Success"] = "Failed to send message.";
+                Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
+                {
+                    Response = apiResponse
+                });
+            }))
+            .Post(out GenericData sendResponse, out int sendCode);
         
         return View();
     }
