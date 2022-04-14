@@ -23,12 +23,13 @@ public class MailboxController : PlatformController
     public async Task<IActionResult> Global()
     {
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages";
         
         ViewData["Success"] = "";
         ViewData["Exist"] = "";
         
         _apiService
-            .Request($"https://dev.nonprod.tower.cdrentertainment.com/mail/admin/global/messages")
+            .Request(requestUrl)
             .AddAuthorization(token)
             .OnSuccess(((sender, apiResponse) =>
             {
@@ -74,6 +75,7 @@ public class MailboxController : PlatformController
         string icon, string banner, string internalNote, string forAccountsBefore)
     {
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages";
         
         ViewData["Exist"] = "";
         
@@ -101,8 +103,7 @@ public class MailboxController : PlatformController
             status: Message.StatusType.UNCLAIMED, internalNote: internalNote, forAccountsBefore: forAccountsBeforeUnix);
 
         _apiService
-            .Request($"https://dev.nonprod.tower.cdrentertainment.com/mail/admin/global/messages/send")
-            //.Request($"https://localhost:5071/mail/admin/messages/send") // local
+            .Request(requestUrl + "/send")
             .AddAuthorization(token)
             .SetPayload(new GenericData
             {
@@ -124,7 +125,7 @@ public class MailboxController : PlatformController
             .Post(out GenericData sendResponse, out int sendCode);
         
         _apiService
-            .Request($"https://dev.nonprod.tower.cdrentertainment.com/mail/admin/global/messages")
+            .Request(requestUrl)
             .AddAuthorization(token)
             .OnSuccess(((sender, apiResponse) =>
             {
@@ -177,6 +178,7 @@ public class MailboxController : PlatformController
         string visibleFrom, string expiration, string icon, string banner, string internalNote)
     {
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/messages/send";
 
         List<string> playerIdsList = null;
         List<Attachment> attachmentsList = null;
@@ -202,8 +204,7 @@ public class MailboxController : PlatformController
             status: Message.StatusType.UNCLAIMED, internalNote: internalNote);
 
         _apiService
-            .Request($"https://dev.nonprod.tower.cdrentertainment.com/mail/admin/messages/send")
-            //.Request($"https://localhost:5071/mail/admin/messages/send") // local
+            .Request(requestUrl)
             .AddAuthorization(token)
             .SetPayload(new GenericData
             {
