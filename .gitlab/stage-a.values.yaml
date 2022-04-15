@@ -20,6 +20,11 @@ podAnnotations: {}
 nodeSelector: {}
 affinity: {}
 tolerations: []
+pv:
+  storageclass: efs-sc
+  enabled: true
+  volume_size: 1Gi
+  mountPath: /app/shared_storage
 application:
   track: stable
   tier: web
