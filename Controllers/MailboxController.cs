@@ -22,12 +22,13 @@ public class MailboxController : PlatformController
     public async Task<IActionResult> Global()
     {
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages";
         
         ViewData["Success"] = "";
         ViewData["Exist"] = "";
         
         _apiService
-            .Request($"https://dev.nonprod.tower.cdrentertainment.com/mail/admin/global/messages")
+            .Request(requestUrl)
             .AddAuthorization(token)
             .OnSuccess(((sender, apiResponse) =>
             {
@@ -73,6 +74,7 @@ public class MailboxController : PlatformController
         string icon, string banner, string internalNote, string forAccountsBefore)
     {
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages";
         
         ViewData["Exist"] = "";
         
@@ -117,9 +119,9 @@ public class MailboxController : PlatformController
             ViewData["Success"] = "Failed to send message. Some fields may be malformed.";
             Log.Error(owner: Owner.Nathan, message: "Error occurred when sending global message.", data: e.Message);
         }
-
+        
         _apiService
-            .Request($"https://dev.nonprod.tower.cdrentertainment.com/mail/admin/global/messages")
+            .Request(requestUrl)
             .AddAuthorization(token)
             .OnSuccess(((sender, apiResponse) =>
             {
@@ -172,7 +174,8 @@ public class MailboxController : PlatformController
         string visibleFrom, string expiration, string icon, string banner, string internalNote)
     {
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
-        
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/messages/send";
+
         try
         {
             List<string> playerIdsList = ParseMessageData.ParseIds(playerIds);
