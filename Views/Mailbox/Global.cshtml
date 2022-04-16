@@ -2,132 +2,142 @@
     ViewData["Title"] = "Global Messages";
 }
 
-@Html.ActionLink(linkText: "Group", actionName: "Group", controllerName: "Mailbox", routeValues: new { }, htmlAttributes: new { })
-<br />
+<div class="mailbox-page-container">
+    <div class="toggle-container">
+        @Html.ActionLink(linkText: "Group", actionName: "Group", controllerName: "Mailbox", routeValues: new {}, htmlAttributes: new {})
+    </div>
+    <br/>
 
-<h2>@ViewData["Title"]</h2>
+    <h2>@ViewData["Title"]</h2>
 
-<p>@ViewData["Success"]</p>
+    <p>@ViewData["Success"]</p>
 
-<form method="post" asp-controller="Mailbox" asp-action="Global">
-    <label for="newSubject" class="subject">Subject*</label>
-    <input id="newSubject" class="subject" type="text" name="subject" placeholder="Subject" maxlength="29" required>
-    <br />
-    <label for="newBody" class="body">Body*</label>
-    <textarea id="newBody" class="body" type="text" name="body" placeholder="Body" rows="3" required></textarea>
-    <br />
-    <label for="newAttachments" class="attachments">Attachments (separated by "," or "|")</label>
-    <input id="newAttachments" class="attachments" type="text" name="attachments" placeholder="ex: currency soft_currency 1500 | hero warlord">
-    <br />
-    <label for="newVisibleFrom" class="visibleFrom">Visible From (UTC)*</label>
-    <input id="newVisibleFrom" class="visibleFrom" name="visibleFrom" type="datetime-local" required>
-    <br />
-    <label for="newExpiration" class="expiration">Expiration (UTC)*</label>
-    <input id="newExpiration" class="expiration" name="expiration" type="datetime-local" required>
-    <br />
-    <label for="newIcon" class="icon">Icon</label>
-    <select id="newIcon" class="icon" name="icon" placeholder="Icon">
-        <option value="">default (empty)</option>
-        <option value="atlas-icons[pvp]">atlas-icons[pvp]</option>
-    </select>
-    <br />
-    <label for="newBanner" class="banner">Banner</label>
-    <select id="newBanner" class="banner" name="banner" placeholder="Banner">
-        <option value="">default (empty)</option>
-        <option value="atlas-events[gold_blitz]">atlas-events[gold_blitz]</option>
-        <option value="atlas-dialog_banners[star_rewards_dialog_banner]">atlas-dialog_banners[star_rewards_dialog_banner]</option>
-    </select>
-    <br />
-    <label for="newForAccountsBefore" class="forAccountsBefore">For Accounts Before (UTC)</label>
-    <input id="newForAccountsBefore" class="forAccountsBefore" name="forAccountsBefore" type="datetime-local">
-    <br />
-    <label for="newInternalNote" class="internalNote">Internal Note</label>
-    <input id="newInternalNote" class="internalNote" type="text" name="internalNote" placeholder="Internal Note">
-    <br />
-    <button id="sendGlobalMessageButton" type="submit">Send</button>
-</form>
+    <div class="global-container">
+        <div class="send-global-container">
+            <form class="message-info" method="post" asp-controller="Mailbox" asp-action="Global">
+                <label for="newSubject" class="subject">Subject*</label>
+                <input id="newSubject" class="subject" type="text" name="subject" placeholder="Subject" maxlength="29" required>
+                <br/>
+                <label for="newBody" class="body">Body*</label>
+                <textarea id="newBody" class="body" type="text" name="body" placeholder="Body" rows="3" required></textarea>
+                <br/>
+                <label for="newAttachments" class="attachments">Attachments (separated by "," or "|")</label>
+                <input id="newAttachments" class="attachments" type="text" name="attachments" placeholder="ex: currency soft_currency 1500 | hero warlord">
+                <br/>
+                <label for="newVisibleFrom" class="visibleFrom">Visible From (UTC)*</label>
+                <input id="newVisibleFrom" class="visibleFrom" name="visibleFrom" type="datetime-local" required>
+                <br/>
+                <label for="newExpiration" class="expiration">Expiration (UTC)*</label>
+                <input id="newExpiration" class="expiration" name="expiration" type="datetime-local" required>
+                <br/>
+                <label for="newIcon" class="icon">Icon</label>
+                <select id="newIcon" class="icon" name="icon" placeholder="Icon">
+                    <option value="">default (empty)</option>
+                    <option value="atlas-icons[pvp]">atlas-icons[pvp]</option>
+                </select>
+                <br/>
+                <label for="newBanner" class="banner">Banner</label>
+                <select id="newBanner" class="banner" name="banner" placeholder="Banner">
+                    <option value="">default (empty)</option>
+                    <option value="atlas-events[gold_blitz]">atlas-events[gold_blitz]</option>
+                    <option value="atlas-dialog_banners[star_rewards_dialog_banner]">atlas-dialog_banners[star_rewards_dialog_banner]</option>
+                </select>
+                <br/>
+                <label for="newForAccountsBefore" class="forAccountsBefore">For Accounts Before (UTC)</label>
+                <input id="newForAccountsBefore" class="forAccountsBefore" name="forAccountsBefore" type="datetime-local">
+                <br/>
+                <label for="newInternalNote" class="internalNote">Internal Note</label>
+                <input id="newInternalNote" class="internalNote" type="text" name="internalNote" placeholder="Internal Note">
+                <br/>
+                <button id="sendGlobalMessageButton" type="submit">Send</button>
+            </form>
+        </div>
 
-<br />
+        <div class="active-globals-container">
+            <p>@ViewData["Exist"]</p>
 
-<p>@ViewData["Exist"]</p>
-
-<h3>Active Global Messages</h3>
-<table>
-    <tr>
-        <td>Id</td>
-        <td>Subject</td>
-        <td>Body</td>
-        <td>Attachments</td>
-        <td>Visible From (UTC)</td>
-        <td>Expiration (UTC)</td>
-        <td>Icon</td>
-        <td>Banner</td>
-        <td>Internal Note</td>
-        <td>For Accounts Before (UTC)</td>
-        <td>Edit</td>
-        <td>Delete</td>
-    </tr>
-    @foreach (GlobalMessage data in (List<GlobalMessage>)ViewData["ActiveGlobalMessages"])
-    {
-        <tr>
-            <td>@data.Id</td>
-            <td>@data.Subject</td>
-            <td>@data.Body</td>
-            <td>
-                @foreach (Attachment attachment in data.Attachments)
+            <h3>Active Global Messages</h3>
+            <table id="activeGlobals" class="globalMessages">
+                <tr>
+                    <td class="id">Id</td>
+                    <td class="subject">Subject</td>
+                    <td class="body">Body</td>
+                    <td class="attachments">Attachments</td>
+                    <td class="visibleFrom">Visible From (UTC)</td>
+                    <td class="expiration">Expiration (UTC)</td>
+                    <td class="icon">Icon</td>
+                    <td class="banner">Banner</td>
+                    <td class="internalNote">Internal Note</td>
+                    <td class="forAccountsBefore">For Accounts Before (UTC)</td>
+                    <td class="edit">Edit</td>
+                    <td class="delete">Delete</td>
+                </tr>
+                @foreach (GlobalMessage data in (List<GlobalMessage>) ViewData["ActiveGlobalMessages"])
                 {
-                    <p>{"type": @attachment.Type, "rewardId": @attachment.RewardId, "quantity": @attachment.Quantity}</p>
+                    <tr>
+                        <td>@data.Id</td>
+                        <td>@data.Subject</td>
+                        <td>@data.Body</td>
+                        <td>
+                            @foreach (Attachment attachment in data.Attachments)
+                            {
+                                <p>{"type": @attachment.Type, "rewardId": @attachment.RewardId, "quantity": @attachment.Quantity}</p>
+                            }
+                        </td>
+                        <td>@data.VisibleFrom</td>
+                        <td>@data.Expiration</td>
+                        <td>@data.Icon</td>
+                        <td>@data.Banner</td>
+                        <td>@data.InternalNote</td>
+                        <td>@data.ForAccountsBefore</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
                 }
-            </td>
-            <td>@data.VisibleFrom</td>
-            <td>@data.Expiration</td>
-            <td>@data.Icon</td>
-            <td>@data.Banner</td>
-            <td>@data.InternalNote</td>
-            <td>@data.ForAccountsBefore</td>
-            <td></td>
-            <td></td>
-        </tr>
-    }
-</table>
-
-<h3>Expired Global Messages</h3>
-<table>
-    <tr>
-        <td>Id</td>
-        <td>Subject</td>
-        <td>Body</td>
-        <td>Attachments</td>
-        <td>Visible From (UTC)</td>
-        <td>Expiration (UTC)</td>
-        <td>Icon</td>
-        <td>Banner</td>
-        <td>Internal Note</td>
-        <td>For Accounts Before (UTC)</td>
-        <td>Edit</td>
-        <td>Delete</td>
-    </tr>
+            </table>
+        </div>
     
-    @foreach (GlobalMessage data in (List<GlobalMessage>)ViewData["ExpiredGlobalMessages"]) // apparently foreach is bad in views, think about changing to html.displayfor with viewmodels
-    {
-        <tr>
-            <td>@data.Id</td>
-            <td>@data.Subject</td>
-            <td>@data.Body</td>
-            <td>
-                @foreach (Attachment attachment in data.Attachments)
+        <div class="expired-globals-container">
+            <h3>Expired Global Messages</h3>
+            <table id="expiredGlobals" class="globalMessages">
+                <tr>
+                    <td class="id">Id</td>
+                    <td class="subject">Subject</td>
+                    <td class="body">Body</td>
+                    <td class="attachments">Attachments</td>
+                    <td class="visibleFrom">Visible From (UTC)</td>
+                    <td class="expiration">Expiration (UTC)</td>
+                    <td class="icon">Icon</td>
+                    <td class="banner">Banner</td>
+                    <td class="internalNote">Internal Note</td>
+                    <td class="forAccountsBefore">For Accounts Before (UTC)</td>
+                    <td class="edit">Edit</td>
+                    <td class="delete">Expired</td>
+                </tr>
+
+                @foreach (GlobalMessage data in (List<GlobalMessage>) ViewData["ExpiredGlobalMessages"]) // apparently foreach is bad in views, think about changing to html.displayfor with viewmodels
                 {
-                    <p>{"type": @attachment.Type, "rewardId": @attachment.RewardId, "quantity": @attachment.Quantity}</p>
+                    <tr>
+                        <td>@data.Id</td>
+                        <td>@data.Subject</td>
+                        <td>@data.Body</td>
+                        <td>
+                            @foreach (Attachment attachment in data.Attachments)
+                            {
+                                <p>{"type": @attachment.Type, "rewardId": @attachment.RewardId, "quantity": @attachment.Quantity}</p>
+                            }
+                        </td>
+                        <td>@data.VisibleFrom</td>
+                        <td>@data.Expiration</td>
+                        <td>@data.Icon</td>
+                        <td>@data.Banner</td>
+                        <td>@data.InternalNote</td>
+                        <td>@data.ForAccountsBefore</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
                 }
-            </td>
-            <td>@data.VisibleFrom</td>
-            <td>@data.Expiration</td>
-            <td>@data.Icon</td>
-            <td>@data.Banner</td>
-            <td>@data.InternalNote</td>
-            <td>@data.ForAccountsBefore</td>
-            <td></td>
-            <td></td>
-        </tr>
-    }
-</table>
+            </table>
+        </div>
+    </div>
+</div>

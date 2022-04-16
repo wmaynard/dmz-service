@@ -1,0 +1,307 @@
+.invisible {
+    display: none
+}
+
+div.view-inbox-container {
+    padding-bottom: 2%;
+    border-bottom: 1px black solid;
+}
+
+div.toggle-container {
+    padding-top: 2%;
+}
+
+div.toggle-container button {
+    margin-right: 5%;
+}
+
+.overlay {
+    text-align: center;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 3;
+}
+
+.edit-container,
+.delete-container {
+    display: block;
+    position: sticky;
+    padding: 10px;
+    border: 10px solid white;
+    border-radius: 10px;
+    background-color: white;
+    opacity: 100%;
+    z-index: 4;
+}
+
+.edit-container {
+    top: 15%;
+    bottom: 15%;
+    left: 10%;
+    right: 10%;
+    width: 80%;
+    height: 70%;
+}
+
+.delete-container {
+    top: 38%;
+    bottom: 38%;
+    left: 30%;
+    right: 30%;
+    width: 40%;
+    height: 24%;
+}
+
+form.message-info {
+    display: grid;
+    grid-template-areas: "l1 l1 i1 i1 i1"
+                         "l2 l2 t2 t2 t2"
+                         "l3 l3 i3 i3 i3"
+                         "l4 l4 i4 i4 i4"
+                         "l5 l5 i5 i5 i5"
+                         "l6 l6 i6 i6 i6"
+                         "l7 l7 i7 i7 i7"
+                         "l8 l8 i8 i8 i8"
+                         "l9 l9 i9 i9 i9"
+                         "l10 . i10 . ."
+                         "b . . . .";
+    grid-template-columns: 1fr 4fr 1fr 2fr 2fr;
+    margin-bottom: 10px;
+}
+
+form.message-info label,
+form.message-info textarea,
+form.message-info input,
+form.message-info select {
+    margin-top: 5px;
+    text-align: left;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+}
+
+form.message-info label.subject,
+form.message-info label.playerIds {
+    grid-area: l1;
+}
+
+form.message-info input.subject,
+form.message-info input.playerIds {
+    grid-area: i1;
+}
+
+form.message-info label.body,
+form.message-info label.groupSubject{
+    grid-area: l2;
+}
+
+form.message-info textarea.body {
+    grid-area: t2;
+    resize: none;
+}
+
+form.message-info input.groupSubject {
+    grid-area: t2;
+}
+
+form.message-info label.attachments,
+form.message-info label.groupBody {
+    grid-area: l3;
+}
+
+form.message-info input.attachments {
+    grid-area: i3;
+}
+
+form.message-info textarea.groupBody {
+    grid-area: i3;
+    resize: none;
+}
+
+form.message-info label.visibleFrom,
+form.message-info label.groupAttachments {
+    grid-area: l4;
+}
+
+form.message-info input.visibleFrom,
+form.message-info input.groupAttachments {
+    grid-area: i4;
+}
+
+form.message-info label.expiration,
+form.message-info label.groupVisibleFrom {
+    grid-area: l5;
+}
+
+form.message-info input.expiration,
+form.message-info input.groupVisibleFrom {
+    grid-area: i5;
+}
+
+form.message-info label.icon,
+form.message-info label.groupExpiration {
+    grid-area: l6;
+}
+
+form.message-info select.icon,
+form.message-info input.groupExpiration {
+    grid-area: i6;
+}
+
+form.message-info label.banner,
+form.message-info label.groupIcon {
+    grid-area: l7;
+}
+
+form.message-info select.banner,
+form.message-info select.groupIcon {
+    grid-area: i7;
+}
+
+form.message-info label.internalNote,
+form.message-info label.groupBanner {
+    grid-area: l8;
+}
+
+form.message-info input.internalNote,
+form.message-info select.groupBanner {
+    grid-area: i8;
+}
+
+form.message-info label.forAccountsBefore,
+form.message-info label.groupInternalNote {
+    grid-area: l9;
+}
+
+form.message-info input.forAccountsBefore,
+form.message-info input.groupInternalNote {
+    grid-area: i9;
+}
+
+form.message-info label.status {
+    grid-area: l10;
+}
+
+form.message-info input.status {
+    grid-area: i10;
+    width: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+form.message-info button {
+    grid-area: b;
+}
+
+#sendGroupMessageButton,
+#sendGlobalMessageButton {
+    width: 50px;
+}
+
+table#activeGlobals,
+table#expiredGlobals {
+    table-layout: fixed;
+    border: 3px solid black;
+}
+
+table#activeGlobals tr:nth-child(1),
+table#expiredGlobals tr:nth-child(1) {
+    border-bottom: 2px solid black;
+}
+
+table#activeGlobals tr td,
+table#expiredGlobals tr td {
+    border: 1px solid black;
+    padding: 5px;
+}
+
+table#activeGlobals tr td button,
+table#expiredGlobals tr td button {
+    width: 100%;
+    height: 100%;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+table#expiredGlobals tr td button.deleteButton {
+    display: none;
+}
+
+table#activeGlobals tr td:nth-child(1),
+table#expiredGlobals tr td:nth-child(1) {
+    /* Id */
+    width: 5%;
+}
+
+table#activeGlobals tr td:nth-child(2),
+table#expiredGlobals tr td:nth-child(2) {
+    /* Subject */
+    width: 5%;
+}
+
+table#activeGlobals tr td:nth-child(3),
+table#expiredGlobals tr td:nth-child(3) {
+    /* Body */
+    width: 15%;
+}
+
+table#activeGlobals tr td:nth-child(4),
+table#expiredGlobals tr td:nth-child(4) {
+    /* Attachments */
+    width: 15%;
+}
+
+table#activeGlobals tr td:nth-child(5),
+table#expiredGlobals tr td:nth-child(5) {
+    /* Visible From */
+    width: 10%;
+}
+
+table#activeGlobals tr td:nth-child(6),
+table#expiredGlobals tr td:nth-child(6) {
+    /* Expiration */
+    width: 10%;
+}
+
+table#activeGlobals tr td:nth-child(7),
+table#expiredGlobals tr td:nth-child(7) {
+    /* Icon */
+    width: 5%;
+}
+
+table#activeGlobals tr td:nth-child(8),
+table#expiredGlobals tr td:nth-child(8) {
+    /* Banner */
+    width: 5%;
+}
+
+table#activeGlobals tr td:nth-child(9),
+table#expiredGlobals tr td:nth-child(9) {
+    /* Internal Note */
+    width: 10%;
+}
+
+table#activeGlobals tr td:nth-child(10),
+table#expiredGlobals tr td:nth-child(10) {
+    /* For Accounts Before */
+    width: 10%;
+}
+
+table#activeGlobals tr td:nth-child(11),
+table#expiredGlobals tr td:nth-child(11) {
+    /* Edit */
+    width: 5%;
+}
+
+table#activeGlobals tr td:nth-child(12),
+table#expiredGlobals tr td:nth-child(12) {
+    /* Delete */
+    width: 5%;
+}
