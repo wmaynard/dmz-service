@@ -53,6 +53,12 @@ spec:
       affinity:
 {{ toYaml .Values.affinity | indent 8 }}
 {{- end }}
+{{- if eq .Values.pv.enabled true }}
+      volumes:
+      - name: {{ template "appname" . }}-pv
+        persistentVolumeClaim: 
+          claimName: {{ template "appname" . }}-pvc
+{{- end }}
       containers:
       - name: {{ .Chart.Name }}
         image: {{ template "imagename" . }}
@@ -143,4 +149,9 @@ spec:
           timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
         resources:
 {{ toYaml .Values.resources | indent 12 }}
+{{- if eq .Values.pv.enabled true }}
+        volumeMounts:
+        - name: {{ template "appname" . }}-pv
+          mountPath: {{ .Values.pv.mountPath }}
+{{- end }}
 {{- end -}}
