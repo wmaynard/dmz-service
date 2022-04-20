@@ -222,6 +222,18 @@ public class MailboxController : PlatformController
         return View();
     }
 
+    [Route("edit")]
+    public async void Edit()
+    {
+        
+    }
+    
+    [Route("delete")]
+    public async void Delete(string id)
+    {
+        
+    }
+
     [Route("health")]
     public override ActionResult HealthCheck() => Ok(_apiService.HealthCheckResponseObject, _dynamicConfigService.HealthCheckResponseObject);
 }

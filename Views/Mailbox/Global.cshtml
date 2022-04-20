@@ -2,6 +2,17 @@
     ViewData["Title"] = "Global Messages";
 }
 
+<script>
+    $(function(id) {
+        $("#editButton").click(function(e) {
+            e.preventDefault();
+            @ViewData["EditId"] = id;
+            $(".editContainer").toggleClass("invisible");
+            }
+        )    
+    })
+</script>
+
 <div class="mailbox-page-container">
     <div class="toggle-container">
         @Html.ActionLink(linkText: "Group", actionName: "Group", controllerName: "Mailbox", routeValues: new {}, htmlAttributes: new {})
@@ -13,6 +24,59 @@
     <p>@ViewData["Success"]</p>
 
     <div class="global-container">
+    <div class = "invisible overlay">
+        <div class = "invisible edit-container">
+            <h1>Edit Message</h1>
+            <p>Leave field empty if no change.</p>
+            <p>Note: incorrectly formatted entries are ignored.</p>
+            <form class = "message-info">
+                <label for="editSubject" class="subject">Subject</label>
+                <input id="editSubject" class="subject" type="text" placeholder="Subject" maxlength="29">
+                <br />
+                <label for="editBody" class="body">Body</label>
+                <textarea id="editBody" class="body" type="text" placeholder="Body" rows="3"></textarea>
+                <br />
+                <label for="editAttachments" class="attachments">Attachments (separated by "," or "|")</label>
+                <input id="editAttachments" class="attachments" type="text" placeholder="ex: currency soft_currency 1500 | hero warlord">
+                <br />
+                <label for="editVisibleFrom" class="visibleFrom">Visible From (UTC)</label>
+                <input id="editVisibleFrom" class="visibleFrom" type="datetime-local" placeholder="2022-01-01T00:00">
+                <br />
+                <label for="editExpiration" class="expiration">Expiration (UTC)</label>
+                <input id="editExpiration" class="expiration" type="datetime-local" placeholder="2022-01-01T00:00">
+                <br />
+                <label for="editIcon" class="icon">Icon</label>
+                <select id="editIcon" class="icon" placeholder="Icon">
+                    <option value="">default (empty)</option>
+                    <option value="atlas-icons[pvp]">atlas-icons[pvp]</option>
+                </select>
+                <br />
+                <label for="editBanner" class="banner">Banner</label>
+                <select id="editBanner" class="banner" placeholder="Banner">
+                    <option value="">default (empty)</option>
+                    <option value="atlas-events[gold_blitz]">atlas-events[gold_blitz]</option>
+                    <option value="atlas-dialog_banners[star_rewards_dialog_banner]">atlas-dialog_banners[star_rewards_dialog_banner]</option>
+                </select>
+                <br />
+                <label for="editStatus" class="status">Reset Status</label>
+                <input id="editStatus" class="status" type="checkbox">
+                <br />
+                <label for="editForAccountsBefore" class="forAccountsBefore">For Accounts Before</label>
+                <input id="editForAccountsBefore" class="forAccountsBefore" type="datetime-local" placeholder="2022-01-01T00:00">
+                <br />
+                <label for="editInternalNote" class="internalNote">Internal Note</label>
+                <input id="editInternalNote" class="internalNote" type="text" placeholder="Internal Note">
+                <button class="edit-confirm" type="submit">Confirm</button>
+                <button class="edit-cancel">Cancel</button>
+            </form>
+        </div>
+        <div class = "invisible delete-container">
+            <h1>Delete Message</h1>
+            <p>Are you sure you would like to delete this message?</p>
+            <button class="delete-confirm" type="submit">Confirm</button>
+            <button class="delete-cancel">Cancel</button>
+        </div>
+    </div>
         <div class="send-global-container">
             <form class="message-info" method="post" asp-controller="Mailbox" asp-action="Global">
                 <label for="newSubject" class="subject">Subject*</label>
@@ -52,7 +116,6 @@
                 <button id="sendGlobalMessageButton" type="submit">Send</button>
             </form>
         </div>
-
         <div class="active-globals-container">
             <p>@ViewData["Exist"]</p>
 
@@ -90,8 +153,8 @@
                         <td>@data.Banner</td>
                         <td>@data.InternalNote</td>
                         <td>@data.ForAccountsBefore</td>
-                        <td></td>
-                        <td></td>
+                        <td><button onclick=@ViewData["EditId"]=@data.Id>Edit</button></td>
+                        <td><button onclick=@ViewData["DeleteId"]=@data.Id>Delete</button></td>
                     </tr>
                 }
             </table>
@@ -133,8 +196,8 @@
                         <td>@data.Banner</td>
                         <td>@data.InternalNote</td>
                         <td>@data.ForAccountsBefore</td>
-                        <td></td>
-                        <td></td>
+                        <td><button>Edit</button></td>
+                        <td><button>Delete</button></td>
                     </tr>
                 }
             </table>
