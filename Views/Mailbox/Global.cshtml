@@ -2,15 +2,30 @@
     ViewData["Title"] = "Global Messages";
 }
 
+@functions{
+
+}
+
 <script>
-    $(function(id) {
-        $("#editButton").click(function(e) {
-            e.preventDefault();
-            @ViewData["EditId"] = id;
-            $(".editContainer").toggleClass("invisible");
-            }
-        )    
-    })
+    function OpenEdit(id) {
+        $(".edit-container").addClass("invisible");
+        @ViewData["EditId"] = id;
+    }
+    
+    function CloseEdit() {
+        $(".edit-container").removeClass("invisible");
+        @ViewData["EditId"] = null;
+    }
+    
+    function OpenDelete(id) {
+        $(".delete-container").addClass("invisible");
+        @ViewData["DeleteId"] = id;
+    }
+    
+    function CloseDelete() {
+        $(".delete-container").removeClass("invisible");
+        @ViewData["DeleteId"] = null;
+    }
 </script>
 
 <div class="mailbox-page-container">
@@ -153,8 +168,8 @@
                         <td>@data.Banner</td>
                         <td>@data.InternalNote</td>
                         <td>@data.ForAccountsBefore</td>
-                        <td><button onclick=@ViewData["EditId"]=@data.Id>Edit</button></td>
-                        <td><button onclick=@ViewData["DeleteId"]=@data.Id>Delete</button></td>
+                        <td><button onclick="OpenEdit(@data.Id)">Edit</button></td>
+                        <td><button onclick="OpenDelete(@data.Id)">Delete</button></td>
                     </tr>
                 }
             </table>
@@ -196,8 +211,8 @@
                         <td>@data.Banner</td>
                         <td>@data.InternalNote</td>
                         <td>@data.ForAccountsBefore</td>
-                        <td><button>Edit</button></td>
-                        <td><button>Delete</button></td>
+                        <td><button onclick="OpenEdit(@data.Id)">Edit</button></td>
+                        <td><button onclick="OpenDelete(@data.Id)">Delete</button></td>
                     </tr>
                 }
             </table>
