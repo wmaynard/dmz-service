@@ -199,6 +199,10 @@ form.message-info button {
     grid-area: b;
 }
 
+form.message-info button.edit-confirm {
+    grid-area: b;
+}
+
 #sendGroupMessageButton,
 #sendGlobalMessageButton {
     width: 50px;

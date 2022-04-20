@@ -28,7 +28,8 @@ public class MailboxController : PlatformController
         ViewData["Exist"] = "";
         
         _apiService
-            .Request(requestUrl)
+            //.Request(requestUrl)
+            .Request($"https://localhost:5071/mail/admin/global/messages/") // local
             .AddAuthorization(token)
             .OnSuccess(((sender, apiResponse) =>
             {
@@ -92,8 +93,8 @@ public class MailboxController : PlatformController
                 status: Message.StatusType.UNCLAIMED, internalNote: internalNote, forAccountsBefore: forAccountsBeforeUnix);
 
             _apiService
-                .Request(requestUrl + "/send")
-                //.Request($"https://localhost:5071/mail/admin/messages/send") // local
+                //.Request(requestUrl + "/send")
+                .Request($"https://localhost:5071/mail/admin/messages/send") // local
                 .AddAuthorization(token)
                 .SetPayload(new GenericData
                 {
@@ -190,8 +191,8 @@ public class MailboxController : PlatformController
                 status: Message.StatusType.UNCLAIMED, internalNote: internalNote);
 
             _apiService
-                .Request(requestUrl)
-                //.Request($"https://localhost:5071/mail/admin/messages/send") // local
+                //.Request(requestUrl)
+                .Request($"https://localhost:5071/mail/admin/messages/send") // local
                 .AddAuthorization(token)
                 .SetPayload(new GenericData
                 {
@@ -241,8 +242,8 @@ public class MailboxController : PlatformController
             long? forAccountsBeforeUnix = ParseMessageData.ParseDateTime(forAccountsBefore);
             
             _apiService
-                .Request(requestUrl)
-                //.Request($"https://localhost:5071/mail/admin/messages/edit") // local
+                //.Request(requestUrl)
+                .Request($"https://localhost:5071/mail/admin/messages/edit") // local
                 .AddAuthorization(token)
                 .SetPayload(new GenericData
                 {
@@ -284,15 +285,15 @@ public class MailboxController : PlatformController
     public async void Delete(string id)
     {
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
-        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages/delete";
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages/expire";
         
         ViewData["Exist"] = "";
         
         try
         {
             _apiService
-                .Request(requestUrl)
-                //.Request($"https://localhost:5071/mail/admin/messages/delete") // local
+                //.Request(requestUrl)
+                .Request($"https://localhost:5071/mail/admin/messages/expire") // local
                 .AddAuthorization(token)
                 .SetPayload(new GenericData
                 {
@@ -320,6 +321,37 @@ public class MailboxController : PlatformController
         }
     }
 
+    [Route("showEdit")]
+    public IActionResult ShowEditOverlay(string id)
+    {
+        TempData["EditId"] = id;
+        TempData["VisibleOverlay"] = true;
+        TempData["VisibleEdit"] = true;
+        TempData["VisibleDelete"] = null;
+        return RedirectToAction("Global");
+    }
+    
+    [Route("showDelete")]
+    public IActionResult ShowDeleteOverlay(string id)
+    {
+        TempData["DeleteId"] = id;
+        TempData["VisibleOverlay"] = true;
+        TempData["VisibleEdit"] = null;
+        TempData["VisibleDelete"] = true;
+        return RedirectToAction("Global");
+    }
+
+    [Route("hideOverlay")]
+    public IActionResult HideOverlay()
+    {
+        TempData["EditId"] = null;
+        TempData["DeleteId"] = null;
+        TempData["VisibleOverlay"] = null;
+        TempData["VisibleEdit"] = null;
+        TempData["VisibleDelete"] = null;
+        return RedirectToAction("Global");
+    }
+    
     [Route("health")]
     public override ActionResult HealthCheck() => Ok(_apiService.HealthCheckResponseObject, _dynamicConfigService.HealthCheckResponseObject);
 }
