@@ -237,7 +237,7 @@ public class MailboxController : PlatformController
         {
             string oldSubject = TempData["EditSubject"] as string;
             string oldBody = TempData["EditBody"] as string;
-            List<Attachment> oldAttachments = TempData["EditAttachments"] as List<Attachment>;
+            List<Attachment> oldAttachments = TempData.Get<List<Attachment>>("EditAttachments");
             long? oldVisibleFromData = TempData["EditVisibleFrom"] as long?;
             long oldVisibleFrom = oldVisibleFromData ?? default(long);
             long? oldExpirationData = TempData["EditExpiration"] as long?;
@@ -383,12 +383,13 @@ public class MailboxController : PlatformController
     }
 
     [Route("showEdit")]
-    public IActionResult ShowEditOverlay(string id, string subject, string body, List<Attachment> attachments, long visibleFrom, long expiration, string icon, string banner, string internalNote, long? forAccountsBefore)
+    public IActionResult ShowEditOverlay(string id, string subject, string body, List<Attachment> attachments, string visibleFrom, string expiration, string icon, string banner, string internalNote, string forAccountsBefore)
     {
         TempData["EditId"] = id;
         TempData["EditSubject"] = subject;
         TempData["EditBody"] = body;
-        TempData["EditAttachments"] = attachments;
+        //TempData["EditAttachments"] = attachments;
+        TempData.Put("EditAttachments", attachments);
         TempData["EditVisibleFrom"] = visibleFrom;
         TempData["EditExpiration"] = expiration;
         TempData["EditInternalNote"] = internalNote;
