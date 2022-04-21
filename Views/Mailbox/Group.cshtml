@@ -3,14 +3,24 @@
 }
 
 <div class="mailbox-page-container">
-    <div class="toggle-container">
-        @Html.ActionLink(linkText: "Global", actionName: "Global", controllerName: "Mailbox", routeValues: new { }, htmlAttributes: new { })
+    <div class="view-inbox-container">
+        @Html.ActionLink(linkText: "View player inbox history", actionName: "Inbox", controllerName: "Mailbox", routeValues: new {}, htmlAttributes: new {})
     </div>
-    <br />
+    <div class="toggle-container">
+        @Html.ActionLink(linkText: "Global Messages", actionName: "Global", controllerName: "Mailbox", routeValues: new {}, htmlAttributes: new {})
+    </div>
+    <br/>
 
-    <h2>@ViewData["Title"]</h2>
+    <h2>@TempData["Title"]</h2>
 
-    <p>@ViewData["Success"]</p>
+    @if (TempData["Failure"] != null)
+    {
+        <h4 style="color: red">@TempData["Success"]</h4>
+    }
+    else
+    {
+        <h4 style="color: darkgreen">@TempData["Success"]</h4>
+    }
 
     <div class="group-container">
         <div class="send-group-container">
@@ -28,10 +38,10 @@
                 <input id="groupAttachments" class="groupAttachments" type="text" name="attachments" placeholder="ex: currency soft_currency 1500 | hero warlord">
                 <br/>
                 <label for="groupVisibleFrom" class="groupVisibleFrom">Visible From (UTC)*</label>
-                <input id="groupVisibleFrom" class="groupVisibleFrom" name="visibleFrom" type="datetime-local" required>
+                <input id="groupVisibleFrom" class="groupVisibleFrom" name="visibleFrom" type="datetime-local" value="@ViewData["Today"]" required>
                 <br/>
                 <label for="groupExpiration" class="groupExpiration">Expiration (UTC)*</label>
-                <input id="groupExpiration" class="groupExpiration" name="expiration" type="datetime-local" required>
+                <input id="groupExpiration" class="groupExpiration" name="expiration" type="datetime-local" value="@ViewData["Week"]" required>
                 <br/>
                 <label for="groupIcon" class="groupIcon">Icon</label>
                 <select id="groupIcon" class="groupIcon" name="icon" placeholder="Icon">

@@ -3,8 +3,11 @@
 }
 
 <div class="mailbox-page-container">
+    <div class="view-inbox-container">
+        @Html.ActionLink(linkText: "View player inbox history", actionName: "Inbox", controllerName: "Mailbox", routeValues: new {}, htmlAttributes: new {})
+    </div>
     <div class="toggle-container">
-        @Html.ActionLink(linkText: "Group", actionName: "Group", controllerName: "Mailbox", routeValues: new {}, htmlAttributes: new {})
+        @Html.ActionLink(linkText: "Direct Messages", actionName: "Group", controllerName: "Mailbox", routeValues: new {}, htmlAttributes: new {})
     </div>
     <br/>
 
@@ -12,7 +15,14 @@
 
     <p>@TempData["VisibleOverlay"]</p>
 
-    <p>@ViewData["Success"]</p>
+    @if (TempData["Failure"] != null)
+    {
+        <h4 style="color: red">@TempData["Success"]</h4>
+    }
+    else
+    {
+        <h4 style="color: darkgreen">@TempData["Success"]</h4>
+    }
 
     <div class="global-container">
         @if (TempData["VisibleOverlay"] != null)
@@ -93,10 +103,10 @@
                 <input id="newAttachments" class="attachments" type="text" name="attachments" placeholder="ex: currency soft_currency 1500 | hero warlord">
                 <br/>
                 <label for="newVisibleFrom" class="visibleFrom">Visible From (UTC)*</label>
-                <input id="newVisibleFrom" class="visibleFrom" name="visibleFrom" type="datetime-local" required>
+                <input id="newVisibleFrom" class="visibleFrom" name="visibleFrom" type="datetime-local" value="@ViewData["Today"]" required>
                 <br/>
                 <label for="newExpiration" class="expiration">Expiration (UTC)*</label>
-                <input id="newExpiration" class="expiration" name="expiration" type="datetime-local" required>
+                <input id="newExpiration" class="expiration" name="expiration" type="datetime-local" value="@ViewData["Week"]" required>
                 <br/>
                 <label for="newIcon" class="icon">Icon</label>
                 <select id="newIcon" class="icon" name="icon" placeholder="Icon">
@@ -254,13 +264,7 @@
                             })
                         </td>
                         <td>
-                            @Html.ActionLink(linkText: "Delete", actionName: "ShowDeleteOverlay", controllerName: "Mailbox", routeValues: new
-                            {
-                                id = data.Id
-                            }, htmlAttributes: new
-                            {
-                                id = data.Id
-                            })
+                            True
                         </td>
                     </tr>
                 }

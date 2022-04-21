@@ -24,8 +24,12 @@ public class MailboxController : PlatformController
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
         string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages";
         
-        ViewData["Success"] = "";
+        TempData["Success"] = "";
+        TempData["Failure"] = null;
         ViewData["Exist"] = "";
+
+        ViewData["Today"] = DefaultDateTime.UtcDateTimeString();
+        ViewData["Week"] = DefaultDateTime.UtcDateTimeString(days: 7);
         
         _apiService
             .Request(requestUrl)
@@ -104,12 +108,14 @@ public class MailboxController : PlatformController
                 })
                 .OnSuccess(((sender, apiResponse) =>
                 {
-                    ViewData["Success"] = "Successfully sent message.";
+                    TempData["Failure"] = null;
+                    TempData["Success"] = "Successfully sent message.";
                     Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
                 }))
                 .OnFailure(((sender, apiResponse) =>
                 {
-                    ViewData["Success"] = "Failed to send message.";
+                    TempData["Failure"] = true;
+                    TempData["Success"] = "Failed to send message.";
                     Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
                     {
                         Response = apiResponse
@@ -119,7 +125,8 @@ public class MailboxController : PlatformController
         }
         catch (Exception e)
         {
-            ViewData["Success"] = "Failed to send message. Some fields may be malformed.";
+            TempData["Failure"] = true;
+            TempData["Success"] = "Failed to send message. Some fields may be malformed.";
             Log.Error(owner: Owner.Nathan, message: "Error occurred when sending global message.", data: e.Message);
         }
         
@@ -167,7 +174,11 @@ public class MailboxController : PlatformController
     [Route("group")]
     public async Task<IActionResult> Group()
     {
-        ViewData["Success"] = "";
+        TempData["Failure"] = null;
+        TempData["Success"] = "";
+        
+        ViewData["Today"] = DefaultDateTime.UtcDateTimeString();
+        ViewData["Week"] = DefaultDateTime.UtcDateTimeString(days: 7);
         return View();
     }
 
@@ -202,12 +213,14 @@ public class MailboxController : PlatformController
                 })
                 .OnSuccess(((sender, apiResponse) =>
                 {
-                    ViewData["Success"] = "Successfully sent message.";
+                    TempData["Failure"] = null;
+                    TempData["Success"] = "Successfully sent message.";
                     Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
                 }))
                 .OnFailure(((sender, apiResponse) =>
                 {
-                    ViewData["Success"] = "Failed to send message.";
+                    TempData["Failure"] = true;
+                    TempData["Success"] = "Failed to send message.";
                     Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
                     {
                         Response = apiResponse
@@ -217,7 +230,8 @@ public class MailboxController : PlatformController
         }
         catch (Exception e)
         {
-            ViewData["Success"] = "Failed to send message. Some fields may be malformed.";
+            TempData["Failure"] = true;
+            TempData["Success"] = "Failed to send message. Some fields may be malformed.";
             Log.Error(owner: Owner.Nathan, message: "Error occurred when sending group message.", data: e.Message);
         }
 
@@ -323,12 +337,14 @@ public class MailboxController : PlatformController
                 })
                 .OnSuccess(((sender, apiResponse) =>
                 {
-                    ViewData["Success"] = "Successfully edited message.";
+                    TempData["Failure"] = null;
+                    TempData["Success"] = "Successfully edited message.";
                     Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
                 }))
                 .OnFailure(((sender, apiResponse) =>
                 {
-                    ViewData["Success"] = "Failed to edit message.";
+                    TempData["Failure"] = true;
+                    TempData["Success"] = "Failed to edit message.";
                     Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
                     {
                         Response = apiResponse
@@ -338,7 +354,8 @@ public class MailboxController : PlatformController
         }
         catch (Exception e)
         {
-            ViewData["Success"] = "Failed to edit message. Some fields may be malformed.";
+            TempData["Failure"] = true;
+            TempData["Success"] = "Failed to edit message. Some fields may be malformed.";
             Log.Error(owner: Owner.Nathan, message: "Error occurred when editing global message.", data: e.Message);
         }
 
@@ -364,12 +381,14 @@ public class MailboxController : PlatformController
                 })
                 .OnSuccess(((sender, apiResponse) =>
                 {
-                    ViewData["Success"] = "Successfully deleted message.";
+                    TempData["Failure"] = null;
+                    TempData["Success"] = "Successfully deleted message.";
                     Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
                 }))
                 .OnFailure(((sender, apiResponse) =>
                 {
-                    ViewData["Success"] = "Failed to delete message.";
+                    TempData["Failure"] = true;
+                    TempData["Success"] = "Failed to delete message.";
                     Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
                     {
                         Response = apiResponse
@@ -379,7 +398,8 @@ public class MailboxController : PlatformController
         }
         catch (Exception e)
         {
-            ViewData["Success"] = "Failed to delete message.";
+            TempData["Failure"] = true;
+            TempData["Success"] = "Failed to delete message.";
             Log.Error(owner: Owner.Nathan, message: "Error occurred when deleting global message.", data: e.Message);
         }
 
@@ -423,6 +443,27 @@ public class MailboxController : PlatformController
         TempData["VisibleEdit"] = null;
         TempData["VisibleDelete"] = null;
         return RedirectToAction("Global");
+    }
+
+    [Route("toggleInput")]
+    public IActionResult ToggleInput()
+    {
+        if (TempData["ToggleInput"] != null)
+        {
+            TempData["ToggleInput"] = null;
+        }
+        else
+        {
+            TempData["ToggleInput"] = true;
+        }
+
+        return RedirectToAction("Global");
+    }
+
+    [Route("inbox")]
+    public async Task<IActionResult> Inbox()
+    {
+        return View();
     }
     
     [Route("health")]
