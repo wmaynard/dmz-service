@@ -9,6 +9,10 @@ public class ParseMessageData
 {
     public static long ParseDateTime(string dateTime)
     {
+        if (dateTime == null)
+        {
+            return 0;
+        }
         return ((DateTimeOffset) DateTime.Parse(dateTime)).ToUnixTimeSeconds();
     }
 

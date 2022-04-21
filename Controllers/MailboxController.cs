@@ -28,8 +28,7 @@ public class MailboxController : PlatformController
         ViewData["Exist"] = "";
         
         _apiService
-            //.Request(requestUrl)
-            .Request($"https://localhost:5071/mail/admin/global/messages/") // local
+            .Request(requestUrl)
             .AddAuthorization(token)
             .OnSuccess(((sender, apiResponse) =>
             {
@@ -46,7 +45,6 @@ public class MailboxController : PlatformController
             }))
             .Get(out GenericData response, out int code);
         
-        //GenericData.require<model>("key")
         List<GlobalMessage> globalMessages = response.Require<List<GlobalMessage>>("globalMessages");
 
         List<GlobalMessage> activeGlobalMessagesList = new List<GlobalMessage>();
@@ -87,14 +85,18 @@ public class MailboxController : PlatformController
             long expirationUnix = ParseMessageData.ParseDateTime(expiration);
             long visibleFromUnix = ParseMessageData.ParseDateTime(visibleFrom);
             long? forAccountsBeforeUnix = ParseMessageData.ParseDateTime(forAccountsBefore);
+
+            if (forAccountsBeforeUnix == 0)
+            {
+                forAccountsBeforeUnix = null;
+            }
             
             GlobalMessage newGlobal = new GlobalMessage(subject: subject, body: body, attachments: attachmentsList,
                 expiration: expirationUnix, visibleFrom: visibleFromUnix, icon: icon, banner: banner,
                 status: Message.StatusType.UNCLAIMED, internalNote: internalNote, forAccountsBefore: forAccountsBeforeUnix);
 
             _apiService
-                //.Request(requestUrl + "/send")
-                .Request($"https://localhost:5071/mail/admin/messages/send") // local
+                .Request(requestUrl + "/send")
                 .AddAuthorization(token)
                 .SetPayload(new GenericData
                 {
@@ -191,8 +193,7 @@ public class MailboxController : PlatformController
                 status: Message.StatusType.UNCLAIMED, internalNote: internalNote);
 
             _apiService
-                //.Request(requestUrl)
-                .Request($"https://localhost:5071/mail/admin/messages/send") // local
+                .Request(requestUrl)
                 .AddAuthorization(token)
                 .SetPayload(new GenericData
                 {
@@ -231,19 +232,80 @@ public class MailboxController : PlatformController
         string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages/edit";
         
         ViewData["Exist"] = "";
-        
+
         try
         {
-            List<Attachment> attachmentsList = ParseMessageData.ParseAttachments(attachments);
+            string oldSubject = TempData["EditSubject"] as string;
+            string oldBody = TempData["EditBody"] as string;
+            List<Attachment> oldAttachments = TempData["EditAttachments"] as List<Attachment>;
+            long? oldVisibleFromData = TempData["EditVisibleFrom"] as long?;
+            long oldVisibleFrom = oldVisibleFromData ?? default(long);
+            long? oldExpirationData = TempData["EditExpiration"] as long?;
+            long oldExpiration = oldExpirationData ?? default(long);
+            string oldInternalNote = TempData["EditInternalNote"] as string;
+            long? oldForAccountsBefore = TempData["EditForAccountsBefore"] as long?;
+
+            if (subject == "")
+            {
+                subject = oldSubject;
+            }
+            
+            if (body == "")
+            {
+                body = oldBody;
+            }
+            
+            List<Attachment> attachmentsList = new List<Attachment>();
+            if (attachments == "")
+            {
+                attachmentsList = oldAttachments;
+            }
+            else
+            {
+                attachmentsList = ParseMessageData.ParseAttachments(attachments);
+            }
+            
             icon = ParseMessageData.ParseEmpty(icon);
+            
             banner = ParseMessageData.ParseEmpty(banner);
-            long expirationUnix = ParseMessageData.ParseDateTime(expiration);
-            long visibleFromUnix = ParseMessageData.ParseDateTime(visibleFrom);
-            long? forAccountsBeforeUnix = ParseMessageData.ParseDateTime(forAccountsBefore);
+
+            long expirationUnix = 0;
+            if (expiration == "")
+            {
+                expirationUnix = oldExpiration;
+            }
+            else
+            {
+                expirationUnix = ParseMessageData.ParseDateTime(expiration);
+            }
+
+            long visibleFromUnix = 0;
+            if (visibleFrom == "")
+            {
+                visibleFromUnix = oldVisibleFrom;
+            }
+            else
+            {
+                visibleFromUnix = ParseMessageData.ParseDateTime(visibleFrom);
+            }
+
+            if (internalNote == "")
+            {
+                internalNote = oldInternalNote;
+            }
+
+            long? forAccountsBeforeUnix = null;
+            if (forAccountsBefore == "")
+            {
+                forAccountsBeforeUnix = oldForAccountsBefore;
+            }
+            else
+            {
+                forAccountsBeforeUnix = ParseMessageData.ParseDateTime(forAccountsBefore);
+            }
             
             _apiService
-                //.Request(requestUrl)
-                .Request($"https://localhost:5071/mail/admin/messages/edit") // local
+                .Request(requestUrl)
                 .AddAuthorization(token)
                 .SetPayload(new GenericData
                 {
@@ -292,8 +354,7 @@ public class MailboxController : PlatformController
         try
         {
             _apiService
-                //.Request(requestUrl)
-                .Request($"https://localhost:5071/mail/admin/messages/expire") // local
+                .Request(requestUrl)
                 .AddAuthorization(token)
                 .SetPayload(new GenericData
                 {
@@ -322,9 +383,16 @@ public class MailboxController : PlatformController
     }
 
     [Route("showEdit")]
-    public IActionResult ShowEditOverlay(string id)
+    public IActionResult ShowEditOverlay(string id, string subject, string body, List<Attachment> attachments, long visibleFrom, long expiration, string icon, string banner, string internalNote, long? forAccountsBefore)
     {
         TempData["EditId"] = id;
+        TempData["EditSubject"] = subject;
+        TempData["EditBody"] = body;
+        TempData["EditAttachments"] = attachments;
+        TempData["EditVisibleFrom"] = visibleFrom;
+        TempData["EditExpiration"] = expiration;
+        TempData["EditInternalNote"] = internalNote;
+        TempData["EditForAccountsBefore"] = forAccountsBefore;
         TempData["VisibleOverlay"] = true;
         TempData["VisibleEdit"] = true;
         TempData["VisibleDelete"] = null;

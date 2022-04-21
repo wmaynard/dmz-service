@@ -158,10 +158,36 @@
                         <td>@data.InternalNote</td>
                         <td>@data.ForAccountsBefore</td>
                         <td>
-                            @Html.ActionLink(linkText: "Edit", actionName: "ShowEditOverlay", controllerName: "Mailbox", routeValues: new { id = data.Id}, htmlAttributes: new { id = data.Id})
+                            @Html.ActionLink(linkText: "Edit", actionName: "ShowEditOverlay", controllerName: "Mailbox", routeValues: new
+                            {
+                                id = data.Id,
+                                subject = data.Subject,
+                                body = data.Body,
+                                attachments = data.Attachments,
+                                visibleFrom = data.VisibleFrom,
+                                expiration = data.Expiration,
+                                internalNote = data.InternalNote,
+                                forAccountsBefore = data.ForAccountsBefore
+                            }, htmlAttributes: new
+                            {
+                                id = data.Id,
+                                subject = data.Subject,
+                                body = data.Body,
+                                attachments = data.Attachments,
+                                visibleFrom = data.VisibleFrom,
+                                expiration = data.Expiration,
+                                internalNote = data.InternalNote,
+                                forAccountsBefore = data.ForAccountsBefore
+                            })
                         </td>
                         <td>
-                            @Html.ActionLink(linkText: "Delete", actionName: "ShowDeleteOverlay", controllerName: "Mailbox", routeValues: new { id = data.Id}, htmlAttributes: new { id = data.Id})
+                            @Html.ActionLink(linkText: "Delete", actionName: "ShowDeleteOverlay", controllerName: "Mailbox", routeValues: new
+                            {
+                                id = data.Id
+                            }, htmlAttributes: new
+                            {
+                                id = data.Id
+                            })
                         </td>
                     </tr>
                 }
@@ -205,10 +231,36 @@
                         <td>@data.InternalNote</td>
                         <td>@data.ForAccountsBefore</td>
                         <td>
-                            @Html.ActionLink(linkText: "Edit", actionName: "ShowEditOverlay", controllerName: "Mailbox", routeValues: new { id = data.Id}, htmlAttributes: new { id = data.Id})
+                            @Html.ActionLink(linkText: "Edit", actionName: "ShowEditOverlay", controllerName: "Mailbox", routeValues: new
+                            {
+                                id = data.Id,
+                                subject = data.Subject,
+                                body = data.Body,
+                                attachments = data.Attachments,
+                                visibleFrom = data.VisibleFrom,
+                                expiration = data.Expiration,
+                                internalNote = data.InternalNote,
+                                forAccountsBefore = data.ForAccountsBefore
+                            }, htmlAttributes: new
+                            {
+                                id = data.Id,
+                                subject = data.Subject,
+                                body = data.Body,
+                                attachments = data.Attachments,
+                                visibleFrom = data.VisibleFrom,
+                                expiration = data.Expiration,
+                                internalNote = data.InternalNote,
+                                forAccountsBefore = data.ForAccountsBefore
+                            })
                         </td>
                         <td>
-                            @Html.ActionLink(linkText: "Delete", actionName: "ShowDeleteOverlay", controllerName: "Mailbox", routeValues: new { id = data.Id}, htmlAttributes: new { id = data.Id})
+                            @Html.ActionLink(linkText: "Delete", actionName: "ShowDeleteOverlay", controllerName: "Mailbox", routeValues: new
+                            {
+                                id = data.Id
+                            }, htmlAttributes: new
+                            {
+                                id = data.Id
+                            })
                         </td>
                     </tr>
                 }
