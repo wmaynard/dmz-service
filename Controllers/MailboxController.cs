@@ -225,7 +225,7 @@ public class MailboxController : PlatformController
     }
 
     [Route("edit")]
-    public async void Edit(string messageId, string subject, string body, string attachments, string visibleFrom, string expiration,
+    public async Task<IActionResult> Edit(string messageId, string subject, string body, string attachments, string visibleFrom, string expiration,
         string icon, string banner, string status, string internalNote, string forAccountsBefore)
     {
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
@@ -238,25 +238,25 @@ public class MailboxController : PlatformController
             string oldSubject = TempData["EditSubject"] as string;
             string oldBody = TempData["EditBody"] as string;
             List<Attachment> oldAttachments = TempData.Get<List<Attachment>>("EditAttachments");
-            long? oldVisibleFromData = TempData["EditVisibleFrom"] as long?;
-            long oldVisibleFrom = oldVisibleFromData ?? default(long);
-            long? oldExpirationData = TempData["EditExpiration"] as long?;
-            long oldExpiration = oldExpirationData ?? default(long);
+            string oldVisibleFromData = TempData["EditVisibleFrom"] as string;
+            long oldVisibleFrom = long.Parse(oldVisibleFromData);
+            string oldExpirationData = TempData["EditExpiration"] as string;
+            long oldExpiration = long.Parse(oldExpirationData);
             string oldInternalNote = TempData["EditInternalNote"] as string;
             long? oldForAccountsBefore = TempData["EditForAccountsBefore"] as long?;
 
-            if (subject == "")
+            if (subject == null)
             {
                 subject = oldSubject;
             }
             
-            if (body == "")
+            if (body == null)
             {
                 body = oldBody;
             }
             
             List<Attachment> attachmentsList = new List<Attachment>();
-            if (attachments == "")
+            if (attachments == null)
             {
                 attachmentsList = oldAttachments;
             }
@@ -270,7 +270,7 @@ public class MailboxController : PlatformController
             banner = ParseMessageData.ParseEmpty(banner);
 
             long expirationUnix = 0;
-            if (expiration == "")
+            if (expiration == null)
             {
                 expirationUnix = oldExpiration;
             }
@@ -280,7 +280,7 @@ public class MailboxController : PlatformController
             }
 
             long visibleFromUnix = 0;
-            if (visibleFrom == "")
+            if (visibleFrom == null)
             {
                 visibleFromUnix = oldVisibleFrom;
             }
@@ -289,13 +289,13 @@ public class MailboxController : PlatformController
                 visibleFromUnix = ParseMessageData.ParseDateTime(visibleFrom);
             }
 
-            if (internalNote == "")
+            if (internalNote == null)
             {
                 internalNote = oldInternalNote;
             }
 
             long? forAccountsBeforeUnix = null;
-            if (forAccountsBefore == "")
+            if (forAccountsBefore == null)
             {
                 forAccountsBeforeUnix = oldForAccountsBefore;
             }
@@ -341,10 +341,12 @@ public class MailboxController : PlatformController
             ViewData["Success"] = "Failed to edit message. Some fields may be malformed.";
             Log.Error(owner: Owner.Nathan, message: "Error occurred when editing global message.", data: e.Message);
         }
+
+        return RedirectToAction("Global");
     }
     
     [Route("delete")]
-    public async void Delete(string id)
+    public async Task<IActionResult> Delete(string id)
     {
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
         string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages/expire";
@@ -380,6 +382,8 @@ public class MailboxController : PlatformController
             ViewData["Success"] = "Failed to delete message.";
             Log.Error(owner: Owner.Nathan, message: "Error occurred when deleting global message.", data: e.Message);
         }
+
+        return RedirectToAction("Global");
     }
 
     [Route("showEdit")]

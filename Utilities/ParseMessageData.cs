@@ -27,6 +27,11 @@ public class ParseMessageData
 
     public static List<Attachment> ParseAttachments(string attachments)
     {
+        if (attachments == "")
+        {
+            return new List<Attachment>();
+        }
+        
         char[] delimiters = {'|', ','};
         string[] split = attachments.Split(delimiters);
         for (int i = 0; i < split.Length; i++)
