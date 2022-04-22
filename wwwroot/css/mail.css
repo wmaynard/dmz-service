@@ -309,3 +309,110 @@ table#expiredGlobals tr td:nth-child(12) {
     /* Delete */
     width: 5%;
 }
+
+div.send-messages-container {
+    padding-bottom: 2%;
+    border-bottom: 1px black solid;
+}
+
+div.inbox-search-container {
+    padding-top: 2%;
+}
+
+table#inboxMessages,
+table#messageHistory {
+    table-layout: fixed;
+    border: 3px solid black;
+}
+
+table#inboxMessages tr:nth-child(1),
+table#messageHistory tr:nth-child(1) {
+    border-bottom: 2px solid black;
+}
+
+table#inboxMessages tr td,
+table#messageHistory tr td {
+    border: 1px solid black;
+    padding: 5px;
+}
+
+table#inboxMessages tr td button,
+table#messageHistory tr td button {
+    width: 100%;
+    height: 100%;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+table#inboxMessages tr td:nth-child(1),
+table#messageHistory tr td:nth-child(1) {
+    /* Id */
+    width: 5%;
+}
+
+table#inboxMessages tr td:nth-child(2),
+table#messageHistory tr td:nth-child(2) {
+    /* Subject */
+    width: 5%;
+}
+
+table#inboxMessages tr td:nth-child(3),
+table#messageHistory tr td:nth-child(3) {
+    /* Body */
+    width: 15%;
+}
+
+table#inboxMessages tr td:nth-child(4),
+table#messageHistory tr td:nth-child(4) {
+    /* Attachments */
+    width: 15%;
+}
+
+table#inboxMessages tr td:nth-child(5),
+table#messageHistory tr td:nth-child(5) {
+    /* Visible From */
+    width: 10%;
+}
+
+table#inboxMessages tr td:nth-child(6),
+table#messageHistory tr td:nth-child(6) {
+    /* Expiration */
+    width: 10%;
+}
+
+table#inboxMessages tr td:nth-child(7),
+table#messageHistory tr td:nth-child(7) {
+    /* Icon */
+    width: 5%;
+}
+
+table#inboxMessages tr td:nth-child(8),
+table#messageHistory tr td:nth-child(8) {
+    /* Banner */
+    width: 5%;
+}
+
+table#inboxMessages tr td:nth-child(9),
+table#messageHistory tr td:nth-child(9) {
+    /* Internal Note */
+    width: 10%;
+}
+
+table#inboxMessages tr td:nth-child(10),
+table#messageHistory tr td:nth-child(10) {
+    /* For Accounts Before */
+    width: 10%;
+}
+
+table#inboxMessages tr td:nth-child(11),
+table#messageHistory tr td:nth-child(11) {
+    /* Status */
+    width: 5%;
+}
+
+table#inboxMessages tr td:nth-child(12),
+table#messageHistory tr td:nth-child(12) {
+    /* Global */
+    width: 5%;
+}

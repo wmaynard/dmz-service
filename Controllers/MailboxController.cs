@@ -26,7 +26,6 @@ public class MailboxController : PlatformController
         
         TempData["Success"] = "";
         TempData["Failure"] = null;
-        ViewData["Exist"] = "";
 
         ViewData["Today"] = DefaultDateTime.UtcDateTimeString();
         ViewData["Week"] = DefaultDateTime.UtcDateTimeString(days: 7);
@@ -36,12 +35,14 @@ public class MailboxController : PlatformController
             .AddAuthorization(token)
             .OnSuccess(((sender, apiResponse) =>
             {
-                ViewData["Exist"] = "Successfully fetched global messages.";
+                TempData["Success"] = "Successfully fetched global messages.";
+                TempData["Failure"] = null;
                 Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
             }))
             .OnFailure(((sender, apiResponse) =>
             {
-                ViewData["Exist"] = "Failed to fetch global messages.";
+                TempData["Success"] = "Failed to fetch global messages.";
+                TempData["Failure"] = true;
                 Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
                 {
                     Response = apiResponse
@@ -79,7 +80,8 @@ public class MailboxController : PlatformController
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
         string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages";
         
-        ViewData["Exist"] = "";
+        TempData["Success"] = "";
+        TempData["Failure"] = null;
         
         try
         {
@@ -108,14 +110,14 @@ public class MailboxController : PlatformController
                 })
                 .OnSuccess(((sender, apiResponse) =>
                 {
-                    TempData["Failure"] = null;
                     TempData["Success"] = "Successfully sent message.";
+                    TempData["Failure"] = null;
                     Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
                 }))
                 .OnFailure(((sender, apiResponse) =>
                 {
-                    TempData["Failure"] = true;
                     TempData["Success"] = "Failed to send message.";
+                    TempData["Failure"] = true;
                     Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
                     {
                         Response = apiResponse
@@ -125,8 +127,8 @@ public class MailboxController : PlatformController
         }
         catch (Exception e)
         {
-            TempData["Failure"] = true;
             TempData["Success"] = "Failed to send message. Some fields may be malformed.";
+            TempData["Failure"] = true;
             Log.Error(owner: Owner.Nathan, message: "Error occurred when sending global message.", data: e.Message);
         }
         
@@ -135,12 +137,14 @@ public class MailboxController : PlatformController
             .AddAuthorization(token)
             .OnSuccess(((sender, apiResponse) =>
             {
-                ViewData["Exist"] = "Successfully fetched global messages.";
+                TempData["Success"] = "Successfully fetched global messages.";
+                TempData["Failure"] = null;
                 Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
             }))
             .OnFailure(((sender, apiResponse) =>
             {
-                ViewData["Exist"] = "Failed to fetch global messages.";
+                TempData["Success"] = "Failed to fetch global messages.";
+                TempData["Failure"] = true;
                 Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
                 {
                     Response = apiResponse
@@ -174,8 +178,8 @@ public class MailboxController : PlatformController
     [Route("group")]
     public async Task<IActionResult> Group()
     {
-        TempData["Failure"] = null;
         TempData["Success"] = "";
+        TempData["Failure"] = null;
         
         ViewData["Today"] = DefaultDateTime.UtcDateTimeString();
         ViewData["Week"] = DefaultDateTime.UtcDateTimeString(days: 7);
@@ -213,14 +217,14 @@ public class MailboxController : PlatformController
                 })
                 .OnSuccess(((sender, apiResponse) =>
                 {
-                    TempData["Failure"] = null;
                     TempData["Success"] = "Successfully sent message.";
+                    TempData["Failure"] = null;
                     Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
                 }))
                 .OnFailure(((sender, apiResponse) =>
                 {
-                    TempData["Failure"] = true;
                     TempData["Success"] = "Failed to send message.";
+                    TempData["Failure"] = true;
                     Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
                     {
                         Response = apiResponse
@@ -230,8 +234,8 @@ public class MailboxController : PlatformController
         }
         catch (Exception e)
         {
-            TempData["Failure"] = true;
             TempData["Success"] = "Failed to send message. Some fields may be malformed.";
+            TempData["Failure"] = true;
             Log.Error(owner: Owner.Nathan, message: "Error occurred when sending group message.", data: e.Message);
         }
 
@@ -245,7 +249,8 @@ public class MailboxController : PlatformController
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
         string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages/edit";
         
-        ViewData["Exist"] = "";
+        TempData["Success"] = "";
+        TempData["Failure"] = null;
 
         try
         {
@@ -337,14 +342,14 @@ public class MailboxController : PlatformController
                 })
                 .OnSuccess(((sender, apiResponse) =>
                 {
-                    TempData["Failure"] = null;
                     TempData["Success"] = "Successfully edited message.";
+                    TempData["Failure"] = null;
                     Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
                 }))
                 .OnFailure(((sender, apiResponse) =>
                 {
-                    TempData["Failure"] = true;
                     TempData["Success"] = "Failed to edit message.";
+                    TempData["Failure"] = true;
                     Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
                     {
                         Response = apiResponse
@@ -354,8 +359,8 @@ public class MailboxController : PlatformController
         }
         catch (Exception e)
         {
-            TempData["Failure"] = true;
             TempData["Success"] = "Failed to edit message. Some fields may be malformed.";
+            TempData["Failure"] = true;
             Log.Error(owner: Owner.Nathan, message: "Error occurred when editing global message.", data: e.Message);
         }
 
@@ -368,7 +373,8 @@ public class MailboxController : PlatformController
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
         string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages/expire";
         
-        ViewData["Exist"] = "";
+        TempData["Success"] = "";
+        TempData["Failure"] = null;
         
         try
         {
@@ -381,14 +387,14 @@ public class MailboxController : PlatformController
                 })
                 .OnSuccess(((sender, apiResponse) =>
                 {
-                    TempData["Failure"] = null;
                     TempData["Success"] = "Successfully deleted message.";
+                    TempData["Failure"] = null;
                     Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
                 }))
                 .OnFailure(((sender, apiResponse) =>
                 {
-                    TempData["Failure"] = true;
                     TempData["Success"] = "Failed to delete message.";
+                    TempData["Failure"] = true;
                     Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
                     {
                         Response = apiResponse
@@ -398,8 +404,8 @@ public class MailboxController : PlatformController
         }
         catch (Exception e)
         {
-            TempData["Failure"] = true;
             TempData["Success"] = "Failed to delete message.";
+            TempData["Failure"] = true;
             Log.Error(owner: Owner.Nathan, message: "Error occurred when deleting global message.", data: e.Message);
         }
 
@@ -463,6 +469,58 @@ public class MailboxController : PlatformController
     [Route("inbox")]
     public async Task<IActionResult> Inbox()
     {
+        return View();
+    }
+    
+    [HttpPost]
+    [Route("inbox")]
+    public async Task<IActionResult> Inbox(string id)
+    {
+        string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages";
+        
+        TempData["Success"] = "";
+        TempData["Failure"] = null;
+        
+        _apiService
+            .Request(requestUrl)
+            .AddAuthorization(token)
+            .OnSuccess(((sender, apiResponse) =>
+            {
+                TempData["Success"] = "Successfully fetched inbox messages.";
+                TempData["Failure"] = null;
+                Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
+            }))
+            .OnFailure(((sender, apiResponse) =>
+            {
+                TempData["Success"] = "Failed to fetch inbox messages.";
+                TempData["Failure"] = true;
+                Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
+                {
+                    Response = apiResponse
+                });
+            }))
+            .Get(out GenericData response, out int code);
+        
+        List<GlobalMessage> globalMessages = response.Require<List<GlobalMessage>>("globalMessages");
+
+        List<GlobalMessage> activeGlobalMessagesList = new List<GlobalMessage>();
+        List<GlobalMessage> expiredGlobalMessagesList = new List<GlobalMessage>();
+
+        foreach (GlobalMessage globalMessage in globalMessages)
+        {
+            if (!globalMessage.IsExpired)
+            {
+                activeGlobalMessagesList.Add(globalMessage);
+            } else if (globalMessage.IsExpired)
+            {
+                expiredGlobalMessagesList.Add(globalMessage);
+            }
+        }
+
+        ViewData["ActiveGlobalMessages"] = activeGlobalMessagesList;
+        ViewData["ExpiredGlobalMessages"] = expiredGlobalMessagesList;
+        
         return View();
     }
     

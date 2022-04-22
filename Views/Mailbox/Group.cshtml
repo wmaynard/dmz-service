@@ -3,6 +3,9 @@
 }
 
 <div class="mailbox-page-container">
+    <div class="view-inbox-container">
+        @Html.ActionLink(linkText: "View player inbox history", actionName: "Inbox", controllerName: "Mailbox", routeValues: new {}, htmlAttributes: new {})
+    </div>
     <div class="toggle-container">
         @Html.ActionLink(linkText: "Global Messages", actionName: "Global", controllerName: "Mailbox", routeValues: new {}, htmlAttributes: new {})
     </div>

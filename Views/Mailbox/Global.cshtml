@@ -3,6 +3,9 @@
 }
 
 <div class="mailbox-page-container">
+    <div class="view-inbox-container">
+        @Html.ActionLink(linkText: "View player inbox history", actionName: "Inbox", controllerName: "Mailbox", routeValues: new {}, htmlAttributes: new {})
+    </div>
     <div class="toggle-container">
         @Html.ActionLink(linkText: "Direct Messages", actionName: "Group", controllerName: "Mailbox", routeValues: new {}, htmlAttributes: new {})
     </div>
@@ -128,8 +131,6 @@
             </form>
         </div>
         <div class="active-globals-container">
-            <p>@ViewData["Exist"]</p>
-
             <h3>Active Global Messages</h3>
             <table id="activeGlobals" class="globalMessages">
                 <tr>

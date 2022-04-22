@@ -2,7 +2,7 @@ using System;
 
 namespace TowerPortal.Utilities;
 
-public class DefaultDateTime
+public static class DefaultDateTime
 {
     public static string UtcDateTimeString(int days = 0)
     {
