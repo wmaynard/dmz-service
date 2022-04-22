@@ -59,8 +59,8 @@
                             <p>{"type": @attachment.Type, "rewardId": @attachment.RewardId, "quantity": @attachment.Quantity}</p>
                         }
                     </td>
-                    <td>@data.VisibleFrom</td>
-                    <td>@data.Expiration</td>
+                    <td>@DateTimeOffset.FromUnixTimeSeconds(@data.VisibleFrom)</td>
+                    <td>@DateTimeOffset.FromUnixTimeSeconds(@data.Expiration)</td>
                     <td>@data.Icon</td>
                     <td>@data.Banner</td>
                     <td>@data.InternalNote</td>
@@ -99,8 +99,8 @@
                                 <p>{"type": @attachment.Type, "rewardId": @attachment.RewardId, "quantity": @attachment.Quantity}</p>
                             }
                         </td>
-                        <td>@data.VisibleFrom</td>
-                        <td>@data.Expiration</td>
+                        <td>@DateTimeOffset.FromUnixTimeSeconds(@data.VisibleFrom)</td>
+                        <td>@DateTimeOffset.FromUnixTimeSeconds(@data.Expiration)</td>
                         <td>@data.Icon</td>
                         <td>@data.Banner</td>
                         <td>@data.InternalNote</td>

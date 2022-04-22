@@ -33,7 +33,7 @@ public class Inbox : PlatformCollectionDocument
     [BsonElement(DB_KEY_HISTORY)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_HISTORY)]
     public List<Message> History { get; private set; }
-
+    
     public Inbox(string aid, List<Message> messages, List<Message> history, long timestamp = 0, string id = null)
     {
         AccountId = aid;
@@ -45,4 +45,7 @@ public class Inbox : PlatformCollectionDocument
             Id = id;
         };
     }
+    
+    [JsonConstructor]
+    public Inbox( ) { }
 }
