@@ -1,18 +1,37 @@
+@{
+    ViewData["Title"] = "Player Inbox";
+}
+
 <div class="mailbox-page-container">
     <div class="send-messages-container">
         @Html.ActionLink(linkText: "Send messages", actionName: "Global", controllerName: "Mailbox", routeValues: new {}, htmlAttributes: new {})
     </div>
-    <div class="error-container invisible"></div>
+    <br/>
+    
+    <h2>@ViewData["Title"]</h2>
+    
+    <div class="error-container">
+        @if (TempData["Failure"] != null)
+            {
+                <h4 style="color: red">@TempData["Success"]</h4>
+            }
+            else
+            {
+                <h4 style="color: darkgreen">@TempData["Success"]</h4>
+            }
+    </div>
     <div class="inbox-search-container">
         <form class="inbox-search-form" method="post" asp-controller="Mailbox" asp-action="Inbox">
             <div class = "inbox-search-form-container">
                 <label for="inbox-search-input" class="inbox-search">Account Id</label>
-                <input id="inbox-search-input" class="inbox-search" type="text" name="id" required>
+                <input id="inbox-search-input" class="inbox-search" type="text" name="accountId" required>
                 <button id="inbox-search-button" class="inbox-search" type="submit">Search</button>
             </div>
         </form>
     </div>
-    <div class="message-history-container">
+    @if (@ViewData["InboxMessages"] != null)
+    {
+        <div class="message-history-container">
         <h1>Inbox Messages</h1>
         <table id="inboxMessages" class="messages">
             <tr>
@@ -52,43 +71,44 @@
         </table>
     </div>
     <br />
-    <div class="message-history-container">
-        <h1>Message History</h1>
-        <table id="messageHistory" class="messages">
-            <tr>
-                <td class="id">Id</td>
-                <td class="subject">Subject</td>
-                <td class="body">Body</td>
-                <td class="attachments">Attachments</td>
-                <td class="visibleFrom">Visible From (UTC)</td>
-                <td class="expiration">Expiration (UTC)</td>
-                <td class="icon">Icon</td>
-                <td class="banner">Banner</td>
-                <td class="internalNote">Internal Note</td>
-                <td class="status">Status</td>
-                <td class="global">Expired</td>
-            </tr>
-            @foreach (Message data in (List<Message>) ViewData["HistoryMessages"])
-            {
+        <div class="message-history-container">
+            <h1>Message History</h1>
+            <table id="messageHistory" class="messages">
                 <tr>
-                    <td>@data.Id</td>
-                    <td>@data.Subject</td>
-                    <td>@data.Body</td>
-                    <td>
-                        @foreach (Attachment attachment in data.Attachments)
-                        {
-                            <p>{"type": @attachment.Type, "rewardId": @attachment.RewardId, "quantity": @attachment.Quantity}</p>
-                        }
-                    </td>
-                    <td>@data.VisibleFrom</td>
-                    <td>@data.Expiration</td>
-                    <td>@data.Icon</td>
-                    <td>@data.Banner</td>
-                    <td>@data.InternalNote</td>
-                    <td>@data.Status</td>
-                    <td>@data.IsExpired</td>
+                    <td class="id">Id</td>
+                    <td class="subject">Subject</td>
+                    <td class="body">Body</td>
+                    <td class="attachments">Attachments</td>
+                    <td class="visibleFrom">Visible From (UTC)</td>
+                    <td class="expiration">Expiration (UTC)</td>
+                    <td class="icon">Icon</td>
+                    <td class="banner">Banner</td>
+                    <td class="internalNote">Internal Note</td>
+                    <td class="status">Status</td>
+                    <td class="global">Expired</td>
                 </tr>
-            }
-        </table>
-    </div>
+                @foreach (Message data in (List<Message>) ViewData["HistoryMessages"])
+                {
+                    <tr>
+                        <td>@data.Id</td>
+                        <td>@data.Subject</td>
+                        <td>@data.Body</td>
+                        <td>
+                            @foreach (Attachment attachment in data.Attachments)
+                            {
+                                <p>{"type": @attachment.Type, "rewardId": @attachment.RewardId, "quantity": @attachment.Quantity}</p>
+                            }
+                        </td>
+                        <td>@data.VisibleFrom</td>
+                        <td>@data.Expiration</td>
+                        <td>@data.Icon</td>
+                        <td>@data.Banner</td>
+                        <td>@data.InternalNote</td>
+                        <td>@data.Status</td>
+                        <td>@data.IsExpired</td>
+                    </tr>
+                }
+            </table>
+        </div>
+    }
 </div>

@@ -50,7 +50,7 @@ public class MailboxController : PlatformController
             }))
             .Get(out GenericData response, out int code);
         
-        List<GlobalMessage> globalMessages = response.Require<List<GlobalMessage>>("globalMessages");
+        List<GlobalMessage> globalMessages = response.Require<List<GlobalMessage>>(key: "globalMessages");
 
         List<GlobalMessage> activeGlobalMessagesList = new List<GlobalMessage>();
         List<GlobalMessage> expiredGlobalMessagesList = new List<GlobalMessage>();
@@ -469,15 +469,18 @@ public class MailboxController : PlatformController
     [Route("inbox")]
     public async Task<IActionResult> Inbox()
     {
+        //ViewData["InboxMessages"] = new List<Message>();
+        //ViewData["HistoryMessages"] = new List<Message>();
+        
         return View();
     }
     
     [HttpPost]
     [Route("inbox")]
-    public async Task<IActionResult> Inbox(string id)
+    public async Task<IActionResult> Inbox(string accountId)
     {
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
-        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages";
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/inbox";
         
         TempData["Success"] = "";
         TempData["Failure"] = null;
@@ -485,6 +488,10 @@ public class MailboxController : PlatformController
         _apiService
             .Request(requestUrl)
             .AddAuthorization(token)
+            .SetPayload(new GenericData
+            {
+                {"accountId", accountId}
+            })
             .OnSuccess(((sender, apiResponse) =>
             {
                 TempData["Success"] = "Successfully fetched inbox messages.";
@@ -500,26 +507,15 @@ public class MailboxController : PlatformController
                     Response = apiResponse
                 });
             }))
-            .Get(out GenericData response, out int code);
+            .Post(out GenericData response, out int code);
+
+        Inbox inbox = response.Require<Inbox>(key: "inbox");
         
-        List<GlobalMessage> globalMessages = response.Require<List<GlobalMessage>>("globalMessages");
+        List<Message> activeMessagesList = inbox.Messages;
+        List<Message> historyMessagesList = inbox.History;
 
-        List<GlobalMessage> activeGlobalMessagesList = new List<GlobalMessage>();
-        List<GlobalMessage> expiredGlobalMessagesList = new List<GlobalMessage>();
-
-        foreach (GlobalMessage globalMessage in globalMessages)
-        {
-            if (!globalMessage.IsExpired)
-            {
-                activeGlobalMessagesList.Add(globalMessage);
-            } else if (globalMessage.IsExpired)
-            {
-                expiredGlobalMessagesList.Add(globalMessage);
-            }
-        }
-
-        ViewData["ActiveGlobalMessages"] = activeGlobalMessagesList;
-        ViewData["ExpiredGlobalMessages"] = expiredGlobalMessagesList;
+        ViewData["InboxMessages"] = activeMessagesList;
+        ViewData["HistoryMessages"] = historyMessagesList;
         
         return View();
     }
