@@ -9,18 +9,19 @@
     <div class="toggle-container">
         @Html.ActionLink(linkText: "Global Messages", actionName: "Global", controllerName: "Mailbox", routeValues: new {}, htmlAttributes: new {})
     </div>
-    <br/>
 
     <h2>@TempData["Title"]</h2>
-
-    @if (TempData["Failure"] != null)
-    {
-        <h4 style="color: red">@TempData["Success"]</h4>
-    }
-    else
-    {
-        <h4 style="color: darkgreen">@TempData["Success"]</h4>
-    }
+    
+    <div class="error-container">
+        @if (TempData["Failure"] != null)
+        {
+            <h4 style="color: red">@TempData["Success"]</h4>
+        }
+        else
+        {
+            <h4 style="color: darkgreen">@TempData["Success"]</h4>
+        }
+    </div>
 
     <div class="group-container">
         <div class="send-group-container">

@@ -9,20 +9,20 @@
     <div class="toggle-container">
         @Html.ActionLink(linkText: "Direct Messages", actionName: "Group", controllerName: "Mailbox", routeValues: new {}, htmlAttributes: new {})
     </div>
-    <br/>
 
     <h2>@ViewData["Title"]</h2>
-
     <p>@TempData["VisibleOverlay"]</p>
 
-    @if (TempData["Failure"] != null)
-    {
-        <h4 style="color: red">@TempData["Success"]</h4>
-    }
-    else
-    {
-        <h4 style="color: darkgreen">@TempData["Success"]</h4>
-    }
+    <div class="error-container">
+        @if (TempData["Failure"] != null)
+        {
+            <h4 style="color: red">@TempData["Success"]</h4>
+        }
+        else
+        {
+            <h4 style="color: darkgreen">@TempData["Success"]</h4>
+        }
+    </div>
 
     <div class="global-container">
         @if (TempData["VisibleOverlay"] != null)
@@ -91,6 +91,7 @@
                 }
             </div>
         }
+    
         <div class="send-global-container">
             <form class="message-info" method="post" asp-controller="Mailbox" asp-action="Global">
                 <label for="newSubject" class="subject">Subject*</label>
@@ -130,6 +131,7 @@
                 <button id="sendGlobalMessageButton" type="submit">Send</button>
             </form>
         </div>
+    
         <div class="active-globals-container">
             <h3>Active Global Messages</h3>
             <table id="activeGlobals" class="globalMessages">
@@ -226,7 +228,6 @@
                     <td class="edit">Edit</td>
                     <td class="delete">Expired</td>
                 </tr>
-
                 @foreach (GlobalMessage data in (List<GlobalMessage>) ViewData["ExpiredGlobalMessages"]) // apparently foreach is bad in views, think about changing to html.displayfor with viewmodels
                 {
                     <tr>

@@ -18,6 +18,9 @@ public class MailboxController : PlatformController
     private readonly ApiService _apiService;
     private readonly DynamicConfigService _dynamicConfigService;
 
+    // Global message routes
+    
+    // Fetch all global messages
     [Route("global")]
     public async Task<IActionResult> Global()
     {
@@ -72,6 +75,8 @@ public class MailboxController : PlatformController
         return View();
     }
 
+    // Sending a new global messages then fetching all global messages upon page reload
+    // Perhaps can refactor to send and then redirect back to GET /global
     [HttpPost]
     [Route("global")]
     public async Task<IActionResult> Global(string subject, string body, string attachments, string visibleFrom, string expiration,
@@ -174,74 +179,8 @@ public class MailboxController : PlatformController
         
         return View();
     }
-    
-    [Route("group")]
-    public async Task<IActionResult> Group()
-    {
-        TempData["Success"] = "";
-        TempData["Failure"] = null;
-        
-        ViewData["Today"] = DefaultDateTime.UtcDateTimeString();
-        ViewData["Week"] = DefaultDateTime.UtcDateTimeString(days: 7);
-        return View();
-    }
 
-    [HttpPost]
-    [Route("group")]
-    public async Task<IActionResult> Group(string playerIds, string subject, string body, string attachments,
-        string visibleFrom, string expiration, string icon, string banner, string internalNote)
-    {
-        string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
-        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/messages/send";
-
-        try
-        {
-            List<string> playerIdsList = ParseMessageData.ParseIds(playerIds);
-            List<Attachment> attachmentsList = ParseMessageData.ParseAttachments(attachments);
-            icon = ParseMessageData.ParseEmpty(icon);
-            banner = ParseMessageData.ParseEmpty(banner);
-            long expirationUnix = ParseMessageData.ParseDateTime(expiration);
-            long visibleFromUnix = ParseMessageData.ParseDateTime(visibleFrom);
-            
-            Message newMessage = new Message(subject: subject, body: body, attachments: attachmentsList,
-                expiration: expirationUnix, visibleFrom: visibleFromUnix, icon: icon, banner: banner,
-                status: Message.StatusType.UNCLAIMED, internalNote: internalNote);
-
-            _apiService
-                .Request(requestUrl)
-                .AddAuthorization(token)
-                .SetPayload(new GenericData
-                {
-                    {"accountIds", playerIdsList},
-                    {"message", newMessage}
-                })
-                .OnSuccess(((sender, apiResponse) =>
-                {
-                    TempData["Success"] = "Successfully sent message.";
-                    TempData["Failure"] = null;
-                    Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
-                }))
-                .OnFailure(((sender, apiResponse) =>
-                {
-                    TempData["Success"] = "Failed to send message.";
-                    TempData["Failure"] = true;
-                    Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
-                    {
-                        Response = apiResponse
-                    });
-                }))
-                .Post(out GenericData sendResponse, out int sendCode);
-        }
-        catch (Exception e)
-        {
-            TempData["Success"] = "Failed to send message. Some fields may be malformed.";
-            TempData["Failure"] = true;
-            Log.Error(owner: Owner.Nathan, message: "Error occurred when sending group message.", data: e.Message);
-        }
-
-        return View();
-    }
-
+    // Edit global messages
     [Route("edit")]
     public async Task<IActionResult> Edit(string messageId, string subject, string body, string attachments, string visibleFrom, string expiration,
         string icon, string banner, string status, string internalNote, string forAccountsBefore)
@@ -367,6 +306,7 @@ public class MailboxController : PlatformController
         return RedirectToAction("Global");
     }
     
+    // Delete global messages
     [Route("delete")]
     public async Task<IActionResult> Delete(string id)
     {
@@ -412,6 +352,7 @@ public class MailboxController : PlatformController
         return RedirectToAction("Global");
     }
 
+    // Used to display edit form and overlay upon clicking edit on a global message
     [Route("showEdit")]
     public IActionResult ShowEditOverlay(string id, string subject, string body, List<Attachment> attachments, string visibleFrom, string expiration, string icon, string banner, string internalNote, string forAccountsBefore)
     {
@@ -430,6 +371,7 @@ public class MailboxController : PlatformController
         return RedirectToAction("Global");
     }
     
+    // Used to display delete confirmation and overlay upon clicking edit on a global message
     [Route("showDelete")]
     public IActionResult ShowDeleteOverlay(string id)
     {
@@ -440,6 +382,7 @@ public class MailboxController : PlatformController
         return RedirectToAction("Global");
     }
 
+    // Used to hide edit, delete, and the overlay
     [Route("hideOverlay")]
     public IActionResult HideOverlay()
     {
@@ -451,6 +394,7 @@ public class MailboxController : PlatformController
         return RedirectToAction("Global");
     }
 
+    // Not currently used. In the future, change to toggle timestamp inputs
     [Route("toggleInput")]
     public IActionResult ToggleInput()
     {
@@ -465,16 +409,92 @@ public class MailboxController : PlatformController
 
         return RedirectToAction("Global");
     }
-
-    [Route("inbox")]
-    public async Task<IActionResult> Inbox()
+    
+    
+    
+    // Group / Direct message routes
+    
+    // View form to send direct messages
+    [Route("group")]
+    public async Task<IActionResult> Group()
     {
-        //ViewData["InboxMessages"] = new List<Message>();
-        //ViewData["HistoryMessages"] = new List<Message>();
+        TempData["Success"] = "";
+        TempData["Failure"] = null;
         
+        ViewData["Today"] = DefaultDateTime.UtcDateTimeString();
+        ViewData["Week"] = DefaultDateTime.UtcDateTimeString(days: 7);
+        return View();
+    }
+
+    // Send direct messages
+    [HttpPost]
+    [Route("group")]
+    public async Task<IActionResult> Group(string playerIds, string subject, string body, string attachments,
+        string visibleFrom, string expiration, string icon, string banner, string internalNote)
+    {
+        string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/messages/send";
+
+        try
+        {
+            List<string> playerIdsList = ParseMessageData.ParseIds(playerIds);
+            List<Attachment> attachmentsList = ParseMessageData.ParseAttachments(attachments);
+            icon = ParseMessageData.ParseEmpty(icon);
+            banner = ParseMessageData.ParseEmpty(banner);
+            long expirationUnix = ParseMessageData.ParseDateTime(expiration);
+            long visibleFromUnix = ParseMessageData.ParseDateTime(visibleFrom);
+            
+            Message newMessage = new Message(subject: subject, body: body, attachments: attachmentsList,
+                expiration: expirationUnix, visibleFrom: visibleFromUnix, icon: icon, banner: banner,
+                status: Message.StatusType.UNCLAIMED, internalNote: internalNote);
+
+            _apiService
+                .Request(requestUrl)
+                .AddAuthorization(token)
+                .SetPayload(new GenericData
+                {
+                    {"accountIds", playerIdsList},
+                    {"message", newMessage}
+                })
+                .OnSuccess(((sender, apiResponse) =>
+                {
+                    TempData["Success"] = "Successfully sent message.";
+                    TempData["Failure"] = null;
+                    Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
+                }))
+                .OnFailure(((sender, apiResponse) =>
+                {
+                    TempData["Success"] = "Failed to send message.";
+                    TempData["Failure"] = true;
+                    Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
+                    {
+                        Response = apiResponse
+                    });
+                }))
+                .Post(out GenericData sendResponse, out int sendCode);
+        }
+        catch (Exception e)
+        {
+            TempData["Success"] = "Failed to send message. Some fields may be malformed.";
+            TempData["Failure"] = true;
+            Log.Error(owner: Owner.Nathan, message: "Error occurred when sending group message.", data: e.Message);
+        }
+
         return View();
     }
     
+    
+    
+    // Player inbox routes
+
+    // Display search form for looking at player inbox
+    [Route("inbox")]
+    public async Task<IActionResult> Inbox()
+    {
+        return View();
+    }
+    
+    // Fetches the inbox for the given accountId
     [HttpPost]
     [Route("inbox")]
     public async Task<IActionResult> Inbox(string accountId)

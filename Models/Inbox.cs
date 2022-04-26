@@ -46,6 +46,7 @@ public class Inbox : PlatformCollectionDocument
         };
     }
     
+    // Required for JSON serialization
     [JsonConstructor]
     public Inbox( ) { }
 }
