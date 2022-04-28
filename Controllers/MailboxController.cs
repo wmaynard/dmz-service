@@ -90,7 +90,11 @@ public class MailboxController : PlatformController
         
         try
         {
-            List<Attachment> attachmentsList = ParseMessageData.ParseAttachments(attachments);
+            List<Attachment> attachmentsList = new List<Attachment>();
+            if (attachments != null)
+            {
+                attachmentsList = ParseMessageData.ParseAttachments(attachments);
+            }
             icon = ParseMessageData.ParseEmpty(icon);
             banner = ParseMessageData.ParseEmpty(banner);
             long expirationUnix = ParseMessageData.ParseDateTime(expiration);
@@ -142,14 +146,10 @@ public class MailboxController : PlatformController
             .AddAuthorization(token)
             .OnSuccess(((sender, apiResponse) =>
             {
-                TempData["Success"] = "Successfully fetched global messages.";
-                TempData["Failure"] = null;
                 Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
             }))
             .OnFailure(((sender, apiResponse) =>
             {
-                TempData["Success"] = "Failed to fetch global messages.";
-                TempData["Failure"] = true;
                 Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
                 {
                     Response = apiResponse
@@ -173,6 +173,9 @@ public class MailboxController : PlatformController
                 expiredGlobalMessagesList.Add(globalMessage);
             }
         }
+        
+        ViewData["Today"] = DefaultDateTime.UtcDateTimeString();
+        ViewData["Week"] = DefaultDateTime.UtcDateTimeString(days: 7);
 
         ViewData["ActiveGlobalMessages"] = activeGlobalMessagesList;
         ViewData["ExpiredGlobalMessages"] = expiredGlobalMessagesList;
@@ -479,6 +482,9 @@ public class MailboxController : PlatformController
             TempData["Failure"] = true;
             Log.Error(owner: Owner.Nathan, message: "Error occurred when sending group message.", data: e.Message);
         }
+        
+        ViewData["Today"] = DefaultDateTime.UtcDateTimeString();
+        ViewData["Week"] = DefaultDateTime.UtcDateTimeString(days: 7);
 
         return View();
     }
