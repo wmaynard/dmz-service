@@ -28,24 +28,14 @@
                     @{
                         if (User?.Identity?.IsAuthenticated ?? false)
                         {
-                            if (ViewData["Admin"] != null)
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Permission" asp-action="Search">Permissions</a>
-                                </li>
-                            }
-                            
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Player" asp-action="Search">Player Service</a>
                             </li>
-
-                            if (ViewData["Test"] != null)
-                            {
+                            
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Mailbox" asp-action="Global">Mailbox Service</a>
                             </li>
-                            }
-
+                            
                             <li class="nav-item">
                                 <u>Welcome: @User.Identity.Name</u>
                                 <a asp-controller="Account" asp-action="GoogleLogout" class="btn btn-danger">Logout</a>

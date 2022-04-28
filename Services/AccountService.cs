@@ -8,9 +8,4 @@ public class AccountService : PlatformMongoService<Account>
     {
         
     }
-    
-    public bool Test()
-    {
-        return true;
-    }
 }
