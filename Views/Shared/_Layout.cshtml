@@ -31,15 +31,18 @@
                             if (ViewData["Admin"] != null)
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Permission" asp-action="Search">Permissions</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Permission" asp-action="List">Permissions</a>
                                 </li>
                             }
-                            
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Player" asp-action="Search">Player Service</a>
-                            </li>
 
-                            if (ViewData["Test"] != null)
+                            if (ViewData["ViewPlayer"] != null)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Player" asp-action="Search">Player Service</a>
+                                </li>
+                            }
+
+                            if (ViewData["ViewMailbox"] != null)
                             {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Mailbox" asp-action="Global">Mailbox Service</a>

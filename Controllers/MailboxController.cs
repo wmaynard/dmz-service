@@ -7,6 +7,7 @@ using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
 using TowerPortal.Models;
+using TowerPortal.Services;
 using TowerPortal.Utilities;
 
 namespace TowerPortal.Controllers;
@@ -17,6 +18,7 @@ public class MailboxController : PlatformController
 {
     private readonly ApiService _apiService;
     private readonly DynamicConfigService _dynamicConfigService;
+    private readonly AccountService _accountService;
 
     // Global message routes
     
@@ -24,6 +26,24 @@ public class MailboxController : PlatformController
     [Route("global")]
     public async Task<IActionResult> Global()
     {
+        // Checking access permissions
+        Account account = Account.FromGoogleClaims(User.Claims);
+        string admin = _accountService.CheckPermissions(account, "admin");
+        string viewPlayer = _accountService.CheckPermissions(account, "viewPlayer");
+        string viewMailbox = _accountService.CheckPermissions(account, "viewMailbox");
+        string editMailbox = _accountService.CheckPermissions(account, "editMailbox");
+        // Tab view permissions
+        ViewData["Admin"] = admin;
+        ViewData["ViewPlayer"] = viewPlayer;
+        ViewData["ViewMailbox"] = viewMailbox;
+        ViewData["EditMailbox"] = editMailbox;
+        
+        // Redirect if not allowed
+        if (viewMailbox == null)
+        {
+            return View("Error");
+        }
+        
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
         string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages";
         
@@ -82,6 +102,24 @@ public class MailboxController : PlatformController
     public async Task<IActionResult> Global(string subject, string body, string attachments, string visibleFrom, string expiration,
         string icon, string banner, string internalNote, string forAccountsBefore)
     {
+        // Checking access permissions
+        Account account = Account.FromGoogleClaims(User.Claims);
+        string admin = _accountService.CheckPermissions(account, "admin");
+        string viewPlayer = _accountService.CheckPermissions(account, "viewPlayer");
+        string viewMailbox = _accountService.CheckPermissions(account, "viewMailbox");
+        string editMailbox = _accountService.CheckPermissions(account, "editMailbox");
+        // Tab view permissions
+        ViewData["Admin"] = admin;
+        ViewData["ViewPlayer"] = viewPlayer;
+        ViewData["ViewMailbox"] = viewMailbox;
+        ViewData["EditMailbox"] = editMailbox;
+        
+        // Redirect if not allowed
+        if (viewMailbox == null || editMailbox == null)
+        {
+            return View("Error");
+        }
+        
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
         string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages";
         
@@ -157,7 +195,6 @@ public class MailboxController : PlatformController
             }))
             .Get(out GenericData response, out int code);
         
-        //GenericData.require<model>("key")
         List<GlobalMessage> globalMessages = response.Require<List<GlobalMessage>>("globalMessages");
 
         List<GlobalMessage> activeGlobalMessagesList = new List<GlobalMessage>();
@@ -188,6 +225,24 @@ public class MailboxController : PlatformController
     public async Task<IActionResult> Edit(string messageId, string subject, string body, string attachments, string visibleFrom, string expiration,
         string icon, string banner, string status, string internalNote, string forAccountsBefore)
     {
+        // Checking access permissions
+        Account account = Account.FromGoogleClaims(User.Claims);
+        string admin = _accountService.CheckPermissions(account, "admin");
+        string viewPlayer = _accountService.CheckPermissions(account, "viewPlayer");
+        string viewMailbox = _accountService.CheckPermissions(account, "viewMailbox");
+        string editMailbox = _accountService.CheckPermissions(account, "editMailbox");
+        // Tab view permissions
+        ViewData["Admin"] = admin;
+        ViewData["ViewPlayer"] = viewPlayer;
+        ViewData["ViewMailbox"] = viewMailbox;
+        ViewData["EditMailbox"] = editMailbox;
+        
+        // Redirect if not allowed
+        if (viewMailbox == null || editMailbox == null)
+        {
+            return View("Error");
+        }
+        
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
         string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages/edit";
         
@@ -313,6 +368,24 @@ public class MailboxController : PlatformController
     [Route("delete")]
     public async Task<IActionResult> Delete(string id)
     {
+        // Checking access permissions
+        Account account = Account.FromGoogleClaims(User.Claims);
+        string admin = _accountService.CheckPermissions(account, "admin");
+        string viewPlayer = _accountService.CheckPermissions(account, "viewPlayer");
+        string viewMailbox = _accountService.CheckPermissions(account, "viewMailbox");
+        string editMailbox = _accountService.CheckPermissions(account, "editMailbox");
+        // Tab view permissions
+        ViewData["Admin"] = admin;
+        ViewData["ViewPlayer"] = viewPlayer;
+        ViewData["ViewMailbox"] = viewMailbox;
+        ViewData["EditMailbox"] = editMailbox;
+        
+        // Redirect if not allowed
+        if (viewMailbox == null || editMailbox == null)
+        {
+            return View("Error");
+        }
+        
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
         string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages/expire";
         
@@ -421,6 +494,24 @@ public class MailboxController : PlatformController
     [Route("group")]
     public async Task<IActionResult> Group()
     {
+        // Checking access permissions
+        Account account = Account.FromGoogleClaims(User.Claims);
+        string admin = _accountService.CheckPermissions(account, "admin");
+        string viewPlayer = _accountService.CheckPermissions(account, "viewPlayer");
+        string viewMailbox = _accountService.CheckPermissions(account, "viewMailbox");
+        string editMailbox = _accountService.CheckPermissions(account, "editMailbox");
+        // Tab view permissions
+        ViewData["Admin"] = admin;
+        ViewData["ViewPlayer"] = viewPlayer;
+        ViewData["ViewMailbox"] = viewMailbox;
+        ViewData["EditMailbox"] = editMailbox;
+        
+        // Redirect if not allowed
+        if (viewMailbox == null)
+        {
+            return View("Error");
+        }
+        
         TempData["Success"] = "";
         TempData["Failure"] = null;
         
@@ -435,6 +526,24 @@ public class MailboxController : PlatformController
     public async Task<IActionResult> Group(string playerIds, string subject, string body, string attachments,
         string visibleFrom, string expiration, string icon, string banner, string internalNote)
     {
+        // Checking access permissions
+        Account account = Account.FromGoogleClaims(User.Claims);
+        string admin = _accountService.CheckPermissions(account, "admin");
+        string viewPlayer = _accountService.CheckPermissions(account, "viewPlayer");
+        string viewMailbox = _accountService.CheckPermissions(account, "viewMailbox");
+        string editMailbox = _accountService.CheckPermissions(account, "editMailbox");
+        // Tab view permissions
+        ViewData["Admin"] = admin;
+        ViewData["ViewPlayer"] = viewPlayer;
+        ViewData["ViewMailbox"] = viewMailbox;
+        ViewData["EditMailbox"] = editMailbox;
+        
+        // Redirect if not allowed
+        if (viewMailbox == null || editMailbox == null)
+        {
+            return View("Error");
+        }
+        
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
         string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/messages/send";
 
@@ -497,6 +606,22 @@ public class MailboxController : PlatformController
     [Route("inbox")]
     public async Task<IActionResult> Inbox()
     {
+        // Checking access permissions
+        Account account = Account.FromGoogleClaims(User.Claims);
+        string admin = _accountService.CheckPermissions(account, "admin");
+        string viewPlayer = _accountService.CheckPermissions(account, "viewPlayer");
+        string viewMailbox = _accountService.CheckPermissions(account, "viewMailbox");
+        // Tab view permissions
+        ViewData["Admin"] = admin;
+        ViewData["ViewPlayer"] = viewPlayer;
+        ViewData["ViewMailbox"] = viewMailbox;
+        
+        // Redirect if not allowed
+        if (viewMailbox == null)
+        {
+            return View("Error");
+        }
+        
         return View();
     }
     
@@ -505,6 +630,22 @@ public class MailboxController : PlatformController
     [Route("inbox")]
     public async Task<IActionResult> Inbox(string accountId)
     {
+        // Checking access permissions
+        Account account = Account.FromGoogleClaims(User.Claims);
+        string admin = _accountService.CheckPermissions(account, "admin");
+        string viewPlayer = _accountService.CheckPermissions(account, "viewPlayer");
+        string viewMailbox = _accountService.CheckPermissions(account, "viewMailbox");
+        // Tab view permissions
+        ViewData["Admin"] = admin;
+        ViewData["ViewPlayer"] = viewPlayer;
+        ViewData["ViewMailbox"] = viewMailbox;
+        
+        // Redirect if not allowed
+        if (viewMailbox == null)
+        {
+            return View("Error");
+        }
+        
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
         string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/inbox";
         

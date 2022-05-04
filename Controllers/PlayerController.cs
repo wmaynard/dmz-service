@@ -7,6 +7,7 @@ using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
 using TowerPortal.Models;
+using TowerPortal.Services;
 
 namespace TowerPortal.Controllers;
 
@@ -17,12 +18,29 @@ public class PlayerController : PlatformController
 #pragma warning disable CS0649
     private readonly ApiService _apiService;
     private readonly DynamicConfigService _dynamicConfigService;
+    private readonly AccountService _accountService;
 #pragma warning restore CS0649
     
     [Route("search")]
     public async Task<IActionResult> Search(string query)
     {
         ViewData["Message"] = "Player search";
+        
+        // Checking access permissions
+        Account account = Account.FromGoogleClaims(User.Claims);
+        string admin = _accountService.CheckPermissions(account, "admin");
+        string viewPlayer = _accountService.CheckPermissions(account, "viewPlayer");
+        string viewMailbox = _accountService.CheckPermissions(account, "viewMailbox");
+        // Tab view permissions
+        ViewData["Admin"] = admin;
+        ViewData["ViewPlayer"] = viewPlayer;
+        ViewData["ViewMailbox"] = viewMailbox;
+        
+        // Redirect if not allowed
+        if (viewPlayer == null)
+        {
+            return View("Error");
+        }
 
         if (query != null)
         {
@@ -83,6 +101,22 @@ public class PlayerController : PlatformController
     [Route("details")]
     public async Task<IActionResult> Details(string id)
     {
+        // Checking access permissions
+        Account account = Account.FromGoogleClaims(User.Claims);
+        string admin = _accountService.CheckPermissions(account, "admin");
+        string viewPlayer = _accountService.CheckPermissions(account, "viewPlayer");
+        string viewMailbox = _accountService.CheckPermissions(account, "viewMailbox");
+        // Tab view permissions
+        ViewData["Admin"] = admin;
+        ViewData["ViewPlayer"] = viewPlayer;
+        ViewData["ViewMailbox"] = viewMailbox;
+        
+        // Redirect if not allowed
+        if (viewPlayer == null)
+        {
+            return View("Error");
+        }
+        
         string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/details?accountId={id}";
 
         string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");

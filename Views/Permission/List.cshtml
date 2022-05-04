@@ -1,0 +1,33 @@
+@{
+    ViewData["Title"] = "Users";
+}
+<h2>@ViewData["Title"]</h2>
+<h3>@ViewData["Message"]</h3>
+
+<p>The following users were found:</p>
+
+<table>
+    <tr>
+        <td>Account Id</td>
+        <td>Email</td>
+        <td>First Name</td>
+        <td>Family Name</td>
+    </tr>
+    @foreach (List<string> data in (List<List<string>>)ViewData["Users"])
+    {
+        <tr>
+            <td>
+                @Html.ActionLink(linkText: @data[0], actionName: "Account", controllerName: "Permission", routeValues: new { id = data[0]}, htmlAttributes: new { id = data[0]})
+            </td>
+            <td>
+                @data[1]
+            </td>
+            <td>
+                @data[2]
+            </td>
+            <td>
+                @data[3]
+            </td>
+        </tr>
+    }
+</table>
