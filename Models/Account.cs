@@ -54,11 +54,11 @@ public class Account : PlatformCollectionDocument
                 continue;
             
             if (type.EndsWith("/givenname"))
-                output.FirstName = claim.Value;
+                output.FirstName = claim.Value.Trim();
             else if (type.EndsWith("/surname"))
-                output.FamilyName = claim.Value;
+                output.FamilyName = claim.Value.Trim();
             else if (type.EndsWith("/emailaddress"))
-                output.Email = claim.Value;
+                output.Email = claim.Value.Trim();
         }
         
         return output;
