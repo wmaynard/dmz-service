@@ -26,6 +26,11 @@ public class HomeController : PlatformController
     {
         // Checking access permissions
         Account account = Account.FromGoogleClaims(User.Claims);
+        if (account.Email == null)
+        {
+            return View();
+        }
+        
         string admin = _accountService.CheckPermissions(account, "admin");
         string viewPlayer = _accountService.CheckPermissions(account, "viewPlayer");
         string viewMailbox = _accountService.CheckPermissions(account, "viewMailbox");
@@ -34,22 +39,6 @@ public class HomeController : PlatformController
         ViewData["ViewPlayer"] = viewPlayer;
         ViewData["ViewMailbox"] = viewMailbox;
         
-        return View();
-    }
-
-    [Route("privacy")]
-    public IActionResult Privacy()
-    {
-        // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims);
-        string admin = _accountService.CheckPermissions(account, "admin");
-        string viewPlayer = _accountService.CheckPermissions(account, "viewPlayer");
-        string viewMailbox = _accountService.CheckPermissions(account, "viewMailbox");
-        // Tab view permissions
-        ViewData["Admin"] = admin;
-        ViewData["ViewPlayer"] = viewPlayer;
-        ViewData["ViewMailbox"] = viewMailbox;
-
         return View();
     }
 
