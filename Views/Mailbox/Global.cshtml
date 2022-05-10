@@ -128,7 +128,14 @@
                 <label for="newInternalNote" class="internalNote">Internal Note</label>
                 <input id="newInternalNote" class="internalNote" type="text" name="internalNote" placeholder="Internal Note">
                 <br/>
-                <button id="sendGlobalMessageButton" type="submit">Send</button>
+                @if (ViewData["EditMailbox"] == null)
+                {
+                    <p id="sendGlobalMessageDisabled" class="disabled">Send</p>
+                }
+                else
+                {
+                    <button id="sendGlobalMessageButton" type="submit">Send</button>
+                }
             </form>
         </div>
     

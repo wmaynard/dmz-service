@@ -1,24 +1,144 @@
 @{
-    ViewData["Title"] = "Player Details";
+    ViewData["Title"] = "User Permissions";
 }
 <h2>@ViewData["Title"]</h2>
 
 <h4>Account: @ViewData["Account"]</h4>
-<form>
-    <table>
-        <tr>
-            
+<form class="permission-info" method="post" asp-controller="Permission" asp-action="Account">
+    <input class="invisible" value=@TempData["AccountId"] name="id"/>
+    <table class="permissions-table">
+        <tr class="env-label">
+            <td></td>
+            @foreach (string env in (List<string>)ViewData["Envs"])
+            {
+                <td>@env</td>
+            }
+        </tr>
+        <tr class="player-label">
+            <td>Player Service</td>
         </tr>
         <tr>
-            <td>
-                <input type="checkbox"/>
-            </td>
-            <td>
-                <input type="checkbox"/>
-            </td>
-            <td>
-                <input type="checkbox"/>
-            </td>
+            <td>    View Player</td>
+            @foreach (string env in (List<string>)ViewData["Envs"])
+            {
+                if (env == "107")
+                {
+                    <td>
+                        <input type="checkbox" name="viewPlayer107"/>
+                    </td>
+                }
+                if (env == "207")
+                {
+                    <td>
+                        <input type="checkbox" name="viewPlayer207"/>
+                    </td>
+                }
+                if (env == "217")
+                {
+                    <td>
+                        <input type="checkbox" name="viewPlayer217"/>
+                    </td>
+                }
+                if (env == "227")
+                {
+                    <td>
+                        <input type="checkbox" name="viewPlayer227"/>
+                    </td>
+                }
+            }
+        </tr>
+        <tr>
+            <td>    Edit Player</td>
+            @foreach (string env in (List<string>)ViewData["Envs"])
+            {
+                if (env == "107")
+                {
+                    <td>
+                        <input type="checkbox" name="editPlayer107"/>
+                    </td>
+                }
+                if (env == "207")
+                {
+                    <td>
+                        <input type="checkbox" name="editPlayer207"/>
+                    </td>
+                }
+                if (env == "217")
+                {
+                    <td>
+                        <input type="checkbox" name="editPlayer217"/>
+                    </td>
+                }
+                if (env == "227")
+                {
+                    <td>
+                        <input type="checkbox" name="editPlayer227"/>
+                    </td>
+                }
+            }
+        </tr>
+        <tr class="mailbox-label">
+            <td>Mailbox Service</td>
+        </tr>
+        <tr>
+            <td>    View Mailbox</td>
+            @foreach (string env in (List<string>)ViewData["Envs"])
+                {
+                    if (env == "107")
+                    {
+                        <td>
+                            <input type="checkbox" name="viewMailbox107"/>
+                        </td>
+                    }
+                    if (env == "207")
+                    {
+                        <td>
+                            <input type="checkbox" name="viewMailbox207"/>
+                        </td>
+                    }
+                    if (env == "217")
+                    {
+                        <td>
+                            <input type="checkbox" name="viewMailbox217"/>
+                        </td>
+                    }
+                    if (env == "227")
+                    {
+                        <td>
+                            <input type="checkbox" name="viewMailbox227"/>
+                        </td>
+                    }
+                }
+        </tr>
+        <tr>
+            <td>    Edit Mailbox</td>
+            @foreach (string env in (List<string>) ViewData["Envs"])
+            {
+                if (env == "107")
+                {
+                    <td>
+                        <input type="checkbox" name="editMailbox107"/>
+                    </td>
+                }
+                if (env == "207")
+                {
+                    <td>
+                        <input type="checkbox" name="editMailbox207"/>
+                    </td>
+                }
+                if (env == "217")
+                {
+                    <td>
+                        <input type="checkbox" name="editMailbox217"/>
+                    </td>
+                }
+                if (env == "227")
+                {
+                    <td>
+                        <input type="checkbox" name="editMailbox227"/>
+                    </td>
+                }
+            }
         </tr>
     </table>
     <button type="submit">Save</button>
