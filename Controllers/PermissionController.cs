@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Services;
+using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
 using TowerPortal.Models;
 using TowerPortal.Services;
@@ -22,6 +23,8 @@ public class PermissionController : PlatformController
     public async Task<IActionResult> List()
     {
         ViewData["Message"] = "User list";
+        TempData["Success"] = null;
+        TempData["Failure"] = null;
 
         // Checking access permissions
         Account account = Models.Account.FromGoogleClaims(User.Claims); // Models required for some reason?
@@ -85,6 +88,90 @@ public class PermissionController : PlatformController
         
         Account user = _accountService.Get(id);
         
+        List<string> currentRoles = user.Roles;
+
+        // TODO refactor, figure out how to do without needing to hardcode
+        ViewData["ViewPlayer107"] = null;
+        if (currentRoles.Contains("viewPlayer107"))
+        {
+            ViewData["ViewPlayer107"] = "on";
+        }
+        ViewData["ViewPlayer207"] = null;
+        if (currentRoles.Contains("viewPlayer207"))
+        {
+            ViewData["ViewPlayer207"] = "on";
+        }
+        ViewData["ViewPlayer217"] = null;
+        if (currentRoles.Contains("viewPlayer217"))
+        {
+            ViewData["ViewPlayer217"] = "on";
+        }
+        ViewData["ViewPlayer227"] = null;
+        if (currentRoles.Contains("viewPlayer227"))
+        {
+            ViewData["ViewPlayer227"] = "on";
+        }
+        ViewData["EditPlayer107"] = null;
+        if (currentRoles.Contains("editPlayer107"))
+        {
+            ViewData["EditPlayer107"] = "on";
+        }
+        ViewData["EditPlayer207"] = null;
+        if (currentRoles.Contains("editPlayer207"))
+        {
+            ViewData["EditPlayer207"] = "on";
+        }
+        ViewData["EditPlayer217"] = null;
+        if (currentRoles.Contains("editPlayer217"))
+        {
+            ViewData["EditPlayer217"] = "on";
+        }
+        ViewData["EditPlayer227"] = null;
+        if (currentRoles.Contains("editPlayer227"))
+        {
+            ViewData["EditPlayer227"] = "on";
+        }
+        ViewData["ViewMailbox107"] = null;
+        if (currentRoles.Contains("viewMailbox107"))
+        {
+            ViewData["ViewMailbox107"] = "on";
+        }
+        ViewData["ViewMailbox207"] = null;
+        if (currentRoles.Contains("viewMailbox207"))
+        {
+            ViewData["ViewMailbox207"] = "on";
+        }
+        ViewData["ViewMailbox217"] = null;
+        if (currentRoles.Contains("viewMailbox217"))
+        {
+            ViewData["ViewMailbox217"] = "on";
+        }
+        ViewData["ViewMailbox227"] = null;
+        if (currentRoles.Contains("viewMailbox227"))
+        {
+            ViewData["ViewMailbox227"] = "on";
+        }
+        ViewData["EditMailbox107"] = null;
+        if (currentRoles.Contains("editMailbox107"))
+        {
+            ViewData["EditMailbox107"] = "on";
+        }
+        ViewData["EditMailbox207"] = null;
+        if (currentRoles.Contains("editMailbox207"))
+        {
+            ViewData["EditMailbox207"] = "on";
+        }
+        ViewData["EditMailbox217"] = null;
+        if (currentRoles.Contains("editMailbox217"))
+        {
+            ViewData["EditMailbox217"] = "on";
+        }
+        ViewData["EditMailbox227"] = null;
+        if (currentRoles.Contains("editMailbox227"))
+        {
+            ViewData["EditMailbox227"] = "on";
+        }
+        
         TempData["AccountId"] = id;
         ViewData["Account"] = user.Email;
 
@@ -99,9 +186,9 @@ public class PermissionController : PlatformController
         string viewPlayer217, string editPlayer217, string viewMailbox217, string editMailbox217,
         string viewPlayer227, string editPlayer227, string viewMailbox227, string editMailbox227
         )
+        // Need to find a way to not have to manually put in each separate permission in parameters
+        // Seems like name field in views has to be hardcoded
     {
-        // TODO show current roles, confirmation on save
-        
         // Checking access permissions
         Account account = Models.Account.FromGoogleClaims(User.Claims); // Models required for some reason?
         string admin = _accountService.CheckPermissions(account, "admin");
@@ -122,9 +209,10 @@ public class PermissionController : PlatformController
 
         List<string> roles = new List<string>();
         
-        if (user.Roles.Contains("admin")) // prevent remove own admin
+        if (user.Roles.Contains("admin107")) // prevent remove own admin
+        // TODO replace with actual env, hardcoded env for now
         {
-            roles.Add("admin");
+            roles.Add("admin107");
         }
         
         // Need to find a way to not have to manually put in each separate permission in parameters
@@ -194,7 +282,18 @@ public class PermissionController : PlatformController
             roles.Add("editMailbox227");
         }
 
-        _accountService.UpdateRoles(user, roles);
+        try
+        {
+            _accountService.UpdateRoles(user, roles);
+            TempData["Success"] = "Successfully updated roles for user.";
+            TempData["Failure"] = null;
+        }
+        catch (Exception e)
+        {
+            Log.Error(owner: Owner.Nathan, message: "Failed to update roles for portal user.", data: e.Message);
+            TempData["Success"] = null;
+            TempData["Failure"] = "Failed to update roles for user.";
+        }
         
         ViewData["Account"] = user.Email;
         

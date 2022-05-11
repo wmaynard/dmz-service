@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using MongoDB.Driver;
+using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
 using TowerPortal.Models;
 
@@ -19,8 +20,12 @@ public class AccountService : PlatformMongoService<Account>
     // Fetch list of roles from db, return list and have controller check list for role
     public string CheckPermissions(Account account, string role)
     {
+        //string env = PlatformEnvironment.Optional<string>("env"); // TODO get env from dynamic config
+        string env = "107"; // hardcoded for now
+        
         Account acc = GetByEmail(account.Email);
-        if (acc.Roles.Contains(role))
+
+        if (acc.Roles.Contains(role + env))
         {
             return "true"; // ViewData is weird with booleans, so using string
         }

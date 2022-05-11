@@ -4,6 +4,18 @@
 <h2>@ViewData["Title"]</h2>
 
 <h4>Account: @ViewData["Account"]</h4>
+
+<div class="error-container">
+    @if (TempData["Failure"] != null)
+    {
+        <h4 style="color: red">@TempData["Success"]</h4>
+    }
+    else
+    {
+        <h4 style="color: darkgreen">@TempData["Success"]</h4>
+    }
+</div>
+
 <form class="permission-info" method="post" asp-controller="Permission" asp-action="Account">
     <input class="invisible" value=@TempData["AccountId"] name="id"/>
     <table class="permissions-table">
@@ -23,27 +35,63 @@
             {
                 if (env == "107")
                 {
-                    <td>
-                        <input type="checkbox" name="viewPlayer107"/>
-                    </td>
+                    if (@ViewData["ViewPlayer107"] != null)
+                    {
+                        <td>
+                            <input type="checkbox" checked name="viewPlayer107"/>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <input type="checkbox" name="viewPlayer107"/>
+                        </td>
+                    }
                 }
                 if (env == "207")
                 {
-                    <td>
-                        <input type="checkbox" name="viewPlayer207"/>
-                    </td>
+                    if (@ViewData["ViewPlayer207"] != null)
+                    {
+                        <td>
+                            <input type="checkbox" checked name="viewPlayer207"/>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <input type="checkbox" name="viewPlayer207"/>
+                        </td>
+                    }
                 }
                 if (env == "217")
                 {
-                    <td>
-                        <input type="checkbox" name="viewPlayer217"/>
-                    </td>
+                    if (@ViewData["ViewPlayer217"] != null)
+                    {
+                        <td>
+                            <input type="checkbox" checked name="viewPlayer217"/>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <input type="checkbox" name="viewPlayer217"/>
+                        </td>
+                    }
                 }
                 if (env == "227")
                 {
-                    <td>
-                        <input type="checkbox" name="viewPlayer227"/>
-                    </td>
+                    if (@ViewData["ViewPlayer227"] != null)
+                    {
+                        <td>
+                            <input type="checkbox" checked name="viewPlayer227"/>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <input type="checkbox" name="viewPlayer227"/>
+                        </td>
+                    }
                 }
             }
         </tr>
@@ -53,27 +101,63 @@
             {
                 if (env == "107")
                 {
-                    <td>
-                        <input type="checkbox" name="editPlayer107"/>
-                    </td>
+                    if (@ViewData["EditPlayer107"] != null)
+                    {
+                        <td>
+                            <input type="checkbox" checked name="editPlayer107"/>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <input type="checkbox" name="editPlayer107"/>
+                        </td>
+                    }
                 }
                 if (env == "207")
                 {
-                    <td>
-                        <input type="checkbox" name="editPlayer207"/>
-                    </td>
+                    if (@ViewData["EditPlayer207"] != null)
+                    {
+                        <td>
+                            <input type="checkbox" checked name="editPlayer207"/>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <input type="checkbox" name="editPlayer207"/>
+                        </td>
+                    }
                 }
                 if (env == "217")
                 {
-                    <td>
-                        <input type="checkbox" name="editPlayer217"/>
-                    </td>
+                    if (@ViewData["EditPlayer217"] != null)
+                    {
+                        <td>
+                            <input type="checkbox" checked name="editPlayer217"/>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <input type="checkbox" name="editPlayer217"/>
+                        </td>
+                    }
                 }
                 if (env == "227")
                 {
-                    <td>
-                        <input type="checkbox" name="editPlayer227"/>
-                    </td>
+                    if (@ViewData["EditPlayer227"] != null)
+                    {
+                        <td>
+                            <input type="checkbox" checked name="editPlayer227"/>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <input type="checkbox" name="editPlayer227"/>
+                        </td>
+                    }
                 }
             }
         </tr>
@@ -86,27 +170,63 @@
                 {
                     if (env == "107")
                     {
-                        <td>
-                            <input type="checkbox" name="viewMailbox107"/>
-                        </td>
+                        if (@ViewData["ViewMailbox107"] != null)
+                        {
+                            <td>
+                                <input type="checkbox" checked name="viewMailbox107"/>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                                <input type="checkbox" name="viewMailbox107"/>
+                            </td>
+                        }
                     }
                     if (env == "207")
                     {
-                        <td>
-                            <input type="checkbox" name="viewMailbox207"/>
-                        </td>
+                        if (@ViewData["ViewMailbox207"] != null)
+                        {
+                            <td>
+                                <input type="checkbox" checked name="viewMailbox207"/>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                                <input type="checkbox" name="viewMailbox207"/>
+                            </td>
+                        }
                     }
                     if (env == "217")
                     {
-                        <td>
-                            <input type="checkbox" name="viewMailbox217"/>
-                        </td>
+                        if (@ViewData["ViewMailbox217"] != null)
+                        {
+                            <td>
+                                <input type="checkbox" checked name="viewMailbox217"/>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                                <input type="checkbox" name="viewMailbox217"/>
+                            </td>
+                        }
                     }
                     if (env == "227")
                     {
-                        <td>
-                            <input type="checkbox" name="viewMailbox227"/>
-                        </td>
+                        if (@ViewData["ViewMailbox227"] != null)
+                        {
+                            <td>
+                                <input type="checkbox" checked name="viewMailbox227"/>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                                <input type="checkbox" name="viewMailbox227"/>
+                            </td>
+                        }
                     }
                 }
         </tr>
@@ -116,27 +236,63 @@
             {
                 if (env == "107")
                 {
-                    <td>
-                        <input type="checkbox" name="editMailbox107"/>
-                    </td>
+                    if (@ViewData["EditMailbox107"] != null)
+                    {
+                        <td>
+                            <input type="checkbox" checked name="editMailbox107"/>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <input type="checkbox" name="editMailbox107"/>
+                        </td>
+                    }
                 }
                 if (env == "207")
                 {
-                    <td>
-                        <input type="checkbox" name="editMailbox207"/>
-                    </td>
+                    if (@ViewData["EditMailbox207"] != null)
+                    {
+                        <td>
+                            <input type="checkbox" checked name="editMailbox207"/>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <input type="checkbox" name="editMailbox207"/>
+                        </td>
+                    }
                 }
                 if (env == "217")
                 {
-                    <td>
-                        <input type="checkbox" name="editMailbox217"/>
-                    </td>
+                    if (@ViewData["EditMailbox217"] != null)
+                    {
+                        <td>
+                            <input type="checkbox" checked name="editMailbox217"/>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <input type="checkbox" name="editMailbox217"/>
+                        </td>
+                    }
                 }
                 if (env == "227")
                 {
-                    <td>
-                        <input type="checkbox" name="editMailbox227"/>
-                    </td>
+                    if (@ViewData["EditMailbox227"] != null)
+                    {
+                        <td>
+                            <input type="checkbox" checked name="editMailbox227"/>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <input type="checkbox" name="editMailbox227"/>
+                        </td>
+                    }
                 }
             }
         </tr>
