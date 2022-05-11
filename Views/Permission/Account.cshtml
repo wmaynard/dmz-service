@@ -1,3 +1,6 @@
+@using TowerPortal.Controllers
+@using TowerPortal.Extensions
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "User Permissions";
 }
@@ -35,18 +38,9 @@
             {
                 if (env == "107")
                 {
-                    if (@ViewData["ViewPlayer107"] != null)
-                    {
-                        <td>
-                            <input type="checkbox" checked name="viewPlayer107"/>
-                        </td>
-                    }
-                    else
-                    {
-                        <td>
-                            <input type="checkbox" name="viewPlayer107"/>
-                        </td>
-                    }
+                    <td>
+                        <input type="checkbox" checked="@(ViewData.GetPermissions().ViewPlayer)" name="viewPlayer107"/>
+                    </td>
                 }
                 if (env == "207")
                 {

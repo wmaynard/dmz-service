@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
@@ -65,6 +66,7 @@ public class PermissionController : PlatformController
     {
         // Checking access permissions
         Account account = Models.Account.FromGoogleClaims(User.Claims); // Models required for some reason?
+        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
         string admin = _accountService.CheckPermissions(account, "admin");
         string viewPlayer = _accountService.CheckPermissions(account, "viewPlayer");
         string viewMailbox = _accountService.CheckPermissions(account, "viewMailbox");
@@ -72,6 +74,7 @@ public class PermissionController : PlatformController
         ViewData["Admin"] = admin;
         ViewData["ViewPlayer"] = viewPlayer;
         ViewData["ViewMailbox"] = viewMailbox;
+        ViewData["Permissions"] = mongoAccount.Permissions;
         
         // Redirect if not allowed
         if (admin == null)
@@ -264,3 +267,4 @@ public class PermissionController : PlatformController
     [Route("health")]
     public override ActionResult HealthCheck() => Ok(_apiService.HealthCheckResponseObject, _dynamicConfigService.HealthCheckResponseObject);
 }
+

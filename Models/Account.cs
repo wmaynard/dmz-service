@@ -38,6 +38,15 @@ public class Account : PlatformCollectionDocument
     [BsonElement(DB_KEY_ROLES)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_ROLES)]
     public List<string> Roles { get; private set; }
+    
+    [BsonElement("permissions")]
+    public Permissions Permissions { get; private set; }
+
+    public Account()
+    {
+        Roles = new List<string>();
+        Permissions = new Permissions();
+    }
 
     public static Account FromGoogleClaims(IEnumerable<Claim> claims)
     {
