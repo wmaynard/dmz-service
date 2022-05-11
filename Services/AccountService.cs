@@ -20,8 +20,8 @@ public class AccountService : PlatformMongoService<Account>
     // Fetch list of roles from db, return list and have controller check list for role
     public string CheckPermissions(Account account, string role)
     {
-        //string env = PlatformEnvironment.Optional<string>("env"); // TODO get env from dynamic config
-        string env = "107"; // hardcoded for now
+        //string env = PlatformEnvironment.Optional<string>("env"); // get env from dynamic config?
+        string env = PlatformEnvironment.Optional<string>(key: "RUMBLE_DEPLOYMENT");
         
         Account acc = GetByEmail(account.Email);
 

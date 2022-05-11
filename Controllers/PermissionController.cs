@@ -80,10 +80,8 @@ public class PermissionController : PlatformController
         }
 
         List<String> environments = new List<String>();
-        environments.Add("107"); // currently hard coded 107
-        environments.Add("207"); // currently hard coded 207
-        environments.Add("217"); // currently hard coded 217
-        environments.Add("227"); // currently hard coded 227
+        string env = PlatformEnvironment.Optional<string>(key: "RUMBLE_DEPLOYMENT");
+        environments.Add(env);
         ViewData["Envs"] = environments;
         
         Account user = _accountService.Get(id);
@@ -101,15 +99,10 @@ public class PermissionController : PlatformController
         {
             ViewData["ViewPlayer207"] = "on";
         }
-        ViewData["ViewPlayer217"] = null;
-        if (currentRoles.Contains("viewPlayer217"))
+        ViewData["ViewPlayer307"] = null;
+        if (currentRoles.Contains("viewPlayer307"))
         {
-            ViewData["ViewPlayer217"] = "on";
-        }
-        ViewData["ViewPlayer227"] = null;
-        if (currentRoles.Contains("viewPlayer227"))
-        {
-            ViewData["ViewPlayer227"] = "on";
+            ViewData["ViewPlayer307"] = "on";
         }
         ViewData["EditPlayer107"] = null;
         if (currentRoles.Contains("editPlayer107"))
@@ -121,15 +114,10 @@ public class PermissionController : PlatformController
         {
             ViewData["EditPlayer207"] = "on";
         }
-        ViewData["EditPlayer217"] = null;
-        if (currentRoles.Contains("editPlayer217"))
+        ViewData["EditPlayer307"] = null;
+        if (currentRoles.Contains("editPlayer307"))
         {
-            ViewData["EditPlayer217"] = "on";
-        }
-        ViewData["EditPlayer227"] = null;
-        if (currentRoles.Contains("editPlayer227"))
-        {
-            ViewData["EditPlayer227"] = "on";
+            ViewData["EditPlayer307"] = "on";
         }
         ViewData["ViewMailbox107"] = null;
         if (currentRoles.Contains("viewMailbox107"))
@@ -141,15 +129,10 @@ public class PermissionController : PlatformController
         {
             ViewData["ViewMailbox207"] = "on";
         }
-        ViewData["ViewMailbox217"] = null;
-        if (currentRoles.Contains("viewMailbox217"))
+        ViewData["ViewMailbox307"] = null;
+        if (currentRoles.Contains("viewMailbox307"))
         {
-            ViewData["ViewMailbox217"] = "on";
-        }
-        ViewData["ViewMailbox227"] = null;
-        if (currentRoles.Contains("viewMailbox227"))
-        {
-            ViewData["ViewMailbox227"] = "on";
+            ViewData["ViewMailbox307"] = "on";
         }
         ViewData["EditMailbox107"] = null;
         if (currentRoles.Contains("editMailbox107"))
@@ -161,17 +144,12 @@ public class PermissionController : PlatformController
         {
             ViewData["EditMailbox207"] = "on";
         }
-        ViewData["EditMailbox217"] = null;
-        if (currentRoles.Contains("editMailbox217"))
+        ViewData["EditMailbox307"] = null;
+        if (currentRoles.Contains("editMailbox307"))
         {
-            ViewData["EditMailbox217"] = "on";
+            ViewData["EditMailbox307"] = "on";
         }
-        ViewData["EditMailbox227"] = null;
-        if (currentRoles.Contains("editMailbox227"))
-        {
-            ViewData["EditMailbox227"] = "on";
-        }
-        
+
         TempData["AccountId"] = id;
         ViewData["Account"] = user.Email;
 
@@ -183,8 +161,7 @@ public class PermissionController : PlatformController
     public async Task<IActionResult> Account(string id,
         string viewPlayer107, string editPlayer107, string viewMailbox107, string editMailbox107,
         string viewPlayer207, string editPlayer207, string viewMailbox207, string editMailbox207,
-        string viewPlayer217, string editPlayer217, string viewMailbox217, string editMailbox217,
-        string viewPlayer227, string editPlayer227, string viewMailbox227, string editMailbox227
+        string viewPlayer307, string editPlayer307, string viewMailbox307, string editMailbox307
         )
         // Need to find a way to not have to manually put in each separate permission in parameters
         // Seems like name field in views has to be hardcoded
@@ -225,13 +202,9 @@ public class PermissionController : PlatformController
         {
             roles.Add("viewPlayer207");
         }
-        if (viewPlayer217 != null)
+        if (viewPlayer307 != null)
         {
-            roles.Add("viewPlayer217");
-        }
-        if (viewPlayer227 != null)
-        {
-            roles.Add("viewPlayer227");
+            roles.Add("viewPlayer307");
         }
         if (editPlayer107 != null)
         {
@@ -241,13 +214,9 @@ public class PermissionController : PlatformController
         {
             roles.Add("editPlayer207");
         }
-        if (editPlayer217 != null)
+        if (editPlayer307 != null)
         {
-            roles.Add("editPlayer217");
-        }
-        if (editPlayer227 != null)
-        {
-            roles.Add("editPlayer227");
+            roles.Add("editPlayer307");
         }
         if (viewMailbox107 != null)
         {
@@ -257,13 +226,9 @@ public class PermissionController : PlatformController
         {
             roles.Add("viewMailbox207");
         }
-        if (viewMailbox217 != null)
+        if (viewMailbox307 != null)
         {
-            roles.Add("viewMailbox217");
-        }
-        if (viewMailbox227 != null)
-        {
-            roles.Add("viewMailbox227");
+            roles.Add("viewMailbox307");
         }
         if (editMailbox107 != null)
         {
@@ -273,13 +238,9 @@ public class PermissionController : PlatformController
         {
             roles.Add("editMailbox207");
         }
-        if (editMailbox217 != null)
+        if (editMailbox307 != null)
         {
-            roles.Add("editMailbox217");
-        }
-        if (editMailbox227 != null)
-        {
-            roles.Add("editMailbox227");
+            roles.Add("editMailbox307");
         }
 
         try
