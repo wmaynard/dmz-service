@@ -6,6 +6,7 @@ using Rumble.Platform.Common.Web;
 
 namespace TowerPortal.Models;
 
+[BsonIgnoreExtraElements]
 public class Account : PlatformCollectionDocument
 {
     internal const string DB_KEY_NAME = "name";
