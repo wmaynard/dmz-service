@@ -24,7 +24,7 @@ public class HomeController : PlatformController
     public IActionResult Index()
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims); // Models required for some reason?
+        Account account = Account.FromGoogleClaims(User.Claims);
         Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
         if (mongoAccount == null)
         {

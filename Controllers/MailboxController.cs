@@ -27,7 +27,7 @@ public class MailboxController : PlatformController
     public async Task<IActionResult> Global()
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims); // Models required for some reason?
+        Account account = Account.FromGoogleClaims(User.Claims);
         Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
         ViewData["Permissions"] = mongoAccount.Permissions;
         Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
@@ -123,7 +123,7 @@ public class MailboxController : PlatformController
         string icon, string banner, string internalNote, string forAccountsBefore)
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims); // Models required for some reason?
+        Account account = Account.FromGoogleClaims(User.Claims);
         Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
         ViewData["Permissions"] = mongoAccount.Permissions;
         Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
@@ -266,7 +266,7 @@ public class MailboxController : PlatformController
         string icon, string banner, string status, string internalNote, string forAccountsBefore)
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims); // Models required for some reason?
+        Account account = Account.FromGoogleClaims(User.Claims);
         Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
         ViewData["Permissions"] = mongoAccount.Permissions;
         Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
@@ -429,7 +429,7 @@ public class MailboxController : PlatformController
     public async Task<IActionResult> Delete(string id)
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims); // Models required for some reason?
+        Account account = Account.FromGoogleClaims(User.Claims);
         Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
         ViewData["Permissions"] = mongoAccount.Permissions;
         Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
@@ -575,7 +575,7 @@ public class MailboxController : PlatformController
     public async Task<IActionResult> Group()
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims); // Models required for some reason?
+        Account account = Account.FromGoogleClaims(User.Claims);
         Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
         ViewData["Permissions"] = mongoAccount.Permissions;
         Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
@@ -627,7 +627,7 @@ public class MailboxController : PlatformController
         string visibleFrom, string expiration, string icon, string banner, string internalNote)
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims); // Models required for some reason?
+        Account account = Account.FromGoogleClaims(User.Claims);
         Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
         ViewData["Permissions"] = mongoAccount.Permissions;
         Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
@@ -727,7 +727,7 @@ public class MailboxController : PlatformController
     public async Task<IActionResult> Inbox()
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims); // Models required for some reason?
+        Account account = Account.FromGoogleClaims(User.Claims);
         Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
         ViewData["Permissions"] = mongoAccount.Permissions;
         Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
@@ -773,7 +773,7 @@ public class MailboxController : PlatformController
     public async Task<IActionResult> Inbox(string accountId)
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims); // Models required for some reason?
+        Account account = Account.FromGoogleClaims(User.Claims);
         Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
         ViewData["Permissions"] = mongoAccount.Permissions;
         Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);

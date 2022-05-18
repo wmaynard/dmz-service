@@ -27,7 +27,7 @@ public class PlayerController : PlatformController
         ViewData["Message"] = "Player search";
         
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims); // Models required for some reason?
+        Account account = Account.FromGoogleClaims(User.Claims);
         Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
         ViewData["Permissions"] = mongoAccount.Permissions;
         Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
@@ -119,7 +119,7 @@ public class PlayerController : PlatformController
     public async Task<IActionResult> Details(string id)
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims); // Models required for some reason?
+        Account account = Account.FromGoogleClaims(User.Claims);
         Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
         ViewData["Permissions"] = mongoAccount.Permissions;
         Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
