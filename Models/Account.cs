@@ -10,13 +10,13 @@ public class Account : PlatformCollectionDocument
 {
     internal const string DB_KEY_NAME = "name";
     internal const string DB_KEY_EMAIL = "email";
-    internal const string DB_KEY_ROLES = "roles";
+    internal const string DB_KEY_PERMISSIONS = "perms";
     internal const string DB_KEY_FIRST_NAME = "fn";
     internal const string DB_KEY_LAST_NAME = "ln";
 
     public const string FRIENDLY_KEY_NAME = "name";
     public const string FRIENDLY_KEY_EMAIL = "email";
-    public const string FRIENDLY_KEY_ROLES = "roles";
+    public const string FRIENDLY_KEY_PERMISSIONS = "permissions";
     public const string FRIENDLY_KEY_GIVEN_NAME = "givenName";
     public const string FRIENDLY_KEY_FAMILY_NAME = "familyName";
 
@@ -35,16 +35,12 @@ public class Account : PlatformCollectionDocument
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_EMAIL)]
     public string Email { get; private set; }
     
-    [BsonElement(DB_KEY_ROLES)]
-    [JsonInclude, JsonPropertyName(FRIENDLY_KEY_ROLES)]
-    public List<string> Roles { get; private set; }
-    
-    [BsonElement("permissions")]
+    [BsonElement(DB_KEY_PERMISSIONS)]
+    [JsonInclude, JsonPropertyName(FRIENDLY_KEY_PERMISSIONS)]
     public Permissions Permissions { get; private set; }
 
     public Account()
     {
-        Roles = new List<string>();
         Permissions = new Permissions();
     }
 

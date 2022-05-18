@@ -27,19 +27,34 @@ public class MailboxController : PlatformController
     public async Task<IActionResult> Global()
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims);
-        string admin = _accountService.CheckPermissions(account, "admin");
-        string viewPlayer = _accountService.CheckPermissions(account, "viewPlayer");
-        string viewMailbox = _accountService.CheckPermissions(account, "viewMailbox");
-        string editMailbox = _accountService.CheckPermissions(account, "editMailbox");
+        Account account = Account.FromGoogleClaims(User.Claims); // Models required for some reason?
+        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
+        ViewData["Permissions"] = mongoAccount.Permissions;
+        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
         // Tab view permissions
-        ViewData["Admin"] = admin;
-        ViewData["ViewPlayer"] = viewPlayer;
-        ViewData["ViewMailbox"] = viewMailbox;
-        ViewData["EditMailbox"] = editMailbox;
+        bool currentAdmin = currentPermissions.Admin;
+        bool currentViewPlayer = currentPermissions.ViewPlayer;
+        bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentEditMailbox = currentPermissions.EditMailbox;
+        if (currentAdmin)
+        {
+            ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentViewPlayer)
+        {
+            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
+        }
+        if (currentViewMailbox)
+        {
+            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        if (currentEditMailbox)
+        {
+            ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
+        }
         
         // Redirect if not allowed
-        if (viewMailbox == null)
+        if (currentViewMailbox == false)
         {
             return View("Error");
         }
@@ -103,19 +118,34 @@ public class MailboxController : PlatformController
         string icon, string banner, string internalNote, string forAccountsBefore)
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims);
-        string admin = _accountService.CheckPermissions(account, "admin");
-        string viewPlayer = _accountService.CheckPermissions(account, "viewPlayer");
-        string viewMailbox = _accountService.CheckPermissions(account, "viewMailbox");
-        string editMailbox = _accountService.CheckPermissions(account, "editMailbox");
+        Account account = Account.FromGoogleClaims(User.Claims); // Models required for some reason?
+        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
+        ViewData["Permissions"] = mongoAccount.Permissions;
+        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
         // Tab view permissions
-        ViewData["Admin"] = admin;
-        ViewData["ViewPlayer"] = viewPlayer;
-        ViewData["ViewMailbox"] = viewMailbox;
-        ViewData["EditMailbox"] = editMailbox;
+        bool currentAdmin = currentPermissions.Admin;
+        bool currentViewPlayer = currentPermissions.ViewPlayer;
+        bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentEditMailbox = currentPermissions.EditMailbox;
+        if (currentAdmin)
+        {
+            ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentViewPlayer)
+        {
+            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
+        }
+        if (currentViewMailbox)
+        {
+            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        if (currentEditMailbox)
+        {
+            ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
+        }
         
         // Redirect if not allowed
-        if (viewMailbox == null || editMailbox == null)
+        if (currentViewMailbox == false || currentEditMailbox == false)
         {
             return View("Error");
         }
@@ -226,19 +256,34 @@ public class MailboxController : PlatformController
         string icon, string banner, string status, string internalNote, string forAccountsBefore)
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims);
-        string admin = _accountService.CheckPermissions(account, "admin");
-        string viewPlayer = _accountService.CheckPermissions(account, "viewPlayer");
-        string viewMailbox = _accountService.CheckPermissions(account, "viewMailbox");
-        string editMailbox = _accountService.CheckPermissions(account, "editMailbox");
+        Account account = Account.FromGoogleClaims(User.Claims); // Models required for some reason?
+        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
+        ViewData["Permissions"] = mongoAccount.Permissions;
+        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
         // Tab view permissions
-        ViewData["Admin"] = admin;
-        ViewData["ViewPlayer"] = viewPlayer;
-        ViewData["ViewMailbox"] = viewMailbox;
-        ViewData["EditMailbox"] = editMailbox;
+        bool currentAdmin = currentPermissions.Admin;
+        bool currentViewPlayer = currentPermissions.ViewPlayer;
+        bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentEditMailbox = currentPermissions.EditMailbox;
+        if (currentAdmin)
+        {
+            ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentViewPlayer)
+        {
+            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
+        }
+        if (currentViewMailbox)
+        {
+            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        if (currentEditMailbox)
+        {
+            ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
+        }
         
         // Redirect if not allowed
-        if (viewMailbox == null || editMailbox == null)
+        if (currentViewMailbox == false || currentEditMailbox == false)
         {
             return View("Error");
         }
@@ -369,19 +414,34 @@ public class MailboxController : PlatformController
     public async Task<IActionResult> Delete(string id)
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims);
-        string admin = _accountService.CheckPermissions(account, "admin");
-        string viewPlayer = _accountService.CheckPermissions(account, "viewPlayer");
-        string viewMailbox = _accountService.CheckPermissions(account, "viewMailbox");
-        string editMailbox = _accountService.CheckPermissions(account, "editMailbox");
+        Account account = Account.FromGoogleClaims(User.Claims); // Models required for some reason?
+        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
+        ViewData["Permissions"] = mongoAccount.Permissions;
+        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
         // Tab view permissions
-        ViewData["Admin"] = admin;
-        ViewData["ViewPlayer"] = viewPlayer;
-        ViewData["ViewMailbox"] = viewMailbox;
-        ViewData["EditMailbox"] = editMailbox;
+        bool currentAdmin = currentPermissions.Admin;
+        bool currentViewPlayer = currentPermissions.ViewPlayer;
+        bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentEditMailbox = currentPermissions.EditMailbox;
+        if (currentAdmin)
+        {
+            ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentViewPlayer)
+        {
+            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
+        }
+        if (currentViewMailbox)
+        {
+            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        if (currentEditMailbox)
+        {
+            ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
+        }
         
         // Redirect if not allowed
-        if (viewMailbox == null || editMailbox == null)
+        if (currentViewMailbox == false || currentEditMailbox == false)
         {
             return View("Error");
         }
@@ -495,19 +555,34 @@ public class MailboxController : PlatformController
     public async Task<IActionResult> Group()
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims);
-        string admin = _accountService.CheckPermissions(account, "admin");
-        string viewPlayer = _accountService.CheckPermissions(account, "viewPlayer");
-        string viewMailbox = _accountService.CheckPermissions(account, "viewMailbox");
-        string editMailbox = _accountService.CheckPermissions(account, "editMailbox");
+        Account account = Account.FromGoogleClaims(User.Claims); // Models required for some reason?
+        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
+        ViewData["Permissions"] = mongoAccount.Permissions;
+        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
         // Tab view permissions
-        ViewData["Admin"] = admin;
-        ViewData["ViewPlayer"] = viewPlayer;
-        ViewData["ViewMailbox"] = viewMailbox;
-        ViewData["EditMailbox"] = editMailbox;
+        bool currentAdmin = currentPermissions.Admin;
+        bool currentViewPlayer = currentPermissions.ViewPlayer;
+        bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentEditMailbox = currentPermissions.EditMailbox;
+        if (currentAdmin)
+        {
+            ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentViewPlayer)
+        {
+            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
+        }
+        if (currentViewMailbox)
+        {
+            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        if (currentEditMailbox)
+        {
+            ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
+        }
         
         // Redirect if not allowed
-        if (viewMailbox == null)
+        if (currentViewMailbox == false)
         {
             return View("Error");
         }
@@ -527,19 +602,34 @@ public class MailboxController : PlatformController
         string visibleFrom, string expiration, string icon, string banner, string internalNote)
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims);
-        string admin = _accountService.CheckPermissions(account, "admin");
-        string viewPlayer = _accountService.CheckPermissions(account, "viewPlayer");
-        string viewMailbox = _accountService.CheckPermissions(account, "viewMailbox");
-        string editMailbox = _accountService.CheckPermissions(account, "editMailbox");
+        Account account = Account.FromGoogleClaims(User.Claims); // Models required for some reason?
+        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
+        ViewData["Permissions"] = mongoAccount.Permissions;
+        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
         // Tab view permissions
-        ViewData["Admin"] = admin;
-        ViewData["ViewPlayer"] = viewPlayer;
-        ViewData["ViewMailbox"] = viewMailbox;
-        ViewData["EditMailbox"] = editMailbox;
+        bool currentAdmin = currentPermissions.Admin;
+        bool currentViewPlayer = currentPermissions.ViewPlayer;
+        bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentEditMailbox = currentPermissions.EditMailbox;
+        if (currentAdmin)
+        {
+            ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentViewPlayer)
+        {
+            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
+        }
+        if (currentViewMailbox)
+        {
+            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        if (currentEditMailbox)
+        {
+            ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
+        }
         
         // Redirect if not allowed
-        if (viewMailbox == null || editMailbox == null)
+        if (currentViewMailbox == false || currentEditMailbox == false)
         {
             return View("Error");
         }
@@ -607,17 +697,34 @@ public class MailboxController : PlatformController
     public async Task<IActionResult> Inbox()
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims);
-        string admin = _accountService.CheckPermissions(account, "admin");
-        string viewPlayer = _accountService.CheckPermissions(account, "viewPlayer");
-        string viewMailbox = _accountService.CheckPermissions(account, "viewMailbox");
+        Account account = Account.FromGoogleClaims(User.Claims); // Models required for some reason?
+        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
+        ViewData["Permissions"] = mongoAccount.Permissions;
+        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
         // Tab view permissions
-        ViewData["Admin"] = admin;
-        ViewData["ViewPlayer"] = viewPlayer;
-        ViewData["ViewMailbox"] = viewMailbox;
+        bool currentAdmin = currentPermissions.Admin;
+        bool currentViewPlayer = currentPermissions.ViewPlayer;
+        bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentEditMailbox = currentPermissions.EditMailbox;
+        if (currentAdmin)
+        {
+            ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentViewPlayer)
+        {
+            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
+        }
+        if (currentViewMailbox)
+        {
+            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        if (currentEditMailbox)
+        {
+            ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
+        }
         
         // Redirect if not allowed
-        if (viewMailbox == null)
+        if (currentViewMailbox == false)
         {
             return View("Error");
         }
@@ -631,17 +738,34 @@ public class MailboxController : PlatformController
     public async Task<IActionResult> Inbox(string accountId)
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims);
-        string admin = _accountService.CheckPermissions(account, "admin");
-        string viewPlayer = _accountService.CheckPermissions(account, "viewPlayer");
-        string viewMailbox = _accountService.CheckPermissions(account, "viewMailbox");
+        Account account = Account.FromGoogleClaims(User.Claims); // Models required for some reason?
+        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
+        ViewData["Permissions"] = mongoAccount.Permissions;
+        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
         // Tab view permissions
-        ViewData["Admin"] = admin;
-        ViewData["ViewPlayer"] = viewPlayer;
-        ViewData["ViewMailbox"] = viewMailbox;
+        bool currentAdmin = currentPermissions.Admin;
+        bool currentViewPlayer = currentPermissions.ViewPlayer;
+        bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentEditMailbox = currentPermissions.EditMailbox;
+        if (currentAdmin)
+        {
+            ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentViewPlayer)
+        {
+            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
+        }
+        if (currentViewMailbox)
+        {
+            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        if (currentEditMailbox)
+        {
+            ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
+        }
         
         // Redirect if not allowed
-        if (viewMailbox == null)
+        if (currentViewMailbox == false)
         {
             return View("Error");
         }

@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Web;
 using TowerPortal.Models;
@@ -25,19 +24,30 @@ public class HomeController : PlatformController
     public IActionResult Index()
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims);
-        if (account.Email == null)
+        Account account = Account.FromGoogleClaims(User.Claims); // Models required for some reason?
+        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
+        if (mongoAccount == null)
         {
             return View();
         }
-        
-        string admin = _accountService.CheckPermissions(account, "admin");
-        string viewPlayer = _accountService.CheckPermissions(account, "viewPlayer");
-        string viewMailbox = _accountService.CheckPermissions(account, "viewMailbox");
+        ViewData["Permissions"] = mongoAccount.Permissions;
+        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
         // Tab view permissions
-        ViewData["Admin"] = admin;
-        ViewData["ViewPlayer"] = viewPlayer;
-        ViewData["ViewMailbox"] = viewMailbox;
+        bool currentAdmin = currentPermissions.Admin;
+        bool currentViewPlayer = currentPermissions.ViewPlayer;
+        bool currentViewMailbox = currentPermissions.ViewMailbox;
+        if (currentAdmin)
+        {
+            ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentViewPlayer)
+        {
+            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
+        }
+        if (currentViewMailbox)
+        {
+            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
         
         return View();
     }

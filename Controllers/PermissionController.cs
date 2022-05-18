@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
@@ -29,16 +28,28 @@ public class PermissionController : PlatformController
 
         // Checking access permissions
         Account account = Models.Account.FromGoogleClaims(User.Claims); // Models required for some reason?
-        string admin = _accountService.CheckPermissions(account, "admin");
-        string viewPlayer = _accountService.CheckPermissions(account, "viewPlayer");
-        string viewMailbox = _accountService.CheckPermissions(account, "viewMailbox");
+        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
+        ViewData["Permissions"] = mongoAccount.Permissions;
+        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
         // Tab view permissions
-        ViewData["Admin"] = admin;
-        ViewData["ViewPlayer"] = viewPlayer;
-        ViewData["ViewMailbox"] = viewMailbox;
+        bool currentAdmin = currentPermissions.Admin;
+        bool currentViewPlayer = currentPermissions.ViewPlayer;
+        bool currentViewMailbox = currentPermissions.ViewMailbox;
+        if (currentAdmin)
+        {
+            ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentViewPlayer)
+        {
+            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
+        }
+        if (currentViewMailbox)
+        {
+            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
         
         // Redirect if not allowed
-        if (admin == null)
+        if (currentAdmin == false)
         {
             return View("Error");
         }
@@ -67,91 +78,34 @@ public class PermissionController : PlatformController
         // Checking access permissions
         Account account = Models.Account.FromGoogleClaims(User.Claims); // Models required for some reason?
         Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
-        string admin = _accountService.CheckPermissions(account, "admin");
-        string viewPlayer = _accountService.CheckPermissions(account, "viewPlayer");
-        string viewMailbox = _accountService.CheckPermissions(account, "viewMailbox");
-        // Tab view permissions
-        ViewData["Admin"] = admin;
-        ViewData["ViewPlayer"] = viewPlayer;
-        ViewData["ViewMailbox"] = viewMailbox;
         ViewData["Permissions"] = mongoAccount.Permissions;
+        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
+        // Tab view permissions
+        bool currentAdmin = currentPermissions.Admin;
+        bool currentViewPlayer = currentPermissions.ViewPlayer;
+        bool currentViewMailbox = currentPermissions.ViewMailbox;
+        if (currentAdmin)
+        {
+            ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentViewPlayer)
+        {
+            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
+        }
+        if (currentViewMailbox)
+        {
+            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
         
         // Redirect if not allowed
-        if (admin == null)
+        if (currentAdmin == false)
         {
             return View("Error");
         }
-
-        List<String> environments = new List<String>();
-        string env = PlatformEnvironment.Optional<string>(key: "RUMBLE_DEPLOYMENT");
-        environments.Add(env);
-        ViewData["Envs"] = environments;
+        
+        ViewData["Environment"] = PlatformEnvironment.Optional<string>(key: "RUMBLE_DEPLOYMENT");
         
         Account user = _accountService.Get(id);
-        
-        List<string> currentRoles = user.Roles;
-
-        // TODO refactor, figure out how to do without needing to hardcode
-        ViewData["ViewPlayer107"] = null;
-        if (currentRoles.Contains("viewPlayer107"))
-        {
-            ViewData["ViewPlayer107"] = "on";
-        }
-        ViewData["ViewPlayer207"] = null;
-        if (currentRoles.Contains("viewPlayer207"))
-        {
-            ViewData["ViewPlayer207"] = "on";
-        }
-        ViewData["ViewPlayer307"] = null;
-        if (currentRoles.Contains("viewPlayer307"))
-        {
-            ViewData["ViewPlayer307"] = "on";
-        }
-        ViewData["EditPlayer107"] = null;
-        if (currentRoles.Contains("editPlayer107"))
-        {
-            ViewData["EditPlayer107"] = "on";
-        }
-        ViewData["EditPlayer207"] = null;
-        if (currentRoles.Contains("editPlayer207"))
-        {
-            ViewData["EditPlayer207"] = "on";
-        }
-        ViewData["EditPlayer307"] = null;
-        if (currentRoles.Contains("editPlayer307"))
-        {
-            ViewData["EditPlayer307"] = "on";
-        }
-        ViewData["ViewMailbox107"] = null;
-        if (currentRoles.Contains("viewMailbox107"))
-        {
-            ViewData["ViewMailbox107"] = "on";
-        }
-        ViewData["ViewMailbox207"] = null;
-        if (currentRoles.Contains("viewMailbox207"))
-        {
-            ViewData["ViewMailbox207"] = "on";
-        }
-        ViewData["ViewMailbox307"] = null;
-        if (currentRoles.Contains("viewMailbox307"))
-        {
-            ViewData["ViewMailbox307"] = "on";
-        }
-        ViewData["EditMailbox107"] = null;
-        if (currentRoles.Contains("editMailbox107"))
-        {
-            ViewData["EditMailbox107"] = "on";
-        }
-        ViewData["EditMailbox207"] = null;
-        if (currentRoles.Contains("editMailbox207"))
-        {
-            ViewData["EditMailbox207"] = "on";
-        }
-        ViewData["EditMailbox307"] = null;
-        if (currentRoles.Contains("editMailbox307"))
-        {
-            ViewData["EditMailbox307"] = "on";
-        }
 
         TempData["AccountId"] = id;
         ViewData["Account"] = user.Email;
@@ -161,102 +115,83 @@ public class PermissionController : PlatformController
 
     [HttpPost]
     [Route("account")]
-    public async Task<IActionResult> Account(string id,
-        string viewPlayer107, string editPlayer107, string viewMailbox107, string editMailbox107,
-        string viewPlayer207, string editPlayer207, string viewMailbox207, string editMailbox207,
-        string viewPlayer307, string editPlayer307, string viewMailbox307, string editMailbox307
-        )
-        // Need to find a way to not have to manually put in each separate permission in parameters
-        // Seems like name field in views has to be hardcoded
+    public async Task<IActionResult> Account(string id, string viewPlayer, string editPlayer, string viewMailbox, string editMailbox)
     {
         // Checking access permissions
         Account account = Models.Account.FromGoogleClaims(User.Claims); // Models required for some reason?
-        string admin = _accountService.CheckPermissions(account, "admin");
-        string viewPlayer = _accountService.CheckPermissions(account, "viewPlayer");
-        string viewMailbox = _accountService.CheckPermissions(account, "viewMailbox");
+        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
+        ViewData["Permissions"] = mongoAccount.Permissions;
+        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
         // Tab view permissions
-        ViewData["Admin"] = admin;
-        ViewData["ViewPlayer"] = viewPlayer;
-        ViewData["ViewMailbox"] = viewMailbox;
+        bool currentAdmin = currentPermissions.Admin;
+        bool currentViewPlayer = currentPermissions.ViewPlayer;
+        bool currentViewMailbox = currentPermissions.ViewMailbox;
+        if (currentAdmin)
+        {
+            ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentViewPlayer)
+        {
+            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
+        }
+        if (currentViewMailbox)
+        {
+            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
         
         // Redirect if not allowed
-        if (admin == null)
+        if (currentAdmin == false)
         {
             return View("Error");
         }
 
         Account user = _accountService.Get(id);
 
-        List<string> roles = new List<string>();
-        
-        if (user.Roles.Contains("admin107")) // prevent remove own admin
-        // TODO replace with actual env, hardcoded env for now
-        {
-            roles.Add("admin107");
-        }
-        
-        // Need to find a way to not have to manually put in each separate permission in parameters
-        // Seems like name field in views has to be hardcoded
-        if (viewPlayer107 != null)
-        {
-            roles.Add("viewPlayer107");
-        }
-        if (viewPlayer207 != null)
-        {
-            roles.Add("viewPlayer207");
-        }
-        if (viewPlayer307 != null)
-        {
-            roles.Add("viewPlayer307");
-        }
-        if (editPlayer107 != null)
-        {
-            roles.Add("editPlayer107");
-        }
-        if (editPlayer207 != null)
-        {
-            roles.Add("editPlayer207");
-        }
-        if (editPlayer307 != null)
-        {
-            roles.Add("editPlayer307");
-        }
-        if (viewMailbox107 != null)
-        {
-            roles.Add("viewMailbox107");
-        }
-        if (viewMailbox207 != null)
-        {
-            roles.Add("viewMailbox207");
-        }
-        if (viewMailbox307 != null)
-        {
-            roles.Add("viewMailbox307");
-        }
-        if (editMailbox107 != null)
-        {
-            roles.Add("editMailbox107");
-        }
-        if (editMailbox207 != null)
-        {
-            roles.Add("editMailbox207");
-        }
-        if (editMailbox307 != null)
-        {
-            roles.Add("editMailbox307");
-        }
-
         try
         {
-            _accountService.UpdateRoles(user, roles);
-            TempData["Success"] = "Successfully updated roles for user.";
+            if (viewPlayer != null)
+            {
+                user.Permissions.ViewPlayer = true;
+            }
+            else
+            {
+                user.Permissions.ViewPlayer = false;
+            }
+            if (editPlayer != null)
+            {
+                user.Permissions.EditPlayer = true;
+            }
+            else
+            {
+                user.Permissions.EditPlayer = false;
+            }
+            if (viewMailbox != null)
+            {
+                user.Permissions.ViewMailbox = true;
+            }
+            else
+            {
+                user.Permissions.ViewMailbox = false;
+            }
+            if (editMailbox != null)
+            {
+                user.Permissions.EditMailbox = true;
+            }
+            else
+            {
+                user.Permissions.EditMailbox = false;
+            }
+            
+            _accountService.Update(user);
+            
+            TempData["Success"] = "Successfully updated permissions for user.";
             TempData["Failure"] = null;
         }
         catch (Exception e)
         {
-            Log.Error(owner: Owner.Nathan, message: "Failed to update roles for portal user.", data: e.Message);
+            Log.Error(owner: Owner.Nathan, message: "Failed to update permissions for portal user.", data: e.Message);
             TempData["Success"] = null;
-            TempData["Failure"] = "Failed to update roles for user.";
+            TempData["Failure"] = "Failed to update permissions for user.";
         }
         
         ViewData["Account"] = user.Email;

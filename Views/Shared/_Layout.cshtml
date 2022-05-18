@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using TowerPortal.Extensions
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
@@ -26,21 +27,21 @@
                     @{
                         if (User?.Identity?.IsAuthenticated ?? false)
                         {
-                            if (ViewData["Admin"] != null)
+                            if (ViewData["CurrentAdmin"] != null)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Permission" asp-action="List">Permissions</a>
                                 </li>
                             }
 
-                            if (ViewData["ViewPlayer"] != null)
+                            if (ViewData["CurrentViewPlayer"] != null)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Player" asp-action="Search">Player Service</a>
                                 </li>
                             }
 
-                            if (ViewData["ViewMailbox"] != null)
+                            if (ViewData["CurrentViewMailbox"] != null)
                             {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Mailbox" asp-action="Global">Mailbox Service</a>

@@ -1,4 +1,3 @@
-@using TowerPortal.Controllers
 @using TowerPortal.Extensions
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @{
@@ -23,212 +22,38 @@
     <input class="invisible" value=@TempData["AccountId"] name="id"/>
     <table class="permissions-table">
         <tr class="env-label">
-            <td></td>
-            @foreach (string env in (List<string>)ViewData["Envs"])
-            {
-                <td>@env</td>
-            }
+            <td>Environment</td>
+            <td>@ViewData["Environment"]</td>
         </tr>
         <tr class="player-label">
             <td>Player Service</td>
         </tr>
         <tr>
             <td>    View Player</td>
-            @foreach (string env in (List<string>)ViewData["Envs"])
-            {
-                if (env == "107")
-                {
-                    <td>
-                        <input type="checkbox" checked="@(ViewData.GetPermissions().ViewPlayer)" name="viewPlayer107"/>
-                    </td>
-                }
-                if (env == "207")
-                {
-                    if (@ViewData["ViewPlayer207"] != null)
-                    {
-                        <td>
-                            <input type="checkbox" checked name="viewPlayer207"/>
-                        </td>
-                    }
-                    else
-                    {
-                        <td>
-                            <input type="checkbox" name="viewPlayer207"/>
-                        </td>
-                    }
-                }
-                if (env == "307")
-                {
-                    if (@ViewData["ViewPlayer307"] != null)
-                    {
-                        <td>
-                            <input type="checkbox" checked name="viewPlayer307"/>
-                        </td>
-                    }
-                    else
-                    {
-                        <td>
-                            <input type="checkbox" name="viewPlayer307"/>
-                        </td>
-                    }
-                }
-            }
+            <td>
+                <input type="checkbox" checked="@(ViewData.GetPermissions().ViewPlayer)" name="viewPlayer"/>
+            </td>
         </tr>
         <tr>
             <td>    Edit Player</td>
-            @foreach (string env in (List<string>)ViewData["Envs"])
-            {
-                if (env == "107")
-                {
-                    if (@ViewData["EditPlayer107"] != null)
-                    {
-                        <td>
-                            <input type="checkbox" checked name="editPlayer107"/>
-                        </td>
-                    }
-                    else
-                    {
-                        <td>
-                            <input type="checkbox" name="editPlayer107"/>
-                        </td>
-                    }
-                }
-                if (env == "207")
-                {
-                    if (@ViewData["EditPlayer207"] != null)
-                    {
-                        <td>
-                            <input type="checkbox" checked name="editPlayer207"/>
-                        </td>
-                    }
-                    else
-                    {
-                        <td>
-                            <input type="checkbox" name="editPlayer207"/>
-                        </td>
-                    }
-                }
-                if (env == "307")
-                {
-                    if (@ViewData["EditPlayer307"] != null)
-                    {
-                        <td>
-                            <input type="checkbox" checked name="editPlayer307"/>
-                        </td>
-                    }
-                    else
-                    {
-                        <td>
-                            <input type="checkbox" name="editPlayer307"/>
-                        </td>
-                    }
-                }
-            }
+            <td>
+                <input type="checkbox" checked="@(ViewData.GetPermissions().EditPlayer)" name="editPlayer"/>
+            </td>
         </tr>
         <tr class="mailbox-label">
             <td>Mailbox Service</td>
         </tr>
         <tr>
             <td>    View Mailbox</td>
-            @foreach (string env in (List<string>)ViewData["Envs"])
-                {
-                    if (env == "107")
-                    {
-                        if (@ViewData["ViewMailbox107"] != null)
-                        {
-                            <td>
-                                <input type="checkbox" checked name="viewMailbox107"/>
-                            </td>
-                        }
-                        else
-                        {
-                            <td>
-                                <input type="checkbox" name="viewMailbox107"/>
-                            </td>
-                        }
-                    }
-                    if (env == "207")
-                    {
-                        if (@ViewData["ViewMailbox207"] != null)
-                        {
-                            <td>
-                                <input type="checkbox" checked name="viewMailbox207"/>
-                            </td>
-                        }
-                        else
-                        {
-                            <td>
-                                <input type="checkbox" name="viewMailbox207"/>
-                            </td>
-                        }
-                    }
-                    if (env == "307")
-                    {
-                        if (@ViewData["ViewMailbox307"] != null)
-                        {
-                            <td>
-                                <input type="checkbox" checked name="viewMailbox307"/>
-                            </td>
-                        }
-                        else
-                        {
-                            <td>
-                                <input type="checkbox" name="viewMailbox307"/>
-                            </td>
-                        }
-                    }
-                }
+            <td>
+                <input type="checkbox" checked="@(ViewData.GetPermissions().ViewMailbox)" name="viewMailbox"/>
+            </td>
         </tr>
         <tr>
             <td>    Edit Mailbox</td>
-            @foreach (string env in (List<string>) ViewData["Envs"])
-            {
-                if (env == "107")
-                {
-                    if (@ViewData["EditMailbox107"] != null)
-                    {
-                        <td>
-                            <input type="checkbox" checked name="editMailbox107"/>
-                        </td>
-                    }
-                    else
-                    {
-                        <td>
-                            <input type="checkbox" name="editMailbox107"/>
-                        </td>
-                    }
-                }
-                if (env == "207")
-                {
-                    if (@ViewData["EditMailbox207"] != null)
-                    {
-                        <td>
-                            <input type="checkbox" checked name="editMailbox207"/>
-                        </td>
-                    }
-                    else
-                    {
-                        <td>
-                            <input type="checkbox" name="editMailbox207"/>
-                        </td>
-                    }
-                }
-                if (env == "307")
-                {
-                    if (@ViewData["EditMailbox217"] != null)
-                    {
-                        <td>
-                            <input type="checkbox" checked name="editMailbox307"/>
-                        </td>
-                    }
-                    else
-                    {
-                        <td>
-                            <input type="checkbox" name="editMailbox307"/>
-                        </td>
-                    }
-                }
-            }
+            <td>
+                <input type="checkbox" checked="@(ViewData.GetPermissions().EditMailbox)" name="editMailbox"/>
+            </td>
         </tr>
     </table>
     <button type="submit">Save</button>
