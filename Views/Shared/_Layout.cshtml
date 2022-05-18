@@ -27,7 +27,7 @@
                     @{
                         if (User?.Identity?.IsAuthenticated ?? false)
                         {
-                            if (ViewData["CurrentAdmin"] != null)
+                            if (ViewData["CurrentAdmin"] != null || ViewData["CurrentManagePermissions"] != null)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Permission" asp-action="List">Permissions</a>

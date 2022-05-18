@@ -33,11 +33,16 @@ public class PermissionController : PlatformController
         Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
         // Tab view permissions
         bool currentAdmin = currentPermissions.Admin;
+        bool currentManagePermissions = currentPermissions.ManagePermissions;
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         if (currentAdmin)
         {
             ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentManagePermissions)
+        {
+            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
         }
         if (currentViewPlayer)
         {
@@ -49,7 +54,7 @@ public class PermissionController : PlatformController
         }
         
         // Redirect if not allowed
-        if (currentAdmin == false)
+        if (currentAdmin == false && currentManagePermissions == false)
         {
             return View("Error");
         }
@@ -82,11 +87,16 @@ public class PermissionController : PlatformController
         Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
         // Tab view permissions
         bool currentAdmin = currentPermissions.Admin;
+        bool currentManagePermissions = currentPermissions.ManagePermissions;
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         if (currentAdmin)
         {
             ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentManagePermissions)
+        {
+            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
         }
         if (currentViewPlayer)
         {
@@ -98,7 +108,7 @@ public class PermissionController : PlatformController
         }
         
         // Redirect if not allowed
-        if (currentAdmin == false)
+        if (currentAdmin == false && currentManagePermissions == false)
         {
             return View("Error");
         }
@@ -115,7 +125,7 @@ public class PermissionController : PlatformController
 
     [HttpPost]
     [Route("account")]
-    public async Task<IActionResult> Account(string id, string viewPlayer, string editPlayer, string viewMailbox, string editMailbox)
+    public async Task<IActionResult> Account(string id, string managePermissions, string viewPlayer, string editPlayer, string viewMailbox, string editMailbox)
     {
         // Checking access permissions
         Account account = Models.Account.FromGoogleClaims(User.Claims); // Models required for some reason?
@@ -124,11 +134,16 @@ public class PermissionController : PlatformController
         Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
         // Tab view permissions
         bool currentAdmin = currentPermissions.Admin;
+        bool currentManagePermissions = currentPermissions.ManagePermissions;
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         if (currentAdmin)
         {
             ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentManagePermissions)
+        {
+            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
         }
         if (currentViewPlayer)
         {
@@ -140,7 +155,7 @@ public class PermissionController : PlatformController
         }
         
         // Redirect if not allowed
-        if (currentAdmin == false)
+        if (currentAdmin == false && currentManagePermissions == false)
         {
             return View("Error");
         }
@@ -149,6 +164,14 @@ public class PermissionController : PlatformController
 
         try
         {
+            if (managePermissions != null)
+            {
+                user.Permissions.ManagePermissions = true;
+            }
+            else
+            {
+                user.Permissions.ManagePermissions = false;
+            }
             if (viewPlayer != null)
             {
                 user.Permissions.ViewPlayer = true;

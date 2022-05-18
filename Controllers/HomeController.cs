@@ -44,11 +44,16 @@ public class HomeController : PlatformController
         Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
         // Tab view permissions
         bool currentAdmin = currentPermissions.Admin;
+        bool currentManagePermissions = currentPermissions.ManagePermissions;
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         if (currentAdmin)
         {
             ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentManagePermissions)
+        {
+            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
         }
         if (currentViewPlayer)
         {

@@ -5,6 +5,7 @@ namespace TowerPortal.Models;
 public class Permissions : PlatformDataModel
 {
 	public bool Admin { get; set; }
+	public bool ManagePermissions { get; set; }
 	public bool ViewPlayer { get; set; }
 	public bool EditPlayer { get; set; }
 	public bool ViewMailbox { get; set; }
@@ -13,5 +14,6 @@ public class Permissions : PlatformDataModel
 	public void SetAdmin()
 	{
 		Admin = true;
+		ManagePermissions = true;
 	}
 }

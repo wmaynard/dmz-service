@@ -25,17 +25,26 @@
             <td>Environment</td>
             <td>@ViewData["Environment"]</td>
         </tr>
+        @if (ViewData["CurrentAdmin"] != null || ViewData["CurrentManagePermissions"] != null)
+        {
+            <tr class="permissions-label">
+                <td>Manage Permissions</td>
+                <td>
+                    <input type="checkbox" checked = "@(ViewData.GetPermissions().ManagePermissions)" disabled="@(ViewData.GetPermissions().Admin)" name="managePermissions"/>
+                </td>
+            </tr>
+        }
         <tr class="player-label">
             <td>Player Service</td>
         </tr>
         <tr>
-            <td>    View Player</td>
+            <td>View Player</td>
             <td>
                 <input type="checkbox" checked="@(ViewData.GetPermissions().ViewPlayer)" name="viewPlayer"/>
             </td>
         </tr>
         <tr>
-            <td>    Edit Player</td>
+            <td>Edit Player</td>
             <td>
                 <input type="checkbox" checked="@(ViewData.GetPermissions().EditPlayer)" name="editPlayer"/>
             </td>
