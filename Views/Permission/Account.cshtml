@@ -1,0 +1,69 @@
+@using TowerPortal.Extensions
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "User Permissions";
+}
+<h2>@ViewData["Title"]</h2>
+
+<h4>Account: @ViewData["Account"]</h4>
+
+<div class="error-container">
+    @if (TempData["Failure"] != null)
+    {
+        <h4 style="color: red">@TempData["Success"]</h4>
+    }
+    else
+    {
+        <h4 style="color: darkgreen">@TempData["Success"]</h4>
+    }
+</div>
+
+<form class="permission-info" method="post" asp-controller="Permission" asp-action="Account">
+    <input class="invisible" value=@TempData["AccountId"] name="id"/>
+    <table class="permissions-table">
+        <tr class="env-label">
+            <td>Environment</td>
+            <td>@ViewData["Environment"]</td>
+        </tr>
+        @if (ViewData["CurrentAdmin"] != null || ViewData["CurrentManagePermissions"] != null)
+        {
+            <tr class="permissions-label">
+                <td>Manage Permissions</td>
+                <td>
+                    <input type="checkbox" checked = "@(ViewData.GetPermissions().ManagePermissions)" disabled="@(ViewData.GetPermissions().Admin)" name="managePermissions"/>
+                </td>
+            </tr>
+        }
+        <tr class="player-label">
+            <td>Player Service</td>
+        </tr>
+        <tr>
+            <td>View Player</td>
+            <td>
+                <input type="checkbox" checked="@(ViewData.GetPermissions().ViewPlayer)" name="viewPlayer"/>
+            </td>
+        </tr>
+        <tr>
+            <td>Edit Player</td>
+            <td>
+                <input type="checkbox" checked="@(ViewData.GetPermissions().EditPlayer)" name="editPlayer"/>
+            </td>
+        </tr>
+        <tr class="mailbox-label">
+            <td>Mailbox Service</td>
+        </tr>
+        <tr>
+            <td>    View Mailbox</td>
+            <td>
+                <input type="checkbox" checked="@(ViewData.GetPermissions().ViewMailbox)" name="viewMailbox"/>
+            </td>
+        </tr>
+        <tr>
+            <td>    Edit Mailbox</td>
+            <td>
+                <input type="checkbox" checked="@(ViewData.GetPermissions().EditMailbox)" name="editMailbox"/>
+            </td>
+        </tr>
+    </table>
+    <button type="submit">Save</button>
+</form>

@@ -1,3 +1,4 @@
+@using TowerPortal.Extensions
 @{
     ViewData["Title"] = "Group Messages";
 }
@@ -60,7 +61,7 @@
                 <label for="groupInternalNote" class="groupInternalNote">Internal Note</label>
                 <input id="groupInternalNote" class="groupInternalNote" type="text" name="internalNote" placeholder="Internal Note">
                 <br/>
-                <button id="sendGroupMessageButton" type="submit">Send</button>
+                <button id="sendGroupMessageButton" disabled="@(!ViewData.GetPermissions().EditMailbox)" type="submit">Send</button>
             </form>
         </div>
     </div>

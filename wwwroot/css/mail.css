@@ -2,6 +2,11 @@
     display: none
 }
 
+.disabled {
+    pointer-events: none;
+    color: gray;
+}
+
 div.view-inbox-container {
     padding-bottom: 2%;
     border-bottom: 1px black solid;
@@ -70,7 +75,7 @@ form.message-info {
                          "l8 l8 i8 i8 i8"
                          "l9 l9 i9 i9 i9"
                          "l10 . i10 . ."
-                         "b . . . .";
+                         "b . . . c";
     grid-template-columns: 1fr 4fr 1fr 2fr 2fr;
     margin-bottom: 10px;
 }
@@ -201,6 +206,10 @@ form.message-info button {
 
 form.message-info button.edit-confirm {
     grid-area: b;
+}
+
+form.message-info a {
+    grid-area: c;
 }
 
 #sendGroupMessageButton,

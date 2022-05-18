@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using TowerPortal.Extensions
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="~/css/site.css"/>
     <link rel="stylesheet" href="~/css/mail.css"/>
+    <link rel="stylesheet" href="~/css/permissions.css"/>
 </head>
 <body>
 <header>
@@ -22,20 +24,30 @@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                    </li>
                     @{
                         if (User?.Identity?.IsAuthenticated ?? false)
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Player" asp-action="Search">Player Service</a>
-                            </li>
-                            
+                            if (ViewData["CurrentAdmin"] != null || ViewData["CurrentManagePermissions"] != null)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Permission" asp-action="List">Permissions</a>
+                                </li>
+                            }
+
+                            if (ViewData["CurrentViewPlayer"] != null)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Player" asp-action="Search">Player Service</a>
+                                </li>
+                            }
+
+                            if (ViewData["CurrentViewMailbox"] != null)
+                            {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Mailbox" asp-action="Global">Mailbox Service</a>
                             </li>
-                            
+                            }
+
                             <li class="nav-item">
                                 <u>Welcome: @User.Identity.Name</u>
                                 <a asp-controller="Account" asp-action="GoogleLogout" class="btn btn-danger">Logout</a>
@@ -60,9 +72,6 @@
 </div>
 
 <footer class="border-top footer text-muted">
-    <div class="container">
-        &copy; 2021 - tower-admin-portal - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-    </div>
 </footer>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

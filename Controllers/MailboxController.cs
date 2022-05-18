@@ -7,6 +7,7 @@ using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
 using TowerPortal.Models;
+using TowerPortal.Services;
 using TowerPortal.Utilities;
 
 namespace TowerPortal.Controllers;
@@ -17,6 +18,7 @@ public class MailboxController : PlatformController
 {
     private readonly ApiService _apiService;
     private readonly DynamicConfigService _dynamicConfigService;
+    private readonly AccountService _accountService;
 
     // Global message routes
     
@@ -24,6 +26,44 @@ public class MailboxController : PlatformController
     [Route("global")]
     public async Task<IActionResult> Global()
     {
+        // Checking access permissions
+        Account account = Account.FromGoogleClaims(User.Claims);
+        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
+        ViewData["Permissions"] = mongoAccount.Permissions;
+        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
+        // Tab view permissions
+        bool currentAdmin = currentPermissions.Admin;
+        bool currentManagePermissions = currentPermissions.ManagePermissions;
+        bool currentViewPlayer = currentPermissions.ViewPlayer;
+        bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentEditMailbox = currentPermissions.EditMailbox;
+        if (currentAdmin)
+        {
+            ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentManagePermissions)
+        {
+            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
+        }
+        if (currentViewPlayer)
+        {
+            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
+        }
+        if (currentViewMailbox)
+        {
+            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        if (currentEditMailbox)
+        {
+            ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
+        }
+        
+        // Redirect if not allowed
+        if (currentViewMailbox == false)
+        {
+            return View("Error");
+        }
+        
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
         string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages";
         
@@ -82,6 +122,44 @@ public class MailboxController : PlatformController
     public async Task<IActionResult> Global(string subject, string body, string attachments, string visibleFrom, string expiration,
         string icon, string banner, string internalNote, string forAccountsBefore)
     {
+        // Checking access permissions
+        Account account = Account.FromGoogleClaims(User.Claims);
+        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
+        ViewData["Permissions"] = mongoAccount.Permissions;
+        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
+        // Tab view permissions
+        bool currentAdmin = currentPermissions.Admin;
+        bool currentManagePermissions = currentPermissions.ManagePermissions;
+        bool currentViewPlayer = currentPermissions.ViewPlayer;
+        bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentEditMailbox = currentPermissions.EditMailbox;
+        if (currentAdmin)
+        {
+            ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentManagePermissions)
+        {
+            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
+        }
+        if (currentViewPlayer)
+        {
+            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
+        }
+        if (currentViewMailbox)
+        {
+            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        if (currentEditMailbox)
+        {
+            ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
+        }
+        
+        // Redirect if not allowed
+        if (currentViewMailbox == false || currentEditMailbox == false)
+        {
+            return View("Error");
+        }
+        
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
         string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages";
         
@@ -157,7 +235,6 @@ public class MailboxController : PlatformController
             }))
             .Get(out GenericData response, out int code);
         
-        //GenericData.require<model>("key")
         List<GlobalMessage> globalMessages = response.Require<List<GlobalMessage>>("globalMessages");
 
         List<GlobalMessage> activeGlobalMessagesList = new List<GlobalMessage>();
@@ -188,6 +265,44 @@ public class MailboxController : PlatformController
     public async Task<IActionResult> Edit(string messageId, string subject, string body, string attachments, string visibleFrom, string expiration,
         string icon, string banner, string status, string internalNote, string forAccountsBefore)
     {
+        // Checking access permissions
+        Account account = Account.FromGoogleClaims(User.Claims);
+        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
+        ViewData["Permissions"] = mongoAccount.Permissions;
+        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
+        // Tab view permissions
+        bool currentAdmin = currentPermissions.Admin;
+        bool currentManagePermissions = currentPermissions.ManagePermissions;
+        bool currentViewPlayer = currentPermissions.ViewPlayer;
+        bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentEditMailbox = currentPermissions.EditMailbox;
+        if (currentAdmin)
+        {
+            ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentManagePermissions)
+        {
+            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
+        }
+        if (currentViewPlayer)
+        {
+            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
+        }
+        if (currentViewMailbox)
+        {
+            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        if (currentEditMailbox)
+        {
+            ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
+        }
+        
+        // Redirect if not allowed
+        if (currentViewMailbox == false || currentEditMailbox == false)
+        {
+            return View("Error");
+        }
+        
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
         string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages/edit";
         
@@ -313,6 +428,44 @@ public class MailboxController : PlatformController
     [Route("delete")]
     public async Task<IActionResult> Delete(string id)
     {
+        // Checking access permissions
+        Account account = Account.FromGoogleClaims(User.Claims);
+        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
+        ViewData["Permissions"] = mongoAccount.Permissions;
+        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
+        // Tab view permissions
+        bool currentAdmin = currentPermissions.Admin;
+        bool currentManagePermissions = currentPermissions.ManagePermissions;
+        bool currentViewPlayer = currentPermissions.ViewPlayer;
+        bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentEditMailbox = currentPermissions.EditMailbox;
+        if (currentAdmin)
+        {
+            ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentManagePermissions)
+        {
+            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
+        }
+        if (currentViewPlayer)
+        {
+            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
+        }
+        if (currentViewMailbox)
+        {
+            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        if (currentEditMailbox)
+        {
+            ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
+        }
+        
+        // Redirect if not allowed
+        if (currentViewMailbox == false || currentEditMailbox == false)
+        {
+            return View("Error");
+        }
+        
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
         string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages/expire";
         
@@ -421,6 +574,44 @@ public class MailboxController : PlatformController
     [Route("group")]
     public async Task<IActionResult> Group()
     {
+        // Checking access permissions
+        Account account = Account.FromGoogleClaims(User.Claims);
+        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
+        ViewData["Permissions"] = mongoAccount.Permissions;
+        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
+        // Tab view permissions
+        bool currentAdmin = currentPermissions.Admin;
+        bool currentManagePermissions = currentPermissions.ManagePermissions;
+        bool currentViewPlayer = currentPermissions.ViewPlayer;
+        bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentEditMailbox = currentPermissions.EditMailbox;
+        if (currentAdmin)
+        {
+            ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentManagePermissions)
+        {
+            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
+        }
+        if (currentViewPlayer)
+        {
+            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
+        }
+        if (currentViewMailbox)
+        {
+            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        if (currentEditMailbox)
+        {
+            ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
+        }
+        
+        // Redirect if not allowed
+        if (currentViewMailbox == false)
+        {
+            return View("Error");
+        }
+        
         TempData["Success"] = "";
         TempData["Failure"] = null;
         
@@ -435,6 +626,44 @@ public class MailboxController : PlatformController
     public async Task<IActionResult> Group(string playerIds, string subject, string body, string attachments,
         string visibleFrom, string expiration, string icon, string banner, string internalNote)
     {
+        // Checking access permissions
+        Account account = Account.FromGoogleClaims(User.Claims);
+        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
+        ViewData["Permissions"] = mongoAccount.Permissions;
+        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
+        // Tab view permissions
+        bool currentAdmin = currentPermissions.Admin;
+        bool currentManagePermissions = currentPermissions.ManagePermissions;
+        bool currentViewPlayer = currentPermissions.ViewPlayer;
+        bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentEditMailbox = currentPermissions.EditMailbox;
+        if (currentAdmin)
+        {
+            ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentManagePermissions)
+        {
+            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
+        }
+        if (currentViewPlayer)
+        {
+            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
+        }
+        if (currentViewMailbox)
+        {
+            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        if (currentEditMailbox)
+        {
+            ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
+        }
+        
+        // Redirect if not allowed
+        if (currentViewMailbox == false || currentEditMailbox == false)
+        {
+            return View("Error");
+        }
+        
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
         string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/messages/send";
 
@@ -497,6 +726,44 @@ public class MailboxController : PlatformController
     [Route("inbox")]
     public async Task<IActionResult> Inbox()
     {
+        // Checking access permissions
+        Account account = Account.FromGoogleClaims(User.Claims);
+        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
+        ViewData["Permissions"] = mongoAccount.Permissions;
+        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
+        // Tab view permissions
+        bool currentAdmin = currentPermissions.Admin;
+        bool currentManagePermissions = currentPermissions.ManagePermissions;
+        bool currentViewPlayer = currentPermissions.ViewPlayer;
+        bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentEditMailbox = currentPermissions.EditMailbox;
+        if (currentAdmin)
+        {
+            ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentManagePermissions)
+        {
+            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
+        }
+        if (currentViewPlayer)
+        {
+            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
+        }
+        if (currentViewMailbox)
+        {
+            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        if (currentEditMailbox)
+        {
+            ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
+        }
+        
+        // Redirect if not allowed
+        if (currentViewMailbox == false)
+        {
+            return View("Error");
+        }
+        
         return View();
     }
     
@@ -505,6 +772,44 @@ public class MailboxController : PlatformController
     [Route("inbox")]
     public async Task<IActionResult> Inbox(string accountId)
     {
+        // Checking access permissions
+        Account account = Account.FromGoogleClaims(User.Claims);
+        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
+        ViewData["Permissions"] = mongoAccount.Permissions;
+        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
+        // Tab view permissions
+        bool currentAdmin = currentPermissions.Admin;
+        bool currentManagePermissions = currentPermissions.ManagePermissions;
+        bool currentViewPlayer = currentPermissions.ViewPlayer;
+        bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentEditMailbox = currentPermissions.EditMailbox;
+        if (currentAdmin)
+        {
+            ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentManagePermissions)
+        {
+            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
+        }
+        if (currentViewPlayer)
+        {
+            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
+        }
+        if (currentViewMailbox)
+        {
+            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        if (currentEditMailbox)
+        {
+            ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
+        }
+        
+        // Redirect if not allowed
+        if (currentViewMailbox == false)
+        {
+            return View("Error");
+        }
+        
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
         string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/inbox";
         

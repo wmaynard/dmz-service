@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
 using TowerPortal.Models;
@@ -61,7 +60,14 @@ public class AccountController : PlatformController
         
         Account output = Account.FromGoogleClaims(claims);
 
-        ViewData["account"] = output;
+        if (_accountService.GetByEmail(output.Email) == null)
+        {
+            Log.Info(owner: Owner.Nathan, message: "New portal account created.", data: new
+            {
+                PortalAccount = output
+            });
+            _accountService.Create(output);
+        }
         
         Log.Info(Owner.Will, "Account logged in successfully.", data: new
         {

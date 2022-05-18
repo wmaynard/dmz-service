@@ -1,9 +1,4 @@
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +7,7 @@ using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
 using TowerPortal.Models;
+using TowerPortal.Services;
 
 namespace TowerPortal.Controllers;
 
@@ -22,12 +18,46 @@ public class PlayerController : PlatformController
 #pragma warning disable CS0649
     private readonly ApiService _apiService;
     private readonly DynamicConfigService _dynamicConfigService;
+    private readonly AccountService _accountService;
 #pragma warning restore CS0649
     
     [Route("search")]
     public async Task<IActionResult> Search(string query)
     {
         ViewData["Message"] = "Player search";
+        
+        // Checking access permissions
+        Account account = Account.FromGoogleClaims(User.Claims);
+        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
+        ViewData["Permissions"] = mongoAccount.Permissions;
+        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
+        // Tab view permissions
+        bool currentAdmin = currentPermissions.Admin;
+        bool currentManagePermissions = currentPermissions.ManagePermissions;
+        bool currentViewPlayer = currentPermissions.ViewPlayer;
+        bool currentViewMailbox = currentPermissions.ViewMailbox;
+        if (currentAdmin)
+        {
+            ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentManagePermissions)
+        {
+            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
+        }
+        if (currentViewPlayer)
+        {
+            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
+        }
+        if (currentViewMailbox)
+        {
+            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        
+        // Redirect if not allowed
+        if (currentViewPlayer == false)
+        {
+            return View("Error");
+        }
 
         if (query != null)
         {
@@ -88,6 +118,39 @@ public class PlayerController : PlatformController
     [Route("details")]
     public async Task<IActionResult> Details(string id)
     {
+        // Checking access permissions
+        Account account = Account.FromGoogleClaims(User.Claims);
+        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
+        ViewData["Permissions"] = mongoAccount.Permissions;
+        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
+        // Tab view permissions
+        bool currentAdmin = currentPermissions.Admin;
+        bool currentManagePermissions = currentPermissions.ManagePermissions;
+        bool currentViewPlayer = currentPermissions.ViewPlayer;
+        bool currentViewMailbox = currentPermissions.ViewMailbox;
+        if (currentAdmin)
+        {
+            ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentManagePermissions)
+        {
+            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
+        }
+        if (currentViewPlayer)
+        {
+            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
+        }
+        if (currentViewMailbox)
+        {
+            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        
+        // Redirect if not allowed
+        if (currentViewPlayer == false)
+        {
+            return View("Error");
+        }
+        
         string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/details?accountId={id}";
 
         string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");

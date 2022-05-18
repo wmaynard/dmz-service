@@ -1,3 +1,4 @@
+@using TowerPortal.Extensions
 @{
     ViewData["Title"] = "Global Messages";
 }
@@ -72,9 +73,9 @@
                             <br/>
                             <label for="editInternalNote" class="internalNote">Internal Note</label>
                             <input id="editInternalNote" class="internalNote" type="text" name="internalNote" placeholder="Internal Note">
-                            <button class="edit-confirm" type="submit">Confirm</button>
+                            <button class="edit-confirm" disabled="@(!ViewData.GetPermissions().EditMailbox)" type="submit">Confirm</button>
+                            @Html.ActionLink(linkText: "Cancel", actionName: "HideOverlay", controllerName: "Mailbox", routeValues: new {}, htmlAttributes: new {})
                         </form>
-                        @Html.ActionLink(linkText: "Cancel", actionName: "HideOverlay", controllerName: "Mailbox", routeValues: new {}, htmlAttributes: new {})
                     </div>
                 }
                 @if (TempData["VisibleDelete"] != null)
@@ -84,7 +85,7 @@
                         <p>Are you sure you would like to delete this message?</p>
                         <form class="delete-form" method="post" asp-controller="Mailbox" asp-action="Delete">
                             <input for="deleteId" class="invisible id" name="id" value="@TempData["DeleteId"]">
-                            <button class="delete-confirm" type="submit">Confirm</button>
+                            <button class="delete-confirm" disabled="@(!ViewData.GetPermissions().EditMailbox)" type="submit">Confirm</button>
                         </form>
                         @Html.ActionLink(linkText: "Cancel", actionName: "HideOverlay", controllerName: "Mailbox", routeValues: new {}, htmlAttributes: new {})
                     </div>
@@ -128,7 +129,7 @@
                 <label for="newInternalNote" class="internalNote">Internal Note</label>
                 <input id="newInternalNote" class="internalNote" type="text" name="internalNote" placeholder="Internal Note">
                 <br/>
-                <button id="sendGlobalMessageButton" type="submit">Send</button>
+                <button id="sendGlobalMessageButton" disabled="@(!ViewData.GetPermissions().EditMailbox)" type="submit">Send</button>
             </form>
         </div>
     
