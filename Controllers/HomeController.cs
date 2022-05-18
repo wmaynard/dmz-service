@@ -30,6 +30,16 @@ public class HomeController : PlatformController
         {
             return View();
         }
+
+        mongoAccount.UpdateRolesToPermissions(); // Temporary to update existing accounts from roles to permissions
+        
+        // Hard coded admin upon login
+        if (mongoAccount.Email == "nathan.mac@rumbleentertainment.com")
+        {
+            mongoAccount.Permissions.SetAdmin();
+            _accountService.Update(mongoAccount);
+        }
+        
         ViewData["Permissions"] = mongoAccount.Permissions;
         Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
         // Tab view permissions

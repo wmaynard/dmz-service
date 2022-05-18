@@ -9,4 +9,9 @@ public class Permissions : PlatformDataModel
 	public bool EditPlayer { get; set; }
 	public bool ViewMailbox { get; set; }
 	public bool EditMailbox { get; set; }
+
+	public void SetAdmin()
+	{
+		Admin = true;
+	}
 }
