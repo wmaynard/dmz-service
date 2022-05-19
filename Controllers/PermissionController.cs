@@ -114,7 +114,7 @@ public class PermissionController : PlatformController
         ViewData["Environment"] = PlatformEnvironment.Optional<string>(key: "RUMBLE_DEPLOYMENT");
         
         Account user = _accountService.Get(id);
-        ViewData["Permissions"] = user.Permissions;
+        ViewData["Permissions"] = user.Permissions; // Inconsistent with others of same name, since this is needed for permissions page
 
         TempData["AccountId"] = id;
         ViewData["Account"] = user.Email;

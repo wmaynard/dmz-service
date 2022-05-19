@@ -47,10 +47,7 @@ public class Account : PlatformCollectionDocument
 
     public void UpdateRolesToPermissions()
     {
-        if (Permissions == null)
-        {
-            Permissions = new Permissions();
-        }
+        Permissions ??= new Permissions();
     }
 
     public static Account FromGoogleClaims(IEnumerable<Claim> claims)
