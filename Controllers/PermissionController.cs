@@ -29,7 +29,6 @@ public class PermissionController : PlatformController
         // Checking access permissions
         Account account = Models.Account.FromGoogleClaims(User.Claims); // Models required for some reason?
         Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
-        ViewData["Permissions"] = mongoAccount.Permissions;
         Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
         // Tab view permissions
         bool currentAdmin = currentPermissions.Admin;
@@ -83,7 +82,6 @@ public class PermissionController : PlatformController
         // Checking access permissions
         Account account = Models.Account.FromGoogleClaims(User.Claims); // Models required for some reason?
         Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
-        ViewData["Permissions"] = mongoAccount.Permissions;
         Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
         // Tab view permissions
         bool currentAdmin = currentPermissions.Admin;
@@ -116,6 +114,7 @@ public class PermissionController : PlatformController
         ViewData["Environment"] = PlatformEnvironment.Optional<string>(key: "RUMBLE_DEPLOYMENT");
         
         Account user = _accountService.Get(id);
+        ViewData["Permissions"] = user.Permissions;
 
         TempData["AccountId"] = id;
         ViewData["Account"] = user.Email;
