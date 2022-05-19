@@ -840,6 +840,14 @@ public class MailboxController : PlatformController
             }))
             .Post(out GenericData response, out int code);
 
+        if (response == null)
+        {
+            TempData["Success"] = "Response was null.";
+            TempData["Failure"] = true;
+
+            return View();
+        }
+
         Inbox inbox = response.Require<Inbox>(key: "inbox");
         
         List<Message> activeMessagesList = inbox.Messages;
