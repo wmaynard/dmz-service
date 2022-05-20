@@ -1,0 +1,15 @@
+.invisible {
+    display: none
+}
+
+div.player-data-container {
+    display: flex;
+    flex-wrap: nowrap;
+    border-bottom: lightgrey 1px solid;
+}
+
+div.player-data-container p,
+div.player-data-container form
+{
+    padding: 10px;
+}
