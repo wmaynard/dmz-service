@@ -151,7 +151,7 @@ public class PlayerController : PlatformController
             return View("Error");
         }
         
-        string requestUrl = PlatformEnvironment.Url("/player/v2/admin/details?accountId={id}");
+        string requestUrl = PlatformEnvironment.Url($"/player/v2/admin/details?accountId={id}");
         string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
         
         _apiService
