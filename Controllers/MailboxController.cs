@@ -16,9 +16,11 @@ namespace TowerPortal.Controllers;
 [Route("mailbox")]
 public class MailboxController : PlatformController
 {
+#pragma warning disable
     private readonly ApiService _apiService;
     private readonly DynamicConfigService _dynamicConfigService;
     private readonly AccountService _accountService;
+#pragma warning restore
 
     // Global message routes
     
@@ -76,13 +78,13 @@ public class MailboxController : PlatformController
         _apiService
             .Request(requestUrl)
             .AddAuthorization(token)
-            .OnSuccess(((sender, apiResponse) =>
+            .OnSuccess((sender, apiResponse) =>
             {
                 TempData["Success"] = "Successfully fetched global messages.";
                 TempData["Failure"] = null;
                 Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
-            }))
-            .OnFailure(((sender, apiResponse) =>
+            })
+            .OnFailure((sender, apiResponse) =>
             {
                 TempData["Success"] = "Failed to fetch global messages.";
                 TempData["Failure"] = true;
@@ -90,7 +92,7 @@ public class MailboxController : PlatformController
                 {
                     Response = apiResponse
                 });
-            }))
+            })
             .Get(out GenericData response, out int code);
         
         List<GlobalMessage> globalMessages = response.Require<List<GlobalMessage>>(key: "globalMessages");
@@ -678,13 +680,13 @@ public class MailboxController : PlatformController
                     {"accountIds", playerIdsList},
                     {"message", newMessage}
                 })
-                .OnSuccess(((sender, apiResponse) =>
+                .OnSuccess((sender, apiResponse) =>
                 {
                     TempData["Success"] = "Successfully sent message.";
                     TempData["Failure"] = null;
                     Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
-                }))
-                .OnFailure(((sender, apiResponse) =>
+                })
+                .OnFailure((sender, apiResponse) =>
                 {
                     TempData["Success"] = "Failed to send message.";
                     TempData["Failure"] = true;
@@ -692,7 +694,7 @@ public class MailboxController : PlatformController
                     {
                         Response = apiResponse
                     });
-                }))
+                })
                 .Post(out GenericData sendResponse, out int sendCode);
         }
         catch (Exception e)
@@ -813,13 +815,13 @@ public class MailboxController : PlatformController
             {
                 {"accountId", accountId}
             })
-            .OnSuccess(((sender, apiResponse) =>
+            .OnSuccess((sender, apiResponse) =>
             {
                 TempData["Success"] = "Successfully fetched inbox messages.";
                 TempData["Failure"] = null;
                 Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
-            }))
-            .OnFailure(((sender, apiResponse) =>
+            })
+            .OnFailure((sender, apiResponse) =>
             {
                 TempData["Success"] = "Failed to fetch inbox messages.";
                 TempData["Failure"] = true;
@@ -827,7 +829,7 @@ public class MailboxController : PlatformController
                 {
                     Response = apiResponse
                 });
-            }))
+            })
             .Post(out GenericData response, out int code);
 
         if (response == null)
