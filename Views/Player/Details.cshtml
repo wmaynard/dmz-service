@@ -1,3 +1,4 @@
+@using TowerPortal.Extensions
 @{
     ViewData["Title"] = "Player Details";
 }
@@ -5,19 +6,58 @@
 
 <h4>Player ID: @ViewData["Id"]</h4>
 
-<p>Username: @ViewData["Username"]</p>
-<p>Screenname: @ViewData["Screenname"]</p>
-<p>Discriminator: @ViewData["Discriminator"]</p>
-<p>Client Version: @ViewData["ClientVersion"]</p>
-<p>Date Created: @ViewData["DateCreated"]</p>
-<p>Data Version: @ViewData["DataVersion"]</p>
-<p>Device Type: @ViewData["DeviceType"]</p>
-<p>Last Saved Install Id: @ViewData["LastSavedInstallId"]</p>
-<p>Merge Version: @ViewData["MergeVersion"]</p>
-<p>Last Changed: @ViewData["LastChanged"]</p>
-<p>Last Data Version: @ViewData["LastDataVersion"]</p>
-<p>Last Updated: @ViewData["LastUpdated"]</p>
+<div class="error-container">
+    @if (TempData["Failure"] != null)
+    {
+        <h4 style="color: red">@TempData["Success"]</h4>
+    }
+    else
+    {
+        <h4 style="color: darkgreen">@TempData["Success"]</h4>
+    }
+</div>
 
+<div>
+    <p>Username: @ViewData["Username"]</p>
+</div>
+<div>
+    <p>Screenname: @ViewData["Screenname"]</p>
+    <form class="edit-player-form" method="post" asp-controller="Player" asp-action="EditScreenname">
+        <input class="edit-player-input invisible" type="text" name="accountId" value="@(ViewData["Id"])"/>
+        <input class="edit-player-input" type="text" name="editScreenname"/>
+        <button class="edit-player-button" disabled="@(!ViewData.GetPermissions().EditPlayer)" type="submit"></button>
+    </form>
+</div>
+<div>
+    <p>Discriminator: @ViewData["Discriminator"]</p>
+</div>
+<div>
+    <p>Client Version: @ViewData["ClientVersion"]</p>
+</div>
+<div>
+    <p>Date Created: @ViewData["DateCreated"]</p>
+</div>
+<div>
+    <p>Data Version: @ViewData["DataVersion"]</p>
+</div>
+<div>
+    <p>Device Type: @ViewData["DeviceType"]</p>
+</div>
+<div>
+    <p>Last Saved Install Id: @ViewData["LastSavedInstallId"]</p>
+</div>
+<div>
+    <p>Merge Version: @ViewData["MergeVersion"]</p>
+</div>
+<div>
+    <p>Last Changed: @ViewData["LastChanged"]</p>
+</div>
+<div>
+    <p>Last Data Version: @ViewData["LastDataVersion"]</p>
+</div>
+<div>
+    <p>Last Updated: @ViewData["LastUpdated"]</p>
+</div>
 
 <h4>Raw Data (To be formatted later)</h4>
 
