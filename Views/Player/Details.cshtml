@@ -17,45 +17,45 @@
     }
 </div>
 
-<div>
+<div class="player-data-container">
     <p>Username: @ViewData["Username"]</p>
 </div>
-<div>
+<div class="player-data-container">
     <p>Screenname: @ViewData["Screenname"]</p>
     <form class="edit-player-form" method="post" asp-controller="Player" asp-action="EditScreenname">
         <input class="edit-player-input invisible" type="text" name="accountId" value="@(ViewData["Id"])"/>
         <input class="edit-player-input" type="text" name="editScreenname"/>
-        <button class="edit-player-button" disabled="@(!ViewData.GetPermissions().EditPlayer)" type="submit"></button>
+        <button class="button" disabled="@(!ViewData.GetPermissions().EditPlayer)" type="submit">Edit</button>
     </form>
 </div>
-<div>
+<div class="player-data-container">
     <p>Discriminator: @ViewData["Discriminator"]</p>
 </div>
-<div>
+<div class="player-data-container">
     <p>Client Version: @ViewData["ClientVersion"]</p>
 </div>
-<div>
+<div class="player-data-container">
     <p>Date Created: @ViewData["DateCreated"]</p>
 </div>
-<div>
+<div class="player-data-container">
     <p>Data Version: @ViewData["DataVersion"]</p>
 </div>
-<div>
+<div class="player-data-container">
     <p>Device Type: @ViewData["DeviceType"]</p>
 </div>
-<div>
+<div class="player-data-container">
     <p>Last Saved Install Id: @ViewData["LastSavedInstallId"]</p>
 </div>
-<div>
+<div class="player-data-container">
     <p>Merge Version: @ViewData["MergeVersion"]</p>
 </div>
-<div>
+<div class="player-data-container">
     <p>Last Changed: @ViewData["LastChanged"]</p>
 </div>
-<div>
+<div class="player-data-container">
     <p>Last Data Version: @ViewData["LastDataVersion"]</p>
 </div>
-<div>
+<div class="player-data-container">
     <p>Last Updated: @ViewData["LastUpdated"]</p>
 </div>
 

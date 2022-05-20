@@ -65,12 +65,11 @@ public class PlayerController : PlatformController
             List<string> searchUser = new List<string>();
 
             string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
-            string url =  $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/search?term={query}";
-            
+            string requestUrl = PlatformEnvironment.Url($"/player/v2/admin/search?term={query}");
             
             // Use the API Service to simplify web requests
             _apiService
-                .Request(url)
+                .Request(requestUrl)
                 .AddAuthorization(token)
                 .OnSuccess(((sender, apiResponse) =>
                 {
@@ -80,7 +79,7 @@ public class PlayerController : PlatformController
                 {
                     Log.Error(Owner.Nathan, "Request to player-service-v2 failed.", data: new
                     {
-                        Url = url,
+                        Url = requestUrl,
                         Response = apiResponse
                     });
                 }))
@@ -151,7 +150,7 @@ public class PlayerController : PlatformController
             return View("Error");
         }
         
-        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/details?accountId={id}";
+        string requestUrl = PlatformEnvironment.Url($"/player/v2/admin/details?accountId={id}");
         string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
         
         _apiService
@@ -267,7 +266,7 @@ public class PlayerController : PlatformController
                     Response = apiResponse
                 });
             }))
-            .Post(out GenericData response, out int code);
+            .Patch(out GenericData response, out int code);
 
         if (response == null)
         {
