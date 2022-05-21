@@ -807,6 +807,8 @@ public class MailboxController : PlatformController
         
         TempData["Success"] = "";
         TempData["Failure"] = null;
+
+        Log.Local(owner: Owner.Nathan, "Admin portal request URL:", data: requestUrl);
         
         _apiService
             .Request(requestUrl)
