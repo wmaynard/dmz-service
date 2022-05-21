@@ -69,6 +69,8 @@ public class MailboxController : PlatformController
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
         string requestUrl = PlatformEnvironment.Url("/mail/admin/global/messages");
         
+        Log.Local(owner: Owner.Nathan, "Admin portal request URL:", data: requestUrl);
+        
         TempData["Success"] = "";
         TempData["Failure"] = null;
 
@@ -808,8 +810,6 @@ public class MailboxController : PlatformController
         TempData["Success"] = "";
         TempData["Failure"] = null;
 
-        Log.Local(owner: Owner.Nathan, "Admin portal request URL:", data: requestUrl);
-        
         _apiService
             .Request(requestUrl)
             .AddAuthorization(token)
