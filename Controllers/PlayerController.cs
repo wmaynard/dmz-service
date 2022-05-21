@@ -150,10 +150,11 @@ public class PlayerController : PlatformController
             return View("Error");
         }
         
-        string requestUrl = PlatformEnvironment.Url($"/player/v2/admin/details?accountId={id}");
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/details?accountId={id}";
+        string url = PlatformEnvironment.Url($"/player/v2/admin/details?accountId={id}");
         string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
         
-        Log.Error(owner: Owner.Nathan, "Admin portal request URL:", data: requestUrl);
+        Log.Error(owner: Owner.Nathan, "Admin portal request URL:", data: url);
         
         _apiService
             .Request(requestUrl)
