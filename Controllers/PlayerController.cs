@@ -65,7 +65,8 @@ public class PlayerController : PlatformController
             List<string> searchUser = new List<string>();
 
             string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
-            string requestUrl = PlatformEnvironment.Url($"/player/v2/admin/search?term={query}");
+            string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/search?term={query}";
+            //string requestUrl = PlatformEnvironment.Url($"/player/v2/admin/search?term={query}");
             
             // Use the API Service to simplify web requests
             _apiService
@@ -151,11 +152,9 @@ public class PlayerController : PlatformController
         }
         
         string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/details?accountId={id}";
-        string url = PlatformEnvironment.Url($"/player/v2/admin/details?accountId={id}");
+        //string requestUrl = PlatformEnvironment.Url($"/player/v2/admin/details?accountId={id}");
         string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
-        
-        Log.Error(owner: Owner.Nathan, "Admin portal request URL:", data: url);
-        
+
         _apiService
             .Request(requestUrl)
             .AddAuthorization(token)
@@ -241,7 +240,8 @@ public class PlayerController : PlatformController
         }
         
         string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
-        string requestUrl = PlatformEnvironment.Url("/player/v2/admin/screenname");
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/screenname";
+        // string requestUrl = PlatformEnvironment.Url("/player/v2/admin/screenname");
         
         TempData["Success"] = "";
         TempData["Failure"] = null;

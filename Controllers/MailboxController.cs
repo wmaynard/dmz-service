@@ -67,7 +67,8 @@ public class MailboxController : PlatformController
         }
         
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
-        string requestUrl = PlatformEnvironment.Url("/mail/admin/global/messages");
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages";
+        //string requestUrl = PlatformEnvironment.Url("/mail/admin/global/messages");
 
         TempData["Success"] = "";
         TempData["Failure"] = null;
@@ -163,7 +164,8 @@ public class MailboxController : PlatformController
         }
         
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
-        string requestUrl = PlatformEnvironment.Url("/mail/admin/global/messages");
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages";
+        //string requestUrl = PlatformEnvironment.Url("/mail/admin/global/messages");
         
         TempData["Success"] = "";
         TempData["Failure"] = null;
@@ -306,7 +308,8 @@ public class MailboxController : PlatformController
         }
         
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
-        string requestUrl = PlatformEnvironment.Url("/mail/admin/global/messages/edit");
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages/edit";
+        //string requestUrl = PlatformEnvironment.Url("/mail/admin/global/messages/edit");
         
         TempData["Success"] = "";
         TempData["Failure"] = null;
@@ -459,7 +462,8 @@ public class MailboxController : PlatformController
         }
         
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
-        string requestUrl = PlatformEnvironment.Url("/mail/admin/global/messages/expire");
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages/expire";
+        //string requestUrl = PlatformEnvironment.Url("/mail/admin/global/messages/expire");
         
         TempData["Success"] = "";
         TempData["Failure"] = null;
@@ -657,7 +661,8 @@ public class MailboxController : PlatformController
         }
         
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
-        string requestUrl = PlatformEnvironment.Url("/mail/admin/messages/send");
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/messages/send";
+        //string requestUrl = PlatformEnvironment.Url("/mail/admin/messages/send");
 
         try
         {
@@ -803,7 +808,8 @@ public class MailboxController : PlatformController
         }
         
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
-        string requestUrl = PlatformEnvironment.Url("/mail/admin/inbox");
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/inbox";
+        //string requestUrl = PlatformEnvironment.Url("/mail/admin/inbox");
         
         TempData["Success"] = "";
         TempData["Failure"] = null;
