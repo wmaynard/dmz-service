@@ -153,7 +153,7 @@ public class PlayerController : PlatformController
         string requestUrl = PlatformEnvironment.Url($"/player/v2/admin/details?accountId={id}");
         string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
         
-        Log.Local(owner: Owner.Nathan, "Admin portal request URL:", data: requestUrl);
+        Log.Error(owner: Owner.Nathan, "Admin portal request URL:", data: requestUrl);
         
         _apiService
             .Request(requestUrl)
