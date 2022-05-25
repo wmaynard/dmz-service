@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RCL.Logging;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
 using TowerPortal.Models;
@@ -76,6 +77,4 @@ public class AccountController : PlatformController
 
         return Redirect("/");
     }
-    
-    public override ActionResult HealthCheck() => Ok(_accountService.HealthCheckResponseObject);
 }

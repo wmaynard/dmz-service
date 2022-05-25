@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
+using RCL.Logging;
 using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Extensions;
 using Rumble.Platform.Common.Filters;
@@ -70,31 +71,31 @@ public class Startup : PlatformStartup
                 options.Cookie.SameSite = SameSiteMode.Lax; // Suggestion from SO to resolve Correlation failed Exception
                 options.Events.OnSignedIn = (context) =>
                 {
-                    Log.Info(Owner.Will, $"{context.Principal.Identity.Name} signed in.");
+                    Log.Local(Owner.Default, $"{context.Principal.Identity.Name} signed in.");
                     
                     return Task.CompletedTask;
                 };
                 options.Events.OnRedirectToLogin = (context) =>
                 {
-                    Log.Info(Owner.Will, $"Redirect login to '{context.RedirectUri}'.");
+                    Log.Local(Owner.Default, $"Redirect login to '{context.RedirectUri}'.");
                     
                     return Task.CompletedTask;
                 };
                 options.Events.OnSigningIn = (context) =>
                 {
-                    Log.Info(Owner.Will, $"{context?.Principal?.Identity?.Name ?? "(unknown)"} is signing in.");
+                    Log.Local(Owner.Default, $"{context?.Principal?.Identity?.Name ?? "(unknown)"} is signing in.");
                     
                     return Task.CompletedTask;
                 };
                 options.Events.OnSigningOut = (context) =>
                 {
-                    Log.Info(Owner.Will, $"User is signing out.");
+                    Log.Local(Owner.Default, $"User is signing out.");
 
                     return Task.CompletedTask;
                 };
                 options.Events.OnRedirectToReturnUrl = (context) =>
                 {
-                    Log.Info(Owner.Will, $"Redirecting to {context.RedirectUri}");
+                    Log.Local(Owner.Default, $"Redirecting to {context.RedirectUri}");
 
                     return Task.CompletedTask;
                 };
