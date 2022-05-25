@@ -70,12 +70,4 @@ public class HomeController : PlatformController
     [Route("error")]
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error() => View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
-
-    [AllowAnonymous]
-    [Route("health")]
-    [Route("portal/health")]
-    public override ActionResult HealthCheck() => Ok(
-        _apiService.HealthCheckResponseObject, 
-        _dynamicConfigService.HealthCheckResponseObject
-    );
 }
