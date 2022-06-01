@@ -47,6 +47,7 @@ public class HomeController : PlatformController
         bool currentManagePermissions = currentPermissions.ManagePermissions;
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentViewToken = currentPermissions.ViewToken;
         if (currentAdmin)
         {
             ViewData["CurrentAdmin"] = currentPermissions.Admin;
@@ -62,6 +63,10 @@ public class HomeController : PlatformController
         if (currentViewMailbox)
         {
             ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        if (currentViewToken)
+        {
+            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
         }
         
         return View();

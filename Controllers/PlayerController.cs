@@ -37,6 +37,7 @@ public class PlayerController : PlatformController
         bool currentManagePermissions = currentPermissions.ManagePermissions;
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentViewToken = currentPermissions.ViewToken;
         if (currentAdmin)
         {
             ViewData["CurrentAdmin"] = currentPermissions.Admin;
@@ -52,6 +53,10 @@ public class PlayerController : PlatformController
         if (currentViewMailbox)
         {
             ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        if (currentViewToken)
+        {
+            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
         }
         
         // Redirect if not allowed
@@ -129,6 +134,7 @@ public class PlayerController : PlatformController
         bool currentManagePermissions = currentPermissions.ManagePermissions;
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentViewToken = currentPermissions.ViewToken;
         if (currentAdmin)
         {
             ViewData["CurrentAdmin"] = currentPermissions.Admin;
@@ -144,6 +150,10 @@ public class PlayerController : PlatformController
         if (currentViewMailbox)
         {
             ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        if (currentViewToken)
+        {
+            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
         }
         
         // Redirect if not allowed
@@ -212,6 +222,7 @@ public class PlayerController : PlatformController
         bool currentManagePermissions = currentPermissions.ManagePermissions;
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentViewToken = currentPermissions.ViewToken;
         bool currentEditPlayer = currentPermissions.EditPlayer;
         if (currentAdmin)
         {
@@ -228,6 +239,10 @@ public class PlayerController : PlatformController
         if (currentViewMailbox)
         {
             ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        if (currentViewToken)
+        {
+            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
         }
         if (currentEditPlayer)
         {
