@@ -145,7 +145,8 @@ public class TokenController : PlatformController
             try
             {
                 List<string> playerIdsList = ParseMessageData.ParseIds(playerIds);
-                long unbanTimeUnix = ParseMessageData.ParseDateTime(unbanTime);
+                long unbanTimeUnix = ParseMessageData.ParseDateTime(unbanTime + "T00:00");
+                long duration = unbanTimeUnix - Account.UnixTime;
                 string actor = mongoAccount.Name;
 
                 foreach (string playerId in playerIdsList)
@@ -155,8 +156,8 @@ public class TokenController : PlatformController
                         .AddAuthorization(token)
                         .SetPayload(new GenericData
                         {
-                            {"aid", playerId}
-                            // TODO send duration to service when supported
+                            {"aid", playerId},
+                            {"duration", duration}
                         })
                         .OnSuccess((sender, apiResponse) =>
                         {
