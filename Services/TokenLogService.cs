@@ -12,6 +12,6 @@ public class TokenLogService : PlatformMongoService<TokenLog>
 
     public List<TokenLog> GetLogs()
     {
-        return _collection.Find(filter: log => true).ToList();
+        return _collection.Find(filter: log => true).SortByDescending(log => log.Timestamp).ToList();
     }
 }

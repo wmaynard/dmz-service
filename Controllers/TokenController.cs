@@ -172,8 +172,17 @@ public class TokenController : PlatformController
                         })
                         .Patch(out GenericData sendResponse, out int sendCode);
 
-                    TokenLog log = new TokenLog(actor: actor, action: "ban", unbanTime: unbanTimeUnix, target: playerId,
-                        note: note);
+                    TokenLog log = null; // TODO move logs to separate page, only admins
+                    if (unbanTimeUnix == 0)
+                    {
+                        log = new TokenLog(actor: actor, action: "ban", unbanTime: null, target: playerId,
+                            note: note);
+                    }
+                    else
+                    {
+                        log = new TokenLog(actor: actor, action: "ban", unbanTime: unbanTimeUnix, target: playerId,
+                            note: note);
+                    }
                     _tokenLogService.Create(log);
                 }
             }
@@ -249,13 +258,13 @@ public class TokenController : PlatformController
                         })
                         .OnSuccess((sender, apiResponse) =>
                         {
-                            TempData["Success"] = "Successfully invalidate player(s).";
+                            TempData["Success"] = "Successfully invalidated token for player(s).";
                             TempData["Failure"] = null;
                             Log.Local(owner: Owner.Nathan, message: "Request to token-service succeeded.");
                         })
                         .OnFailure((sender, apiResponse) =>
                         {
-                            TempData["Success"] = "Failed to invalidate player(s).";
+                            TempData["Success"] = "Failed to invalidate token for player(s).";
                             TempData["Failure"] = true;
                             Log.Error(owner: Owner.Nathan, message: "Request to token-service failed.", data: new
                             {
@@ -271,9 +280,9 @@ public class TokenController : PlatformController
             }
             catch (Exception e)
             {
-                TempData["Success"] = "Failed to invalidate player(s). Some fields may be malformed.";
+                TempData["Success"] = "Failed to invalidate token for player(s). Some fields may be malformed.";
                 TempData["Failure"] = true;
-                Log.Error(owner: Owner.Nathan, message: "Error occurred when invalidating player(s).", data: e.Message);
+                Log.Error(owner: Owner.Nathan, message: "Error occurred when invalidating token for player(s).", data: e.Message);
             }
         }
         

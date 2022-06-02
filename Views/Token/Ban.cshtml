@@ -47,37 +47,40 @@
         </form>
     </div>
     
-    <div class="log-container">
-        @if (ViewData["TokenLogs"] != null)
-        {
-            <table id="tokenLogs" class="log-table">
-                <tr>
-                    <td id="actorLog">Actor</td>
-                    <td id="actionLog">Action</td>
-                    <td id="unbanTimeLog">Unban Time</td>
-                    <td id="timestampLog">Timestamp</td>
-                    <td id="targetLog">Target</td>
-                    <td id="noteLog">Note</td>
-                </tr>
-                @foreach (TokenLog data in (List<TokenLog>) ViewData["TokenLogs"])
-                {
+    @if (ViewData["CurrentAdmin"] != null)
+    {
+        <div class="log-container">
+            @if (ViewData["TokenLogs"] != null)
+            {
+                <table id="tokenLogs" class="log-table">
                     <tr>
-                        <td>@data.Actor</td>
-                        <td>@data.Action</td>
-                        @if (@data.UnbanTime != null)
-                        {
-                            <td>@DateTimeOffset.FromUnixTimeSeconds(@data.UnbanTime ?? default(long))</td>
-                        }
-                        else
-                        {
-                            <td></td>
-                        }
-                        <td>@DateTimeOffset.FromUnixTimeSeconds(@data.Timestamp)</td>
-                        <td>@data.Target</td>
-                        <td>@data.Note</td>
+                        <td id="actorLog">Actor</td>
+                        <td id="actionLog">Action</td>
+                        <td id="unbanTimeLog">Unban Time</td>
+                        <td id="timestampLog">Timestamp</td>
+                        <td id="targetLog">Target</td>
+                        <td id="noteLog">Note</td>
                     </tr>
-                }
-            </table>
-        }
-    </div>
+                    @foreach (TokenLog data in (List<TokenLog>) ViewData["TokenLogs"])
+                    {
+                        <tr>
+                            <td>@data.Actor</td>
+                            <td>@data.Action</td>
+                            @if (@data.UnbanTime != null)
+                            {
+                                <td>@DateTimeOffset.FromUnixTimeSeconds(@data.UnbanTime ?? default(long))</td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                            <td>@DateTimeOffset.FromUnixTimeSeconds(@data.Timestamp)</td>
+                            <td>@data.Target</td>
+                            <td>@data.Note</td>
+                        </tr>
+                    }
+                </table>
+            }
+        </div>
+    }
 </div>
