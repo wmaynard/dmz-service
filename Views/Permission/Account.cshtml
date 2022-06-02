@@ -64,6 +64,21 @@
                 <input type="checkbox" checked="@(ViewData.GetPermissions().EditMailbox)" name="editMailbox"/>
             </td>
         </tr>
+        <tr class="token-label">
+            <td>Token Service</td>
+        </tr>
+        <tr>
+            <td>View Token</td>
+            <td>
+                <input type="checkbox" checked="@(ViewData.GetPermissions().ViewToken)" name="viewToken"/>
+            </td>
+        </tr>
+        <tr>
+            <td>Edit Token</td>
+            <td>
+                <input type="checkbox" checked="@(ViewData.GetPermissions().EditToken)" name="editToken"/>
+            </td>
+        </tr>
     </table>
     <button type="submit">Save</button>
 </form>
