@@ -24,5 +24,6 @@ public class Permissions : PlatformDataModel
 	{
 		ViewPlayer = true;
 		ViewMailbox = true;
+		ViewToken = true;
 	}
 }
