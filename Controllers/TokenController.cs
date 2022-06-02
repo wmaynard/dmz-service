@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
 using Rumble.Platform.Common.Services;
@@ -12,6 +13,8 @@ using TowerPortal.Utilities;
 
 namespace TowerPortal.Controllers;
 
+[Authorize]
+[Route("token")]
 public class TokenController : PlatformController
 {
     private readonly ApiService _apiService;
