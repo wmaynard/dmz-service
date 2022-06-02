@@ -36,6 +36,7 @@ public class PermissionController : PlatformController
         bool currentManagePermissions = currentPermissions.ManagePermissions;
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentViewToken = currentPermissions.ViewToken;
         if (currentAdmin)
         {
             ViewData["CurrentAdmin"] = currentPermissions.Admin;
@@ -51,6 +52,10 @@ public class PermissionController : PlatformController
         if (currentViewMailbox)
         {
             ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        if (currentViewToken)
+        {
+            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
         }
         
         // Redirect if not allowed
@@ -89,6 +94,7 @@ public class PermissionController : PlatformController
         bool currentManagePermissions = currentPermissions.ManagePermissions;
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentViewToken = currentPermissions.ViewToken;
         if (currentAdmin)
         {
             ViewData["CurrentAdmin"] = currentPermissions.Admin;
@@ -104,6 +110,10 @@ public class PermissionController : PlatformController
         if (currentViewMailbox)
         {
             ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        if (currentViewToken)
+        {
+            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
         }
         
         // Redirect if not allowed
@@ -115,7 +125,7 @@ public class PermissionController : PlatformController
         ViewData["Environment"] = PlatformEnvironment.Optional<string>(key: "RUMBLE_DEPLOYMENT");
         
         Account user = _accountService.Get(id);
-        ViewData["Permissions"] = user.Permissions;
+        ViewData["Permissions"] = user.Permissions; // Inconsistent with others of same name, since this is needed for permissions page
 
         TempData["AccountId"] = id;
         ViewData["Account"] = user.Email;
@@ -125,7 +135,7 @@ public class PermissionController : PlatformController
 
     [HttpPost]
     [Route("account")]
-    public async Task<IActionResult> Account(string id, string managePermissions, string viewPlayer, string editPlayer, string viewMailbox, string editMailbox)
+    public async Task<IActionResult> Account(string id, string managePermissions, string viewPlayer, string editPlayer, string viewMailbox, string editMailbox, string viewToken, string editToken)
     {
         // Checking access permissions
         Account account = Models.Account.FromGoogleClaims(User.Claims); // Models required for some reason?
@@ -137,6 +147,7 @@ public class PermissionController : PlatformController
         bool currentManagePermissions = currentPermissions.ManagePermissions;
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentViewToken = currentPermissions.ViewToken;
         if (currentAdmin)
         {
             ViewData["CurrentAdmin"] = currentPermissions.Admin;
@@ -152,6 +163,10 @@ public class PermissionController : PlatformController
         if (currentViewMailbox)
         {
             ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        if (currentViewToken)
+        {
+            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
         }
         
         // Redirect if not allowed
@@ -203,6 +218,22 @@ public class PermissionController : PlatformController
             else
             {
                 user.Permissions.EditMailbox = false;
+            }
+            if (viewToken != null)
+            {
+                user.Permissions.ViewToken = true;
+            }
+            else
+            {
+                user.Permissions.ViewToken = false;
+            }
+            if (editToken != null)
+            {
+                user.Permissions.EditToken = true;
+            }
+            else
+            {
+                user.Permissions.EditToken = false;
             }
             
             _accountService.Update(user);

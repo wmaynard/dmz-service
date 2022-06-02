@@ -37,6 +37,7 @@ public class PlayerController : PlatformController
         bool currentManagePermissions = currentPermissions.ManagePermissions;
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentViewToken = currentPermissions.ViewToken;
         if (currentAdmin)
         {
             ViewData["CurrentAdmin"] = currentPermissions.Admin;
@@ -53,6 +54,10 @@ public class PlayerController : PlatformController
         {
             ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
         }
+        if (currentViewToken)
+        {
+            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
         
         // Redirect if not allowed
         if (currentViewPlayer == false)
@@ -66,12 +71,12 @@ public class PlayerController : PlatformController
             List<string> searchUser = new List<string>();
 
             string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
-            string url =  $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/search?term={query}";
-            
+            string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/search?term={query}";
+            //string requestUrl = PlatformEnvironment.Url($"/player/v2/admin/search?term={query}");
             
             // Use the API Service to simplify web requests
             _apiService
-                .Request(url)
+                .Request(requestUrl)
                 .AddAuthorization(token)
                 .OnSuccess(((sender, apiResponse) =>
                 {
@@ -81,7 +86,7 @@ public class PlayerController : PlatformController
                 {
                     Log.Error(Owner.Nathan, "Request to player-service-v2 failed.", data: new
                     {
-                        Url = url,
+                        Url = requestUrl,
                         Response = apiResponse
                     });
                 }))
@@ -129,6 +134,7 @@ public class PlayerController : PlatformController
         bool currentManagePermissions = currentPermissions.ManagePermissions;
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentViewToken = currentPermissions.ViewToken;
         if (currentAdmin)
         {
             ViewData["CurrentAdmin"] = currentPermissions.Admin;
@@ -145,6 +151,10 @@ public class PlayerController : PlatformController
         {
             ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
         }
+        if (currentViewToken)
+        {
+            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
         
         // Redirect if not allowed
         if (currentViewPlayer == false)
@@ -153,9 +163,9 @@ public class PlayerController : PlatformController
         }
         
         string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/details?accountId={id}";
-
+        //string requestUrl = PlatformEnvironment.Url($"/player/v2/admin/details?accountId={id}");
         string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
-        
+
         _apiService
             .Request(requestUrl)
             .AddAuthorization(token)
@@ -196,5 +206,95 @@ public class PlayerController : PlatformController
         ViewData["Items"] = detailsResponse.Items;
 
         return View();
+    }
+
+    [HttpPost]
+    [Route("editScreenname")]
+    public async Task<IActionResult> EditScreenname(string accountId, string editScreenname)
+    {
+        // Checking access permissions
+        Account account = Account.FromGoogleClaims(User.Claims);
+        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
+        ViewData["Permissions"] = mongoAccount.Permissions;
+        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
+        // Tab view permissions
+        bool currentAdmin = currentPermissions.Admin;
+        bool currentManagePermissions = currentPermissions.ManagePermissions;
+        bool currentViewPlayer = currentPermissions.ViewPlayer;
+        bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentViewToken = currentPermissions.ViewToken;
+        bool currentEditPlayer = currentPermissions.EditPlayer;
+        if (currentAdmin)
+        {
+            ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentManagePermissions)
+        {
+            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
+        }
+        if (currentViewPlayer)
+        {
+            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
+        }
+        if (currentViewMailbox)
+        {
+            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        if (currentViewToken)
+        {
+            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
+        if (currentEditPlayer)
+        {
+            ViewData["CurrentEditPlayer"] = currentPermissions.EditPlayer;
+        }
+        
+        // Redirect if not allowed
+        if (currentEditPlayer == false)
+        {
+            return View("Error");
+        }
+        
+        string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/screenname";
+        // string requestUrl = PlatformEnvironment.Url("/player/v2/admin/screenname");
+        
+        TempData["Success"] = "";
+        TempData["Failure"] = null;
+        
+        _apiService
+            .Request(requestUrl)
+            .AddAuthorization(token)
+            .SetPayload(new GenericData
+            {
+                {"accountId", accountId},
+                {"screenname", editScreenname}
+            })
+            .OnSuccess(((sender, apiResponse) =>
+            {
+                TempData["Success"] = "Successfully edited player screenname.";
+                TempData["Failure"] = null;
+                Log.Local(Owner.Nathan, "Request to player-service-v2 screenname succeeded.");
+            }))
+            .OnFailure(((sender, apiResponse) =>
+            {
+                TempData["Success"] = "Failed to edit player screenname.";
+                TempData["Failure"] = true;
+                Log.Error(Owner.Nathan, "Request to player-service-v2 screenname failed.", data: new
+                {
+                    Response = apiResponse
+                });
+            }))
+            .Patch(out GenericData response, out int code);
+
+        if (response == null)
+        {
+            TempData["Success"] = "Response was null.";
+            TempData["Failure"] = true;
+
+            return RedirectToAction("Details", new { id = accountId });
+        }
+        
+        return RedirectToAction("Details", new { id = accountId });
     }
 }

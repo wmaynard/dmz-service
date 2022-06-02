@@ -39,6 +39,7 @@ public class MailboxController : PlatformController
         bool currentManagePermissions = currentPermissions.ManagePermissions;
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentViewToken = currentPermissions.ViewToken;
         bool currentEditMailbox = currentPermissions.EditMailbox;
         if (currentAdmin)
         {
@@ -56,6 +57,10 @@ public class MailboxController : PlatformController
         {
             ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
         }
+        if (currentViewToken)
+        {
+            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
         if (currentEditMailbox)
         {
             ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
@@ -68,8 +73,9 @@ public class MailboxController : PlatformController
         }
         
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
-        string requestUrl = PlatformEnvironment.Url("/mail/admin/global/messages");
-        
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages";
+        //string requestUrl = PlatformEnvironment.Url("/mail/admin/global/messages");
+
         TempData["Success"] = "";
         TempData["Failure"] = null;
 
@@ -135,6 +141,7 @@ public class MailboxController : PlatformController
         bool currentManagePermissions = currentPermissions.ManagePermissions;
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentViewToken = currentPermissions.ViewToken;
         bool currentEditMailbox = currentPermissions.EditMailbox;
         if (currentAdmin)
         {
@@ -152,6 +159,10 @@ public class MailboxController : PlatformController
         {
             ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
         }
+        if (currentViewToken)
+        {
+            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
         if (currentEditMailbox)
         {
             ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
@@ -164,7 +175,8 @@ public class MailboxController : PlatformController
         }
         
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
-        string requestUrl = PlatformEnvironment.Url("/mail/admin/global/messages");
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages";
+        //string requestUrl = PlatformEnvironment.Url("/mail/admin/global/messages");
         
         TempData["Success"] = "";
         TempData["Failure"] = null;
@@ -278,6 +290,7 @@ public class MailboxController : PlatformController
         bool currentManagePermissions = currentPermissions.ManagePermissions;
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentViewToken = currentPermissions.ViewToken;
         bool currentEditMailbox = currentPermissions.EditMailbox;
         if (currentAdmin)
         {
@@ -295,6 +308,10 @@ public class MailboxController : PlatformController
         {
             ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
         }
+        if (currentViewToken)
+        {
+            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
         if (currentEditMailbox)
         {
             ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
@@ -307,7 +324,8 @@ public class MailboxController : PlatformController
         }
         
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
-        string requestUrl = PlatformEnvironment.Url("/mail/admin/global/messages/edit");
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages/edit";
+        //string requestUrl = PlatformEnvironment.Url("/mail/admin/global/messages/edit");
         
         TempData["Success"] = "";
         TempData["Failure"] = null;
@@ -323,17 +341,9 @@ public class MailboxController : PlatformController
             long oldExpiration = long.Parse(oldExpirationData);
             string oldInternalNote = TempData["EditInternalNote"] as string;
             long? oldForAccountsBefore = TempData["EditForAccountsBefore"] as long?;
-
-            // TODO: Use null coalescing assignment operator (??=) to trim the null-checks down.
-            if (subject == null)
-            {
-                subject = oldSubject;
-            }
             
-            if (body == null)
-            {
-                body = oldBody;
-            }
+            subject ??= oldSubject;
+            body ??= oldBody;
             
             List<Attachment> attachmentsList = new List<Attachment>();
             if (attachments == null)
@@ -369,10 +379,7 @@ public class MailboxController : PlatformController
                 visibleFromUnix = ParseMessageData.ParseDateTime(visibleFrom);
             }
 
-            if (internalNote == null)
-            {
-                internalNote = oldInternalNote;
-            }
+            internalNote ??= oldInternalNote;
 
             long? forAccountsBeforeUnix = null;
             if (forAccountsBefore == null)
@@ -442,6 +449,7 @@ public class MailboxController : PlatformController
         bool currentManagePermissions = currentPermissions.ManagePermissions;
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentViewToken = currentPermissions.ViewToken;
         bool currentEditMailbox = currentPermissions.EditMailbox;
         if (currentAdmin)
         {
@@ -459,6 +467,10 @@ public class MailboxController : PlatformController
         {
             ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
         }
+        if (currentViewToken)
+        {
+            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
         if (currentEditMailbox)
         {
             ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
@@ -471,7 +483,8 @@ public class MailboxController : PlatformController
         }
         
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
-        string requestUrl = PlatformEnvironment.Url("/mail/admin/global/messages/expire");
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages/expire";
+        //string requestUrl = PlatformEnvironment.Url("/mail/admin/global/messages/expire");
         
         TempData["Success"] = "";
         TempData["Failure"] = null;
@@ -588,6 +601,7 @@ public class MailboxController : PlatformController
         bool currentManagePermissions = currentPermissions.ManagePermissions;
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentViewToken = currentPermissions.ViewToken;
         bool currentEditMailbox = currentPermissions.EditMailbox;
         if (currentAdmin)
         {
@@ -604,6 +618,10 @@ public class MailboxController : PlatformController
         if (currentViewMailbox)
         {
             ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        if (currentViewToken)
+        {
+            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
         }
         if (currentEditMailbox)
         {
@@ -640,6 +658,7 @@ public class MailboxController : PlatformController
         bool currentManagePermissions = currentPermissions.ManagePermissions;
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentViewToken = currentPermissions.ViewToken;
         bool currentEditMailbox = currentPermissions.EditMailbox;
         if (currentAdmin)
         {
@@ -657,6 +676,10 @@ public class MailboxController : PlatformController
         {
             ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
         }
+        if (currentViewToken)
+        {
+            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
         if (currentEditMailbox)
         {
             ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
@@ -669,7 +692,8 @@ public class MailboxController : PlatformController
         }
         
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
-        string requestUrl = PlatformEnvironment.Url("/mail/admin/messages/send");
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/messages/send";
+        //string requestUrl = PlatformEnvironment.Url("/mail/admin/messages/send");
 
         try
         {
@@ -740,6 +764,7 @@ public class MailboxController : PlatformController
         bool currentManagePermissions = currentPermissions.ManagePermissions;
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentViewToken = currentPermissions.ViewToken;
         bool currentEditMailbox = currentPermissions.EditMailbox;
         if (currentAdmin)
         {
@@ -756,6 +781,10 @@ public class MailboxController : PlatformController
         if (currentViewMailbox)
         {
             ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        if (currentViewToken)
+        {
+            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
         }
         if (currentEditMailbox)
         {
@@ -786,6 +815,7 @@ public class MailboxController : PlatformController
         bool currentManagePermissions = currentPermissions.ManagePermissions;
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentViewToken = currentPermissions.ViewToken;
         bool currentEditMailbox = currentPermissions.EditMailbox;
         if (currentAdmin)
         {
@@ -803,6 +833,10 @@ public class MailboxController : PlatformController
         {
             ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
         }
+        if (currentViewToken)
+        {
+            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
         if (currentEditMailbox)
         {
             ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
@@ -815,11 +849,12 @@ public class MailboxController : PlatformController
         }
         
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
-        string requestUrl = PlatformEnvironment.Url("/mail/admin/inbox");
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/inbox";
+        //string requestUrl = PlatformEnvironment.Url("/mail/admin/inbox");
         
         TempData["Success"] = "";
         TempData["Failure"] = null;
-        
+
         _apiService
             .Request(requestUrl)
             .AddAuthorization(token)

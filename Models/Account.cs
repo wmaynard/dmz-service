@@ -29,6 +29,7 @@ public class Account : PlatformCollectionDocument
     [BsonElement(DB_KEY_FIRST_NAME)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_GIVEN_NAME), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string FirstName { get; private set; }
+    
     [BsonElement(DB_KEY_LAST_NAME)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_FAMILY_NAME), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string FamilyName { get; private set; }
@@ -48,10 +49,7 @@ public class Account : PlatformCollectionDocument
 
     public void UpdateRolesToPermissions()
     {
-        if (Permissions == null)
-        {
-            Permissions = new Permissions();
-        }
+        Permissions ??= new Permissions();
     }
 
     public static Account FromGoogleClaims(IEnumerable<Claim> claims)

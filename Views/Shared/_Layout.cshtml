@@ -8,7 +8,9 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="~/css/site.css"/>
     <link rel="stylesheet" href="~/css/mail.css"/>
+    <link rel="stylesheet" href="~/css/player.css"/>
     <link rel="stylesheet" href="~/css/permissions.css"/>
+    <link rel="stylesheet" href="~/css/token.css"/>
 </head>
 <body>
 <header>
@@ -37,15 +39,22 @@
                             if (ViewData["CurrentViewPlayer"] != null)
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Player" asp-action="Search">Player Service</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Player" asp-action="Search">Player</a>
                                 </li>
                             }
 
                             if (ViewData["CurrentViewMailbox"] != null)
                             {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Mailbox" asp-action="Global">Mailbox Service</a>
-                            </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Mailbox" asp-action="Global">Mailbox</a>
+                                </li>
+                            }
+
+                            if (ViewData["CurrentViewToken"] != null)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Token" asp-action="Ban">Token</a>
+                                </li>
                             }
 
                             <li class="nav-item">
