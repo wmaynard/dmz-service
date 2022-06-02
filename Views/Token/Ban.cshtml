@@ -3,6 +3,21 @@
     ViewData["Title"] = "Ban players";
 }
 
+<script src="//code.jquery.com/jquery-2.1.1.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('input[name="action"]').change(function () {
+            let val = $(this).val();
+            let unbanDiv = $('.unbanTime');
+            if (val == 'ban') {
+                unbanDiv.show();    
+            } else {
+                unbanDiv.hide();
+            }
+        })
+    })
+</script>
+
 <div class="token-page-container">
     <h2>@TempData["Title"]</h2>
     
