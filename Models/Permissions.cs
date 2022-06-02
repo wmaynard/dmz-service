@@ -19,4 +19,11 @@ public class Permissions : PlatformDataModel
 		Admin = true;
 		ManagePermissions = true;
 	}
+
+	public void SetUser()
+	{
+		ViewPlayer = true;
+		ViewMailbox = true;
+		ViewToken = true;
+	}
 }
