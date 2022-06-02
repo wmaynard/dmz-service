@@ -13,7 +13,7 @@ public class ParseMessageData
         {
             return 0;
         }
-        return ((DateTimeOffset) DateTime.Parse(dateTime)).ToUnixTimeSeconds();
+        return ((DateTimeOffset) DateTime.SpecifyKind(DateTime.Parse(dateTime), DateTimeKind.Utc)).ToUnixTimeSeconds();
     }
 
     public static string ParseEmpty(string input)
