@@ -3,13 +3,16 @@
 }
 
 div.player-data-container {
-    display: flex;
-    flex-wrap: nowrap;
     border-bottom: lightgrey 1px solid;
 }
 
-div.player-data-container p,
-div.player-data-container form
+div.player-data-item {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+div.player-data-item p,
+div.player-data-item form
 {
     padding: 10px;
 }
