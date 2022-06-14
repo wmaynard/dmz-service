@@ -260,6 +260,10 @@ public class TokenController : PlatformController
                             TempData["Success"] = "Successfully unbanned player(s).";
                             TempData["Failure"] = null;
                             Log.Local(owner: Owner.Nathan, message: "Request to token-service succeeded.");
+                            
+                            TokenLog log = new TokenLog(actor: actor, action: "unban", unbanTime: null, target: playerId,
+                                note: note);
+                            _tokenLogService.Create(log);
                         })
                         .OnFailure((sender, apiResponse) =>
                         {
@@ -271,10 +275,6 @@ public class TokenController : PlatformController
                             });
                         })
                         .Patch(out GenericData sendResponse, out int sendCode);
-
-                    TokenLog log = new TokenLog(actor: actor, action: "unban", unbanTime: null, target: playerId,
-                        note: note);
-                    _tokenLogService.Create(log);
                 }
             }
             catch (Exception e)
@@ -306,6 +306,10 @@ public class TokenController : PlatformController
                             TempData["Success"] = "Successfully invalidated token for player(s).";
                             TempData["Failure"] = null;
                             Log.Local(owner: Owner.Nathan, message: "Request to token-service succeeded.");
+                            
+                            TokenLog log = new TokenLog(actor: actor, action: "invalidate", unbanTime: null, target: playerId,
+                                note: note);
+                            _tokenLogService.Create(log);
                         })
                         .OnFailure((sender, apiResponse) =>
                         {
@@ -317,10 +321,6 @@ public class TokenController : PlatformController
                             });
                         })
                         .Patch(out GenericData sendResponse, out int sendCode);
-
-                    TokenLog log = new TokenLog(actor: actor, action: "invalidate", unbanTime: null, target: playerId,
-                        note: note);
-                    _tokenLogService.Create(log);
                 }
             }
             catch (Exception e)
