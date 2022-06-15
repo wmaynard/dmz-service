@@ -189,6 +189,9 @@ public class PlayerController : PlatformController
         DetailsResponse detailsResponse = JsonConvert.DeserializeObject<DetailsResponse>(responseString);
         // TODO remove newtonsoft, breaking down into models
         
+        
+        PlayerComponents component = response.Require<PlayerComponents>(key: "components");
+        
         ViewData["ClientVersion"] = detailsResponse.Player.ClientVersion;
         ViewData["DateCreated"] = detailsResponse.Player.DateCreated;
         ViewData["DataVersion"] = detailsResponse.Player.DataVersion;
@@ -204,7 +207,7 @@ public class PlayerController : PlatformController
         ViewData["Id"] = detailsResponse.Player.Id;
         
         ViewData["Profiles"] = detailsResponse.Profiles;
-        ViewData["Components"] = detailsResponse.Components;
+        ViewData["Components"] = component;
         ViewData["Items"] = detailsResponse.Items;
 
         PlayerComponents playerComponents = response.Require<PlayerComponents>(key: "components");
@@ -293,14 +296,6 @@ public class PlayerController : PlatformController
             }))
             .Patch(out GenericData response, out int code);
 
-        if (response == null)
-        {
-            TempData["Success"] = "Response was null.";
-            TempData["Failure"] = true;
-
-            return RedirectToAction("Details", new { id = accountId });
-        }
-        
         return RedirectToAction("Details", new { id = accountId });
     }
     
@@ -410,8 +405,8 @@ public class PlayerController : PlatformController
         component.Wallet.Version += 1;
 
         // string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
-        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/update";
-        // string requestUrl = PlatformEnvironment.Url("/player/v2/admin/player/v2/admin/update");
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/component";
+        // string requestUrl = PlatformEnvironment.Url("/player/v2/admin/player/v2/admin/component");
         
         TempData["Success"] = "";
         TempData["Failure"] = null;
@@ -421,7 +416,7 @@ public class PlayerController : PlatformController
             .AddAuthorization(token)
             .SetPayload(new GenericData
             {
-                {"component", component}
+                {"component", component.Wallet}
             })
             .OnSuccess(((sender, apiResponse) =>
             {
@@ -440,14 +435,6 @@ public class PlayerController : PlatformController
             }))
             .Patch(out GenericData response, out int code);
 
-        if (response == null)
-        {
-            TempData["Success"] = "Response was null.";
-            TempData["Failure"] = true;
-
-            return RedirectToAction("Details", new { id = aid });
-        }
-        
         return RedirectToAction("Details", new { id = aid });
     }
 }

@@ -70,7 +70,7 @@
             @foreach (WalletCurrency currency in (List<WalletCurrency>) ViewData["WalletCurrencies"])
             {
                 <label class="wallet-currency-item">@currency.CurrencyId</label>
-                <input class="wallet-currency-item" type="number" name="@(currency.CurrencyId)" value="@(currency.Amount)" min="0" step="1"/>
+                <input class="wallet-currency-item" type="number" name="@(currency.CurrencyId)" value="@(currency.Amount)" min="0" step="1" required/>
             }
             <button class="button" disabled="@(!ViewData.GetPermissions().EditPlayer)" type="submit">Change</button>
         </form>
