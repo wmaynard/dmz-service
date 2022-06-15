@@ -698,7 +698,11 @@ public class MailboxController : PlatformController
         try
         {
             List<string> playerIdsList = ParseMessageData.ParseIds(playerIds);
-            List<Attachment> attachmentsList = ParseMessageData.ParseAttachments(attachments);
+            List<Attachment> attachmentsList = new List<Attachment>();
+            if (attachments != null)
+            {
+                attachmentsList = ParseMessageData.ParseAttachments(attachments);
+            }
             icon = ParseMessageData.ParseEmpty(icon);
             banner = ParseMessageData.ParseEmpty(banner);
             long expirationUnix = ParseMessageData.ParseDateTime(expiration);

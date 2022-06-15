@@ -142,59 +142,100 @@ public class TokenController : PlatformController
 
         if (action == "ban")
         {
-            try
+            if (unbanTime == null)
             {
-                List<string> playerIdsList = ParseMessageData.ParseIds(playerIds);
-                long unbanTimeUnix = ParseMessageData.ParseDateTime(unbanTime + "T00:00");
-                long duration = unbanTimeUnix - Account.UnixTime;
-                string actor = mongoAccount.Name;
-
-                foreach (string playerId in playerIdsList)
+                try
                 {
-                    _apiService
-                        .Request(requestUrl + "ban")
-                        .AddAuthorization(token)
-                        .SetPayload(new GenericData
-                        {
-                            {"aid", playerId},
-                            {"duration", duration}
-                        })
-                        .OnSuccess((sender, apiResponse) =>
-                        {
-                            TempData["Success"] = "Successfully banned player(s).";
-                            TempData["Failure"] = null;
-                            Log.Local(owner: Owner.Nathan, message: "Request to token-service succeeded.");
-                        })
-                        .OnFailure((sender, apiResponse) =>
-                        {
-                            TempData["Success"] = "Failed to ban player(s).";
-                            TempData["Failure"] = true;
-                            Log.Error(owner: Owner.Nathan, message: "Request to token-service failed.", data: new
-                            {
-                                Response = apiResponse
-                            });
-                        })
-                        .Patch(out GenericData sendResponse, out int sendCode);
+                    List<string> playerIdsList = ParseMessageData.ParseIds(playerIds);
+                    string actor = mongoAccount.Name;
 
-                    TokenLog log = null; // TODO move logs to separate page, only admins
-                    if (unbanTimeUnix == 0)
+                    foreach (string playerId in playerIdsList)
                     {
-                        log = new TokenLog(actor: actor, action: "ban", unbanTime: null, target: playerId,
-                            note: note);
+                        _apiService
+                            .Request(requestUrl + "ban")
+                            .AddAuthorization(token)
+                            .SetPayload(new GenericData
+                            {
+                                {"aid", playerId}
+                            })
+                            .OnSuccess((sender, apiResponse) =>
+                            {
+                                TempData["Success"] = "Successfully banned player(s).";
+                                TempData["Failure"] = null;
+                                Log.Local(owner: Owner.Nathan, message: "Request to token-service succeeded.");
+                                
+                                TokenLog log = null; // TODO move logs to separate page, only admins
+                                log = new TokenLog(actor: actor, action: "ban", unbanTime: null, target: playerId,
+                                    note: note);
+                                _tokenLogService.Create(log);
+                            })
+                            .OnFailure((sender, apiResponse) =>
+                            {
+                                TempData["Success"] = "Failed to ban player(s).";
+                                TempData["Failure"] = true;
+                                Log.Error(owner: Owner.Nathan, message: "Request to token-service failed.", data: new
+                                {
+                                    Response = apiResponse
+                                });
+                            })
+                            .Patch(out GenericData sendResponse, out int sendCode);
                     }
-                    else
-                    {
-                        log = new TokenLog(actor: actor, action: "ban", unbanTime: unbanTimeUnix, target: playerId,
-                            note: note);
-                    }
-                    _tokenLogService.Create(log);
+                }
+                catch (Exception e)
+                {
+                    TempData["Success"] = "Failed to ban player(s). Some fields may be malformed.";
+                    TempData["Failure"] = true;
+                    Log.Error(owner: Owner.Nathan, message: "Error occurred when banning player(s).", data: e.Message);
                 }
             }
-            catch (Exception e)
-            {
-                TempData["Success"] = "Failed to ban player(s). Some fields may be malformed.";
-                TempData["Failure"] = true;
-                Log.Error(owner: Owner.Nathan, message: "Error occurred when banning player(s).", data: e.Message);
+            else
+            {  
+                try
+                {
+                    List<string> playerIdsList = ParseMessageData.ParseIds(playerIds);
+                    long unbanTimeUnix = ParseMessageData.ParseDateTime(unbanTime + "T00:00");
+                    long duration = unbanTimeUnix - Account.UnixTime;
+                    string actor = mongoAccount.Name;
+
+                    foreach (string playerId in playerIdsList)
+                    {
+                        _apiService
+                            .Request(requestUrl + "ban")
+                            .AddAuthorization(token)
+                            .SetPayload(new GenericData
+                            {
+                                {"aid", playerId},
+                                {"duration", duration}
+                            })
+                            .OnSuccess((sender, apiResponse) =>
+                            {
+                                TempData["Success"] = "Successfully banned player(s).";
+                                TempData["Failure"] = null;
+                                Log.Local(owner: Owner.Nathan, message: "Request to token-service succeeded.");
+                                
+                                TokenLog log = null; // TODO move logs to separate page, only admins
+                                log = new TokenLog(actor: actor, action: "ban", unbanTime: unbanTimeUnix, target: playerId,
+                                    note: note);
+                                _tokenLogService.Create(log);
+                            })
+                            .OnFailure((sender, apiResponse) =>
+                            {
+                                TempData["Success"] = "Failed to ban player(s).";
+                                TempData["Failure"] = true;
+                                Log.Error(owner: Owner.Nathan, message: "Request to token-service failed.", data: new
+                                {
+                                    Response = apiResponse
+                                });
+                            })
+                            .Patch(out GenericData sendResponse, out int sendCode);
+                    }
+                }
+                catch (Exception e)
+                {
+                    TempData["Success"] = "Failed to ban player(s). Some fields may be malformed.";
+                    TempData["Failure"] = true;
+                    Log.Error(owner: Owner.Nathan, message: "Error occurred when banning player(s).", data: e.Message);
+                }
             }
         }
 
@@ -219,6 +260,10 @@ public class TokenController : PlatformController
                             TempData["Success"] = "Successfully unbanned player(s).";
                             TempData["Failure"] = null;
                             Log.Local(owner: Owner.Nathan, message: "Request to token-service succeeded.");
+                            
+                            TokenLog log = new TokenLog(actor: actor, action: "unban", unbanTime: null, target: playerId,
+                                note: note);
+                            _tokenLogService.Create(log);
                         })
                         .OnFailure((sender, apiResponse) =>
                         {
@@ -230,10 +275,6 @@ public class TokenController : PlatformController
                             });
                         })
                         .Patch(out GenericData sendResponse, out int sendCode);
-
-                    TokenLog log = new TokenLog(actor: actor, action: "unban", unbanTime: null, target: playerId,
-                        note: note);
-                    _tokenLogService.Create(log);
                 }
             }
             catch (Exception e)
@@ -265,6 +306,10 @@ public class TokenController : PlatformController
                             TempData["Success"] = "Successfully invalidated token for player(s).";
                             TempData["Failure"] = null;
                             Log.Local(owner: Owner.Nathan, message: "Request to token-service succeeded.");
+                            
+                            TokenLog log = new TokenLog(actor: actor, action: "invalidate", unbanTime: null, target: playerId,
+                                note: note);
+                            _tokenLogService.Create(log);
                         })
                         .OnFailure((sender, apiResponse) =>
                         {
@@ -276,10 +321,6 @@ public class TokenController : PlatformController
                             });
                         })
                         .Patch(out GenericData sendResponse, out int sendCode);
-
-                    TokenLog log = new TokenLog(actor: actor, action: "invalidate", unbanTime: null, target: playerId,
-                        note: note);
-                    _tokenLogService.Create(log);
                 }
             }
             catch (Exception e)

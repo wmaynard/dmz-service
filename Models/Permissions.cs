@@ -1,8 +1,10 @@
+using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Web;
 
 namespace TowerPortal.Models;
 
+[BsonIgnoreExtraElements]
 public class Permissions : PlatformDataModel
 {
 	public bool Admin { get; set; }
