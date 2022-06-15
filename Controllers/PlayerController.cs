@@ -377,11 +377,8 @@ public class PlayerController : PlatformController
             }))
             .Get(out GenericData tempResponse, out int tempCode);
         
-        string responseString = tempResponse.JSON;
-        DetailsResponse detailsResponse = JsonConvert.DeserializeObject<DetailsResponse>(responseString);
+        PlayerComponents component = tempResponse.Require<PlayerComponents>(key: "components");
 
-        PlayerComponents component = detailsResponse?.Components;
-        
         if (component == null)
         {
             Log.Error(owner: Owner.Nathan, message: "Error occurred when attempting to update player components.", data:"TempData components was null when passed from player details to player wallets.");
