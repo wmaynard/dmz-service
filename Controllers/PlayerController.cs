@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using RCL.Logging;
@@ -301,9 +302,7 @@ public class PlayerController : PlatformController
     
     [HttpPost]
     [Route("EditWallet")]
-    public async Task<IActionResult> EditWallet(string aid, int energy, int hard_currency,
-        int soft_currency, int xp_currency, int username_change, int account_xp_currency,
-        int pvp_energy, int exp2_currency)
+    public async Task<IActionResult> EditWallet(IFormCollection collection)
     // hard coded in currencies, possibly subject to changes
     {
         // Checking access permissions
@@ -349,6 +348,8 @@ public class PlayerController : PlatformController
             return View("Error");
         }
 
+        string aid = collection["aid"];
+        
         // PlayerComponents component = (PlayerComponents) TempData["Components"]; 
         // TODO resolve to remove following extra call; this is unable to pass data for some reason
 
@@ -384,22 +385,13 @@ public class PlayerController : PlatformController
 
         List<WalletCurrency> newWalletCurrencies = new List<WalletCurrency>();
 
-        WalletCurrency newEnergy = new WalletCurrency(currencyId: "energy", amount: energy);
-        newWalletCurrencies.Add(newEnergy);
-        WalletCurrency newHardCurrency = new WalletCurrency(currencyId: "hard_currency", amount: hard_currency);
-        newWalletCurrencies.Add(newHardCurrency);
-        WalletCurrency newSoftCurrency = new WalletCurrency(currencyId: "soft_currency", amount: soft_currency);
-        newWalletCurrencies.Add(newSoftCurrency);
-        WalletCurrency newXpCurrency = new WalletCurrency(currencyId: "xp_currency", amount: xp_currency);
-        newWalletCurrencies.Add(newXpCurrency);
-        WalletCurrency newUsernameChange = new WalletCurrency(currencyId: "username_change", amount: username_change);
-        newWalletCurrencies.Add(newUsernameChange);
-        WalletCurrency newAccountXpCurrency = new WalletCurrency(currencyId: "account_xp_currency", amount: account_xp_currency);
-        newWalletCurrencies.Add(newAccountXpCurrency);
-        WalletCurrency newPvpEnergy = new WalletCurrency(currencyId: "pvp_energy", amount: pvp_energy);
-        newWalletCurrencies.Add(newPvpEnergy);
-        WalletCurrency newExp2Currency = new WalletCurrency(currencyId: "exp2_currency", amount: exp2_currency);
-        newWalletCurrencies.Add(newExp2Currency);
+        foreach (string key in collection.Keys)
+        {
+            if (key != "aid" && key != "__RequestVerificationToken")
+            {
+                newWalletCurrencies.Add(new WalletCurrency(currencyId: key, amount: int.Parse(collection[key])));
+            }
+        }
 
         component.Wallet.Data.Currencies = newWalletCurrencies;
         component.Wallet.Version += 1;
