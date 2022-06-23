@@ -2,14 +2,24 @@
     display: none
 }
 
-div.player-data-container {
-    display: flex;
-    flex-wrap: nowrap;
+div.player-data-container,
+div.player-wallet-container {
     border-bottom: lightgrey 1px solid;
+    margin-bottom: 10px;
 }
 
-div.player-data-container p,
-div.player-data-container form
-{
-    padding: 10px;
+div.player-data-item,
+div.player-wallet-item,
+div.wallet-currency-item {
+    display: flex;
+    flex-wrap: nowrap;
 }
+
+div.player-data-item p,
+div.player-data-item form,
+div.player-wallet.item form,
+div.wallet-currency-item {
+    padding: 5px;
+    margin-bottom: 0;
+}
+

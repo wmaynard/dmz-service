@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using RCL.Logging;
@@ -187,7 +188,11 @@ public class PlayerController : PlatformController
         string responseString = response.JSON;
         
         DetailsResponse detailsResponse = JsonConvert.DeserializeObject<DetailsResponse>(responseString);
-
+        // TODO remove newtonsoft, breaking down into models
+        
+        
+        PlayerComponents component = response.Require<PlayerComponents>(key: "components");
+        
         ViewData["ClientVersion"] = detailsResponse.Player.ClientVersion;
         ViewData["DateCreated"] = detailsResponse.Player.DateCreated;
         ViewData["DataVersion"] = detailsResponse.Player.DataVersion;
@@ -203,7 +208,12 @@ public class PlayerController : PlatformController
         ViewData["Id"] = detailsResponse.Player.Id;
         
         ViewData["Profiles"] = detailsResponse.Profiles;
+        ViewData["Components"] = component;
         ViewData["Items"] = detailsResponse.Items;
+
+        PlayerComponents playerComponents = response.Require<PlayerComponents>(key: "components");
+        PlayerWallet playerWallet = playerComponents.Wallet; // TODO simplify if GenericData works
+        ViewData["WalletCurrencies"] = playerWallet.Data.Currencies;
 
         return View();
     }
@@ -287,14 +297,136 @@ public class PlayerController : PlatformController
             }))
             .Patch(out GenericData response, out int code);
 
-        if (response == null)
+        return RedirectToAction("Details", new { id = accountId });
+    }
+    
+    [HttpPost]
+    [Route("EditWallet")]
+    public async Task<IActionResult> EditWallet(IFormCollection collection)
+    // hard coded in currencies, possibly subject to changes
+    {
+        // Checking access permissions
+        Account account = Account.FromGoogleClaims(User.Claims);
+        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
+        ViewData["Permissions"] = mongoAccount.Permissions;
+        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
+        // Tab view permissions
+        bool currentAdmin = currentPermissions.Admin;
+        bool currentManagePermissions = currentPermissions.ManagePermissions;
+        bool currentViewPlayer = currentPermissions.ViewPlayer;
+        bool currentViewMailbox = currentPermissions.ViewMailbox;
+        bool currentViewToken = currentPermissions.ViewToken;
+        bool currentEditPlayer = currentPermissions.EditPlayer;
+        if (currentAdmin)
         {
-            TempData["Success"] = "Response was null.";
-            TempData["Failure"] = true;
-
-            return RedirectToAction("Details", new { id = accountId });
+            ViewData["CurrentAdmin"] = currentPermissions.Admin;
+        }
+        if (currentManagePermissions)
+        {
+            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
+        }
+        if (currentViewPlayer)
+        {
+            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
+        }
+        if (currentViewMailbox)
+        {
+            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
+        }
+        if (currentViewToken)
+        {
+            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
+        if (currentEditPlayer)
+        {
+            ViewData["CurrentEditPlayer"] = currentPermissions.EditPlayer;
         }
         
-        return RedirectToAction("Details", new { id = accountId });
+        // Redirect if not allowed
+        if (currentEditPlayer == false)
+        {
+            return View("Error");
+        }
+
+        string aid = collection["aid"];
+        
+        // PlayerComponents component = (PlayerComponents) TempData["Components"]; 
+        // TODO resolve to remove following extra call; this is unable to pass data for some reason
+
+        string detailsUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/details?accountId={aid}";
+        //string requestUrl = PlatformEnvironment.Url($"/player/v2/admin/details?accountId={id}");
+        string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
+
+        _apiService
+            .Request(detailsUrl)
+            .AddAuthorization(token)
+            .OnSuccess(((sender, apiResponse) =>
+            {
+                Log.Local(Owner.Nathan, "Request to player-service-v2 details succeeded.");
+            }))
+            .OnFailure(((sender, apiResponse) =>
+            {
+                Log.Error(Owner.Nathan, "Request to player-service-v2 details failed.", data: new
+                {
+                    Response = apiResponse
+                });
+            }))
+            .Get(out GenericData tempResponse, out int tempCode);
+        
+        PlayerComponents component = tempResponse.Require<PlayerComponents>(key: "components");
+
+        if (component == null)
+        {
+            Log.Error(owner: Owner.Nathan, message: "Error occurred when attempting to update player components.", data:"TempData components was null when passed from player details to player wallets.");
+            TempData["Success"] = "Failed to update player wallet.";
+            TempData["Failure"] = true;
+            return RedirectToAction("Details", new { id = aid});
+        }
+
+        List<WalletCurrency> newWalletCurrencies = new List<WalletCurrency>();
+
+        foreach (string key in collection.Keys)
+        {
+            if (key != "aid" && key != "__RequestVerificationToken")
+            {
+                newWalletCurrencies.Add(new WalletCurrency(currencyId: key, amount: int.Parse(collection[key])));
+            }
+        }
+
+        component.Wallet.Data.Currencies = newWalletCurrencies;
+        component.Wallet.Version += 1;
+
+        // string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
+        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/component";
+        // string requestUrl = PlatformEnvironment.Url("/player/v2/admin/player/v2/admin/component");
+        
+        TempData["Success"] = "";
+        TempData["Failure"] = null;
+        
+        _apiService
+            .Request(requestUrl)
+            .AddAuthorization(token)
+            .SetPayload(new GenericData
+            {
+                {"component", component.Wallet}
+            })
+            .OnSuccess(((sender, apiResponse) =>
+            {
+                TempData["Success"] = "Successfully edited player wallet.";
+                TempData["Failure"] = null;
+                Log.Local(Owner.Nathan, "Request to player-service-v2 update succeeded.");
+            }))
+            .OnFailure(((sender, apiResponse) =>
+            {
+                TempData["Success"] = "Failed to update player wallet.";
+                TempData["Failure"] = true;
+                Log.Error(Owner.Nathan, "Request to player-service-v2 update failed.", data: new
+                {
+                    Response = apiResponse
+                });
+            }))
+            .Patch(out GenericData response, out int code);
+
+        return RedirectToAction("Details", new { id = aid });
     }
 }
