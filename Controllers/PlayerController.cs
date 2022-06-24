@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -186,12 +187,21 @@ public class PlayerController : PlatformController
         ViewData["accountId"] = id;
 
         string responseString = response.JSON;
-        
-        DetailsResponse detailsResponse = JsonConvert.DeserializeObject<DetailsResponse>(responseString);
+
+        DetailsResponse detailsResponse = new DetailsResponse();
         // TODO remove newtonsoft, breaking down into models
-        
-        
-        PlayerComponents component = response.Require<PlayerComponents>(key: "components");
+
+        PlayerComponents component = new PlayerComponents();
+
+        try
+        {
+            component = response.Require<PlayerComponents>(key: "components");
+            detailsResponse = JsonConvert.DeserializeObject<DetailsResponse>(responseString);
+        }
+        catch (Exception e)
+        {
+            Log.Error(owner: Owner.Nathan, message: "Failed to parse response from player-service.", data: e);
+        }
         
         ViewData["ClientVersion"] = detailsResponse.Player.ClientVersion;
         ViewData["DateCreated"] = detailsResponse.Player.DateCreated;
@@ -211,8 +221,7 @@ public class PlayerController : PlatformController
         ViewData["Components"] = component;
         ViewData["Items"] = detailsResponse.Items;
 
-        PlayerComponents playerComponents = response.Require<PlayerComponents>(key: "components");
-        PlayerWallet playerWallet = playerComponents.Wallet; // TODO simplify if GenericData works
+        PlayerWallet playerWallet = component.Wallet;
         ViewData["WalletCurrencies"] = playerWallet.Data.Currencies;
 
         return View();
@@ -373,7 +382,16 @@ public class PlayerController : PlatformController
             }))
             .Get(out GenericData tempResponse, out int tempCode);
         
-        PlayerComponents component = tempResponse.Require<PlayerComponents>(key: "components");
+        PlayerComponents component = new PlayerComponents();
+
+        try
+        {
+            component = tempResponse.Require<PlayerComponents>(key: "components");
+        }
+        catch (Exception e)
+        {
+            Log.Error(owner: Owner.Nathan, message: "Failed to parse response from player-service.", data: e);
+        }
 
         if (component == null)
         {

@@ -32,12 +32,4 @@ public class DetailsResponse : PlatformDataModel
         [BsonElement(DB_KEY_ITEMS)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_ITEMS)]
     public object Items { get; set; } // TODO use model later
-
-    public DetailsResponse(DetailsPlayer player, object profiles, PlayerComponents components, object items)
-    {
-        Player = player;
-        Profiles = profiles;
-        Components = components;
-        Items = items;
-    }
 }
