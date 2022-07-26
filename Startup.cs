@@ -120,7 +120,7 @@ public class Startup : PlatformStartup
                     catch (Exception e)
                     {
                         Log.Warn(Owner.Will, "Could not set callback path with PlatformEnvironment.Url.  Manually setting it for dev.", exception: e);
-                        options.CallbackPath = "https://dev.nonprod.tower.cdrentertainment.com/portal/account/signin-google";
+                        options.CallbackPath = "/portal/account/signin-google";
                     }
                 }
             });
