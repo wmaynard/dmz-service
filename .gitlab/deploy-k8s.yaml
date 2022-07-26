@@ -14,14 +14,11 @@
     - auto-deploy create_secret
     - auto-deploy deploy
   rules:
-    - if: '$CI_KUBERNETES_ACTIVE == null || $CI_KUBERNETES_ACTIVE == ""'
-      when: never
     - if: '$CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH'
       when: never
     - if: $CI_COMMIT_TAG
       when: never
-    - if: $DEPLOY_TYPE == "kubernetes" || $DEPLOY_TYPE == "both"
-      when: manual
+    - when: manual
 
 .auto-deploy-prod:
   image: "registry.gitlab.com/gitlab-org/cluster-integration/auto-deploy-image:v2.26.0"
@@ -36,14 +33,11 @@
     - auto-deploy create_secret
     - auto-deploy deploy
   rules:
-    - if: '$CI_KUBERNETES_ACTIVE == null || $CI_KUBERNETES_ACTIVE == ""'
-      when: never
     - if: '$CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH'
       when: never
     - if: $CI_COMMIT_TAG
       when: never
-    - if: $DEPLOY_TYPE == "kubernetes" || $DEPLOY_TYPE == "both"
-      when: manual
+    - when: manual
 
 dev:
   extends: .auto-deploy
