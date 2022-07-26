@@ -9,7 +9,7 @@ using TowerPortal.Services;
 namespace TowerPortal.Controllers;
 
 [Authorize]
-[Route("")]
+[Route("portal")]
 public class HomeController : PlatformController
 {
 #pragma warning disable CS0649
