@@ -13,7 +13,7 @@ using TowerPortal.Services;
 namespace TowerPortal.Controllers;
 
 [Authorize]
-[Route("permission")]
+[Route("portal/permission")]
 public class PermissionController : PlatformController
 {
     private readonly ApiService _apiService;

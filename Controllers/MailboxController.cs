@@ -14,7 +14,7 @@ using TowerPortal.Utilities;
 namespace TowerPortal.Controllers;
 
 [Authorize]
-[Route("mailbox")]
+[Route("portal/mailbox")]
 public class MailboxController : PlatformController
 {
 #pragma warning disable

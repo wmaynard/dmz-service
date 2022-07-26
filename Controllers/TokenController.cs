@@ -14,7 +14,7 @@ using TowerPortal.Utilities;
 namespace TowerPortal.Controllers;
 
 [Authorize]
-[Route("token")]
+[Route("portal/token")]
 public class TokenController : PlatformController
 {
     private readonly ApiService _apiService;

@@ -14,7 +14,7 @@ using TowerPortal.Services;
 namespace TowerPortal.Controllers;
 
 [Authorize]
-[Route("player")]
+[Route("portal/player")]
 public class PlayerController : PlatformController
 {
 #pragma warning disable CS0649
