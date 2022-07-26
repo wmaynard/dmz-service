@@ -14,6 +14,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
 using RCL.Logging;
 using Rumble.Platform.Common.Attributes;
+using Rumble.Platform.Common.Enums;
 using Rumble.Platform.Common.Extensions;
 using Rumble.Platform.Common.Filters;
 using Rumble.Platform.Common.Interfaces;
@@ -29,9 +30,9 @@ namespace TowerPortal;
 // [BaseRoute("portal")]
 public class Startup : PlatformStartup
 {
-    public void ConfigureServices(IServiceCollection services)
+    public override void ConfigureServices(IServiceCollection services)
     {
-        BypassFilter<PlatformPerformanceFilter>();
+        base.ConfigureServices(services);
         
         
         string baseRoute = this.HasAttribute(out BaseRoute att)
@@ -127,11 +128,15 @@ public class Startup : PlatformStartup
         });
 
         services.AddControllersWithViews();
-        
-        base.ConfigureServices(services, Owner.Nathan, warnMS: 30_000, errorMS: 60_000, criticalMS: 90_000, webServerEnabled: true);
-
     }
-    
+
+    protected override PlatformOptions Configure(PlatformOptions options) => options
+        .SetProjectOwner(Owner.Nathan)
+        .SetPerformanceThresholds(warnMS: 30_000, errorMS: 60_000, criticalMS: 90_000)
+        .DisableFeatures(CommonFeature.ConsoleObjectPrinting)
+        .DisableFilters(CommonFilter.Performance)
+        .EnableWebServer();
+
     // More debugging on cookie conflicts
     // https://community.auth0.com/t/correlation-failed-unknown-location-error-on-chrome-but-not-in-safari/40013/7
     public bool DisallowsSameSiteNone(string userAgent)

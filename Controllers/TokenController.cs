@@ -135,10 +135,6 @@ public class TokenController : PlatformController
         {
             return View("Error");
         }
-        
-        string token = _dynamicConfigService.GameConfig.Require<string>("portalToken");
-        // string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/token/admin/";
-        //string requestUrl = PlatformEnvironment.Url("/token/admin/");
 
         if (action == "ban")
         {
@@ -153,7 +149,7 @@ public class TokenController : PlatformController
                     {
                         _apiService
                             .Request(PlatformEnvironment.Url("/token/admin/ban"))
-                            .AddAuthorization(token)
+                            .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("portalToken"))
                             .SetPayload(new GenericData
                             {
                                 {"aid", playerId}
@@ -201,7 +197,7 @@ public class TokenController : PlatformController
                     {
                         _apiService
                             .Request(PlatformEnvironment.Url("/token/admin/ban"))
-                            .AddAuthorization(token)
+                            .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("portalToken"))
                             .SetPayload(new GenericData
                             {
                                 {"aid", playerId},
@@ -250,7 +246,7 @@ public class TokenController : PlatformController
                 {
                     _apiService
                         .Request(PlatformEnvironment.Url("/token/admin/unban"))
-                        .AddAuthorization(token)
+                        .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("portalToken"))
                         .SetPayload(new GenericData
                         {
                             {"aid", playerId}
@@ -296,7 +292,7 @@ public class TokenController : PlatformController
                 {
                     _apiService
                         .Request(PlatformEnvironment.Url("/token/admin/invalidate"))
-                        .AddAuthorization(token)
+                        .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("portalToken"))
                         .SetPayload(new GenericData
                         {
                             {"aid", playerId}
