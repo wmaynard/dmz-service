@@ -106,8 +106,7 @@ public class Startup : PlatformStartup
                 options.ClientId = PlatformEnvironment.Require("GOOGLE_CLIENT_ID");
                 options.ClientSecret = PlatformEnvironment.Require("GOOGLE_CLIENT_SECRET");
                 options.SaveTokens = true;
-
-                // options.CallbackPath = $"{baseRoute}/account/google-response";
+                // options.CallbackPath = $"{baseRoute}/portal/account/google-response";
             });
 
         services.AddAuthorization(options =>

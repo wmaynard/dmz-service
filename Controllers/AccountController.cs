@@ -39,7 +39,7 @@ public class AccountController : PlatformController
     {
         await HttpContext.SignOutAsync();
 
-        return Redirect("/");
+        return Redirect("/portal/index");
     }
 
     [Route("signin-google")]
@@ -75,6 +75,6 @@ public class AccountController : PlatformController
             PortalAccount = output
         });
 
-        return Redirect("/");
+        return Redirect("/portal/index");
     }
 }
