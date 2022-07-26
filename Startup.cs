@@ -113,7 +113,7 @@ public class Startup : PlatformStartup
                     {
                         Url = PlatformEnvironment.Url("/portal/signin-google")
                     });
-                    options.CallbackPath = PlatformEnvironment.Url("/portal/signin-google");
+                    options.CallbackPath = PlatformEnvironment.Url("/portal/account/signin-google");
                 }
             });
 
