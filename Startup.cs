@@ -67,8 +67,8 @@ public class Startup : PlatformStartup
             .AddCookie(options =>
             {
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-                options.LoginPath = $"{baseRoute}/account/google-login";
-                options.LogoutPath = $"{baseRoute}/account/google-logout";
+                options.LoginPath = $"{baseRoute}/portal/account/google-login";
+                options.LogoutPath = $"{baseRoute}/portal/account/google-logout";
                 options.Cookie.SameSite = SameSiteMode.Lax; // Suggestion from SO to resolve Correlation failed Exception
                 options.Events.OnSignedIn = (context) =>
                 {
