@@ -113,7 +113,15 @@ public class Startup : PlatformStartup
                     {
                         Url = PlatformEnvironment.Url("/portal/signin-google")
                     });
-                    options.CallbackPath = PlatformEnvironment.Url("/portal/account/signin-google");
+                    try
+                    {
+                        options.CallbackPath = PlatformEnvironment.Url("/portal/account/signin-google");
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Warn(Owner.Will, "Could not set callback path with PlatformEnvironment.Url.  Manually setting it for dev.", exception: e);
+                        options.CallbackPath = "https://dev.nonprod.tower.cdrentertainment.com/portal/account/signin-google";
+                    }
                 }
             });
 
