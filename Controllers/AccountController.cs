@@ -17,7 +17,7 @@ namespace TowerPortal.Controllers;
 
 [AllowAnonymous]
 [Route("portal/account")]
-public class AccountController : PlatformController
+public class AccountController : PortalController
 {
 #pragma warning disable CS0649
     private readonly AccountService _accountService;

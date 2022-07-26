@@ -15,9 +15,8 @@ namespace TowerPortal.Controllers;
 
 [Authorize]
 [Route("portal/token")]
-public class TokenController : PlatformController
+public class TokenController : PortalController
 {
-    private readonly ApiService _apiService;
     private readonly DynamicConfigService _dynamicConfigService;
     private readonly AccountService _accountService;
     private readonly TokenLogService _tokenLogService;

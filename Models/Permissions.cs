@@ -7,6 +7,9 @@ namespace TowerPortal.Models;
 [BsonIgnoreExtraElements]
 public class Permissions : PlatformDataModel
 {
+	// TODO: Permissions should be renamed to be more English-readable
+	// e.g. IsAdmin
+	// This will make it easier to understand when used in conditional statements
 	public bool Admin { get; set; }
 	public bool ManagePermissions { get; set; }
 	public bool ViewPlayer { get; set; }

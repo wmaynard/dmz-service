@@ -23,6 +23,7 @@ using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Utilities.Serializers;
 using Rumble.Platform.Common.Web;
 using Rumble.Platform.Common.Web.Routing;
+using TowerPortal.Filters;
 using TowerPortal.Utilities;
 
 namespace TowerPortal;
@@ -135,6 +136,7 @@ public class Startup : PlatformStartup
         .SetPerformanceThresholds(warnMS: 30_000, errorMS: 60_000, criticalMS: 90_000)
         .DisableFeatures(CommonFeature.ConsoleObjectPrinting)
         .DisableFilters(CommonFilter.Performance)
+        .AddFilter<ViewDataFilter>()
         .EnableWebServer();
 
     // More debugging on cookie conflicts

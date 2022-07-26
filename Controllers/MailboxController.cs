@@ -15,10 +15,9 @@ namespace TowerPortal.Controllers;
 
 [Authorize]
 [Route("portal/mailbox")]
-public class MailboxController : PlatformController
+public class MailboxController : PortalController
 {
 #pragma warning disable
-    private readonly ApiService _apiService;
     private readonly DynamicConfigService _dynamicConfigService;
     private readonly AccountService _accountService;
 #pragma warning restore

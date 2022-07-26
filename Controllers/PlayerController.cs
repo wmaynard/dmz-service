@@ -15,10 +15,9 @@ namespace TowerPortal.Controllers;
 
 [Authorize]
 [Route("portal/player")]
-public class PlayerController : PlatformController
+public class PlayerController : PortalController
 {
 #pragma warning disable CS0649
-    private readonly ApiService _apiService;
     private readonly DynamicConfigService _dynamicConfigService;
     private readonly AccountService _accountService;
 #pragma warning restore CS0649
