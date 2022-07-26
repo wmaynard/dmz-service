@@ -103,10 +103,18 @@ public class Startup : PlatformStartup
             })
             .AddGoogle(options =>
             {
+                Log.Local(Owner.Will, "Adding Google auth options.");
                 options.ClientId = PlatformEnvironment.Require("GOOGLE_CLIENT_ID");
                 options.ClientSecret = PlatformEnvironment.Require("GOOGLE_CLIENT_SECRET");
                 options.SaveTokens = true;
-                // options.CallbackPath = $"{baseRoute}/portal/account/google-response";
+                if (!PlatformEnvironment.IsLocal)
+                {
+                    Log.Info(Owner.Will, "Setting Google callback path", data: new
+                    {
+                        Url = PlatformEnvironment.Url("/portal/signin-google")
+                    });
+                    options.CallbackPath = PlatformEnvironment.Url("/portal/signin-google");
+                }
             });
 
         services.AddAuthorization(options =>
