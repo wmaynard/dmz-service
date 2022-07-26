@@ -22,14 +22,12 @@
       <_ContentIncludedByDefault Remove="Views\Secured\Index.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Account\AccessDenied.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Account\Login.cshtml" />
+      <_ContentIncludedByDefault Remove="wwwroot\js\site.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\site.css" />
     </ItemGroup>
 
     <ItemGroup>
       <Folder Include="Settings" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Include="wwwroot\css\mail.css" />
     </ItemGroup>
 
     <ItemGroup>
