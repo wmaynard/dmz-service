@@ -38,7 +38,7 @@ public class Startup : PlatformStartup
             ? $"/{att.Route}"
             : "";
         
-        services.ConfigureApplicationCookie(options => options.LoginPath = $"{baseRoute}/account/google-login");
+        services.ConfigureApplicationCookie(options => options.LoginPath = $"{baseRoute}/portal/account/google-login");
 
         services.Configure<CookiePolicyOptions>(options =>
         {
