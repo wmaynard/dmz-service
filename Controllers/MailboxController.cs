@@ -73,7 +73,7 @@ public class MailboxController : PlatformController
         }
         
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
-        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages";
+        // string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages";
         //string requestUrl = PlatformEnvironment.Url("/mail/admin/global/messages");
 
         TempData["Success"] = "";
@@ -83,7 +83,7 @@ public class MailboxController : PlatformController
         ViewData["Week"] = DefaultDateTime.UtcDateTimeString(days: 7);
         
         _apiService
-            .Request(requestUrl)
+            .Request(PlatformEnvironment.Url("/mail/admin/global/messages"))
             .AddAuthorization(token)
             .OnSuccess((sender, apiResponse) =>
             {
@@ -175,7 +175,7 @@ public class MailboxController : PlatformController
         }
         
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
-        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages";
+        // string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages";
         //string requestUrl = PlatformEnvironment.Url("/mail/admin/global/messages");
         
         TempData["Success"] = "";
@@ -204,7 +204,7 @@ public class MailboxController : PlatformController
                 status: Message.StatusType.UNCLAIMED, internalNote: internalNote, forAccountsBefore: forAccountsBeforeUnix);
 
             _apiService
-                .Request(requestUrl + "/send")
+                .Request(PlatformEnvironment.Url("/mail/admin/global/messages/send"))
                 .AddAuthorization(token)
                 .SetPayload(new GenericData
                 {
@@ -235,7 +235,7 @@ public class MailboxController : PlatformController
         }
         
         _apiService
-            .Request(requestUrl)
+            .Request(PlatformEnvironment.Url("/mail/admin/global/messages"))
             .AddAuthorization(token)
             .OnSuccess(((sender, apiResponse) =>
             {
@@ -324,7 +324,7 @@ public class MailboxController : PlatformController
         }
         
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
-        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages/edit";
+        // string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages/edit";
         //string requestUrl = PlatformEnvironment.Url("/mail/admin/global/messages/edit");
         
         TempData["Success"] = "";
@@ -392,7 +392,7 @@ public class MailboxController : PlatformController
             }
             
             _apiService
-                .Request(requestUrl)
+                .Request(PlatformEnvironment.Url("/mail/admin/global/messages/edit"))
                 .AddAuthorization(token)
                 .SetPayload(new GenericData
                 {
@@ -483,7 +483,7 @@ public class MailboxController : PlatformController
         }
         
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
-        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages/expire";
+        // string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/global/messages/expire";
         //string requestUrl = PlatformEnvironment.Url("/mail/admin/global/messages/expire");
         
         TempData["Success"] = "";
@@ -492,7 +492,7 @@ public class MailboxController : PlatformController
         try
         {
             _apiService
-                .Request(requestUrl)
+                .Request(PlatformEnvironment.Url("/mail/admin/global/messages/expire"))
                 .AddAuthorization(token)
                 .SetPayload(new GenericData
                 {
@@ -692,7 +692,7 @@ public class MailboxController : PlatformController
         }
         
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
-        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/messages/send";
+        // string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/messages/send";
         //string requestUrl = PlatformEnvironment.Url("/mail/admin/messages/send");
 
         try
@@ -713,7 +713,7 @@ public class MailboxController : PlatformController
                 status: Message.StatusType.UNCLAIMED, internalNote: internalNote);
 
             _apiService
-                .Request(requestUrl)
+                .Request(PlatformEnvironment.Url("/mail/admin/messages/send"))
                 .AddAuthorization(token)
                 .SetPayload(new GenericData
                 {
@@ -853,14 +853,14 @@ public class MailboxController : PlatformController
         }
         
         string token = _dynamicConfigService.GameConfig.Require<string>("mailToken");
-        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/inbox";
+        // string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/mail/admin/inbox";
         //string requestUrl = PlatformEnvironment.Url("/mail/admin/inbox");
         
         TempData["Success"] = "";
         TempData["Failure"] = null;
 
         _apiService
-            .Request(requestUrl)
+            .Request(PlatformEnvironment.Url("/mail/admin/inbox"))
             .AddAuthorization(token)
             .SetPayload(new GenericData
             {

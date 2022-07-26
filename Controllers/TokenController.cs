@@ -137,7 +137,7 @@ public class TokenController : PlatformController
         }
         
         string token = _dynamicConfigService.GameConfig.Require<string>("portalToken");
-        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/token/admin/";
+        // string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/token/admin/";
         //string requestUrl = PlatformEnvironment.Url("/token/admin/");
 
         if (action == "ban")
@@ -152,7 +152,7 @@ public class TokenController : PlatformController
                     foreach (string playerId in playerIdsList)
                     {
                         _apiService
-                            .Request(requestUrl + "ban")
+                            .Request(PlatformEnvironment.Url("/token/admin/ban"))
                             .AddAuthorization(token)
                             .SetPayload(new GenericData
                             {
@@ -200,7 +200,7 @@ public class TokenController : PlatformController
                     foreach (string playerId in playerIdsList)
                     {
                         _apiService
-                            .Request(requestUrl + "ban")
+                            .Request(PlatformEnvironment.Url("/token/admin/ban"))
                             .AddAuthorization(token)
                             .SetPayload(new GenericData
                             {
@@ -249,7 +249,7 @@ public class TokenController : PlatformController
                 foreach (string playerId in playerIdsList)
                 {
                     _apiService
-                        .Request(requestUrl + "unban")
+                        .Request(PlatformEnvironment.Url("/token/admin/unban"))
                         .AddAuthorization(token)
                         .SetPayload(new GenericData
                         {
@@ -295,7 +295,7 @@ public class TokenController : PlatformController
                 foreach (string playerId in playerIdsList)
                 {
                     _apiService
-                        .Request(requestUrl + "invalidate")
+                        .Request(PlatformEnvironment.Url("/token/admin/invalidate"))
                         .AddAuthorization(token)
                         .SetPayload(new GenericData
                         {

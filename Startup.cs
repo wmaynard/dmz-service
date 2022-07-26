@@ -107,22 +107,7 @@ public class Startup : PlatformStartup
                 options.ClientId = PlatformEnvironment.Require("GOOGLE_CLIENT_ID");
                 options.ClientSecret = PlatformEnvironment.Require("GOOGLE_CLIENT_SECRET");
                 options.SaveTokens = true;
-                if (!PlatformEnvironment.IsLocal)
-                {
-                    Log.Info(Owner.Will, "Setting Google callback path", data: new
-                    {
-                        Url = PlatformEnvironment.Url("/portal/signin-google")
-                    });
-                    try
-                    {
-                        options.CallbackPath = PlatformEnvironment.Url("/portal/account/signin-google");
-                    }
-                    catch (Exception e)
-                    {
-                        Log.Warn(Owner.Will, "Could not set callback path with PlatformEnvironment.Url.  Manually setting it for dev.", exception: e);
-                        options.CallbackPath = "/portal/account/signin-google";
-                    }
-                }
+                options.CallbackPath = "/portal/account/signin-google";
             });
 
         services.AddAuthorization(options =>

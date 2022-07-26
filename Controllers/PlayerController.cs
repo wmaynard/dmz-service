@@ -72,12 +72,13 @@ public class PlayerController : PlatformController
             List<string> searchUser = new List<string>();
 
             string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
-            string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/search?term={query}";
+            // string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/search?term={query}";
             //string requestUrl = PlatformEnvironment.Url($"/player/v2/admin/search?term={query}");
             
             // Use the API Service to simplify web requests
             _apiService
-                .Request(requestUrl)
+                .Request(PlatformEnvironment.Url("/player/v2/admin/search"))
+                .AddParameter("term", query)
                 .AddAuthorization(token)
                 .OnSuccess(((sender, apiResponse) =>
                 {
@@ -87,7 +88,7 @@ public class PlayerController : PlatformController
                 {
                     Log.Error(Owner.Nathan, "Request to player-service-v2 failed.", data: new
                     {
-                        Url = requestUrl,
+                        Url = apiResponse.RequestUrl,
                         Response = apiResponse
                     });
                 }))
@@ -163,12 +164,13 @@ public class PlayerController : PlatformController
             return View("Error");
         }
         
-        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/details?accountId={id}";
+        // string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/details?accountId={id}";
         //string requestUrl = PlatformEnvironment.Url($"/player/v2/admin/details?accountId={id}");
         string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
 
         _apiService
-            .Request(requestUrl)
+            .Request(PlatformEnvironment.Url("/player/v2/admin/details"))
+            .AddParameter("accountId", id)
             .AddAuthorization(token)
             .OnSuccess(((sender, apiResponse) =>
             {
@@ -266,14 +268,14 @@ public class PlayerController : PlatformController
         }
         
         string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
-        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/screenname";
+        // string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/screenname";
         // string requestUrl = PlatformEnvironment.Url("/player/v2/admin/screenname");
         
         TempData["Success"] = "";
         TempData["Failure"] = null;
         
         _apiService
-            .Request(requestUrl)
+            .Request(PlatformEnvironment.Url("/player/v2/admin/screenname"))
             .AddAuthorization(token)
             .SetPayload(new GenericData
             {
@@ -353,12 +355,13 @@ public class PlayerController : PlatformController
         // PlayerComponents component = (PlayerComponents) TempData["Components"]; 
         // TODO resolve to remove following extra call; this is unable to pass data for some reason
 
-        string detailsUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/details?accountId={aid}";
+        // string detailsUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/details?accountId={aid}";
         //string requestUrl = PlatformEnvironment.Url($"/player/v2/admin/details?accountId={id}");
         string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
 
         _apiService
-            .Request(detailsUrl)
+            .Request(PlatformEnvironment.Url("/player/v2/admin/details"))
+            .AddParameter("accountId", aid)
             .AddAuthorization(token)
             .OnSuccess(((sender, apiResponse) =>
             {
@@ -397,14 +400,14 @@ public class PlayerController : PlatformController
         component.Wallet.Version += 1;
 
         // string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
-        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/component";
+        // string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/component";
         // string requestUrl = PlatformEnvironment.Url("/player/v2/admin/player/v2/admin/component");
         
         TempData["Success"] = "";
         TempData["Failure"] = null;
         
         _apiService
-            .Request(requestUrl)
+            .Request(PlatformEnvironment.Url("/player/v2/admin/component"))
             .AddAuthorization(token)
             .SetPayload(new GenericData
             {
