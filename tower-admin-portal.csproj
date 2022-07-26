@@ -32,4 +32,11 @@
       <None Include="wwwroot\css\mail.css" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include=".gitlab\deploy-k8s.yaml" />
+      <Content Include=".gitlab\dev.values.yaml" />
+      <Content Include=".gitlab\prod.values.yaml" />
+      <Content Include=".gitlab\stage-a.values.yaml" />
+    </ItemGroup>
+
 </Project>

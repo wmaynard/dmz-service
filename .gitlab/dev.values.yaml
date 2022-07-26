@@ -54,7 +54,7 @@ service:
   annotations: {}
   name: ap-dev # 15 character limit..
   type: NodePort
-  url: https://portal-eng.tower.cdrentertainment.com/
+  url: 
   additionalHosts:
   commonName: 
   externalPort: 5000
@@ -62,7 +62,7 @@ service:
 ingress:
   enabled: true
   paths: 
-    - "/"
+    - "/portal"
   tls:
     enabled: false
     acme: false
@@ -87,19 +87,19 @@ ingress:
 prometheus:
   metrics: false
 livenessProbe:
-  path: "/health"
+  path: "/portal/health"
   initialDelaySeconds: 30
   timeoutSeconds: 3
   scheme: "HTTP"
   probeType: "httpGet"
 readinessProbe:
-  path: "/health"
+  path: "/portal/health"
   initialDelaySeconds: 30
   timeoutSeconds: 3
   scheme: "HTTP"
   probeType: "httpGet"
 startupProbe:
-  path: "/health"
+  path: "/portal/health"
   failureThreshold: 30
   timeoutSeconds: 2
   scheme: "HTTP"

@@ -2,6 +2,8 @@
   image: "registry.gitlab.com/gitlab-org/cluster-integration/auto-deploy-image:v2.26.0"
   dependencies: []
   variables:
+    KUBE_INGRESS_BASE_DOMAIN: nonprod.tower.cdrentertainment.com
+    KUBE_NAMESPACE: "tower-admin-portal-29-dev"
     KUBE_CONTEXT: "platform-services/platform-services-agent:platform-services"
   allow_failure: false
   script:
@@ -43,33 +45,48 @@
     - if: $DEPLOY_TYPE == "kubernetes" || $DEPLOY_TYPE == "both"
       when: manual
 
-
 dev:
   extends: .auto-deploy
   stage: dev
-  variables:
-    KUBE_INGRESS_BASE_DOMAIN: nonprod.tower.cdrentertainment.com
-    KUBE_NAMESPACE: tower-admin-portal-29-dev
   environment:
     name: dev
-    url: https://portal-eng.tower.cdrentertainment.com/
+    url: https://dev.nonprod.tower.cdrentertainment.com/
 
 stage-a:
   extends: .auto-deploy
   stage: staging
-  variables:
-    KUBE_INGRESS_BASE_DOMAIN: nonprod.tower.cdrentertainment.com
-    KUBE_NAMESPACE: tower-admin-portal-29-stage-a
   environment:
     name: stage-a
-    url: https://portal.tower.cdrentertainment.com/
+    url: https://stage-a.nonprod.tower.cdrentertainment.com/
+
+stage-b:
+  extends: .auto-deploy
+  stage: staging
+  environment:
+    name: stage-b
+    url: https://stage-b.nonprod.tower.cdrentertainment.com/
+
+stage-c:
+  extends: .auto-deploy
+  stage: staging
+  environment:
+    name: stage-c
+    url: https://stage-c.nonprod.tower.cdrentertainment.com/
 
 production:
-  extends: .auto-deploy-prod
+  extends: .auto-deploy
   stage: production
   tags:
     - production
   environment:
     name: production/platform
-    url: https://portal.tower.rumblegames.com/
+    url: https://platform-a.prod.tower.rumblegames.com/
 
+production-b:
+  extends: .auto-deploy
+  stage: production
+  tags:
+    - production
+  environment:
+    name: production/platform-b
+    url: https://platform-b.prod.tower.rumblegames.com/
