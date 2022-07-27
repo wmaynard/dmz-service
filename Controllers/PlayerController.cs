@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -15,11 +16,10 @@ using TowerPortal.Services;
 namespace TowerPortal.Controllers;
 
 [Authorize]
-[Route("player")]
-public class PlayerController : PlatformController
+[Route("portal/player")]
+public class PlayerController : PortalController
 {
 #pragma warning disable CS0649
-    private readonly ApiService _apiService;
     private readonly DynamicConfigService _dynamicConfigService;
     private readonly AccountService _accountService;
 #pragma warning restore CS0649
@@ -28,103 +28,52 @@ public class PlayerController : PlatformController
     public async Task<IActionResult> Search(string query)
     {
         ViewData["Message"] = "Player search";
-        
-        // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims);
-        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
-        ViewData["Permissions"] = mongoAccount.Permissions;
-        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
-        // Tab view permissions
-        bool currentAdmin = currentPermissions.Admin;
-        bool currentManagePermissions = currentPermissions.ManagePermissions;
-        bool currentViewPlayer = currentPermissions.ViewPlayer;
-        bool currentViewMailbox = currentPermissions.ViewMailbox;
-        bool currentViewToken = currentPermissions.ViewToken;
-        bool currentViewConfig = currentPermissions.ViewConfig;
-        if (currentAdmin)
-        {
-            ViewData["CurrentAdmin"] = currentPermissions.Admin;
-        }
-        if (currentManagePermissions)
-        {
-            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
-        }
-        if (currentViewPlayer)
-        {
-            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
-        }
-        if (currentViewMailbox)
-        {
-            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
-        }
-        if (currentViewToken)
-        {
-            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
-        }
-        if (currentViewConfig)
-        {
-            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
-        }
-        
-        // Redirect if not allowed
-        if (currentViewPlayer == false)
-        {
+
+        // Exit early if there's invalid data; easier to read.
+        if (!UserPermissions.ViewPlayer)
             return View("Error");
-        }
-
-        if (query != null)
+        if (query == null)
         {
-            List<string> searchId = new List<string>();
-            List<string> searchUser = new List<string>();
-
-            string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
-            string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/search?term={query}";
-            //string requestUrl = PlatformEnvironment.Url($"/player/v2/admin/search?term={query}");
-            
-            // Use the API Service to simplify web requests
-            _apiService
-                .Request(requestUrl)
-                .AddAuthorization(token)
-                .OnSuccess(((sender, apiResponse) =>
-                {
-                    Log.Local(Owner.Nathan, "Request to player-service-v2 succeeded.");
-                }))
-                .OnFailure(((sender, apiResponse) =>
-                {
-                    Log.Error(Owner.Nathan, "Request to player-service-v2 failed.", data: new
-                    {
-                        Url = requestUrl,
-                        Response = apiResponse
-                    });
-                }))
-                .Get(out GenericData response, out int code);
-            
-            string responseString = response.JSON;
-
-            SearchResponse searchResponse = JsonConvert.DeserializeObject<SearchResponse>(responseString);
-
-            foreach (SearchResult result in searchResponse.Results)
-            {
-                searchId.Add(result.Player.Id);
-                searchUser.Add(result.Player.Username);
-            }
-            
-            List<List<string>> searchList = new List<List<string>>();
-            for (int i = 0; i < searchId.Count; i++)
-            {
-                List<string> searchEntry = new List<string>();
-                searchEntry.Add(searchId[i]);
-                searchEntry.Add(searchUser[i]);
-                
-                searchList.Add(searchEntry);
-            }
-
-            ViewData["Query"] = query;
-            ViewData["Data"] = searchList;
-            
+            ViewData["Data"] = new List<List<string>>();
             return View();
         }
-        ViewData["Data"] = new List<List<string>>();
+
+        List<string> searchId = new List<string>();
+        List<string> searchUser = new List<string>();
+
+        // Use the API Service to simplify web requests
+        _apiService
+            .Request(PlatformEnvironment.Url("/player/v2/admin/search"))
+            .AddParameter("term", query)
+            .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("playerServiceToken"))
+            .OnSuccess((_, apiResponse) =>
+            {
+                Log.Local(Owner.Nathan, "Request to player-service-v2 succeeded.");
+            })
+            .OnFailure((_, apiResponse) =>
+            {
+                Log.Error(Owner.Nathan, "Request to player-service-v2 failed.", data: new
+                {
+                    Url = apiResponse.RequestUrl,
+                    Response = apiResponse
+                });
+            })
+            .Get(out GenericData response);
+
+        // Will: Probably? don't need the SearchResult model.  I think the game server serializes the entire response from
+        // the APIs it touches, but general practice for platform is just to serialize the keys you need.
+        SearchResult[] results = response.Require<SearchResult[]>(SearchResult.API_KEY_RESULTS);
+        
+        // This could probably be converted to a struct or something; nested collections are difficult to work with.
+        // LINQ can also help a lot with transforming data from one structure into another, and is easier to read (with practice)
+        // than looping through collections.
+        List<List<string>> searchList = results
+            .Select(result => new List<string> { result.Player.Id, result.Player.Username })
+            .ToList();
+
+        ViewData["Query"] = query;
+        ViewData["Data"] = searchList;
+        
         return View();
     }
     
@@ -173,14 +122,11 @@ public class PlayerController : PlatformController
         {
             return View("Error");
         }
-        
-        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/details?accountId={id}";
-        //string requestUrl = PlatformEnvironment.Url($"/player/v2/admin/details?accountId={id}");
-        string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
 
         _apiService
-            .Request(requestUrl)
-            .AddAuthorization(token)
+            .Request(PlatformEnvironment.Url("/player/v2/admin/details"))
+            .AddParameter("accountId", id)
+            .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("playerServiceToken"))
             .OnSuccess(((sender, apiResponse) =>
             {
                 Log.Local(Owner.Nathan, "Request to player-service-v2 details succeeded.");
@@ -289,16 +235,12 @@ public class PlayerController : PlatformController
             return View("Error");
         }
         
-        string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
-        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/screenname";
-        // string requestUrl = PlatformEnvironment.Url("/player/v2/admin/screenname");
-        
         TempData["Success"] = "";
         TempData["Failure"] = null;
         
         _apiService
-            .Request(requestUrl)
-            .AddAuthorization(token)
+            .Request(PlatformEnvironment.Url("/player/v2/admin/screenname"))
+            .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("playerServiceToken"))
             .SetPayload(new GenericData
             {
                 {"accountId", accountId},
@@ -381,14 +323,11 @@ public class PlayerController : PlatformController
         
         // PlayerComponents component = (PlayerComponents) TempData["Components"]; 
         // TODO resolve to remove following extra call; this is unable to pass data for some reason
-
-        string detailsUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/details?accountId={aid}";
-        //string requestUrl = PlatformEnvironment.Url($"/player/v2/admin/details?accountId={id}");
-        string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
-
+        
         _apiService
-            .Request(detailsUrl)
-            .AddAuthorization(token)
+            .Request(PlatformEnvironment.Url("/player/v2/admin/details"))
+            .AddParameter("accountId", aid)
+            .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("playerServiceToken"))
             .OnSuccess(((sender, apiResponse) =>
             {
                 Log.Local(Owner.Nathan, "Request to player-service-v2 details succeeded.");
@@ -434,16 +373,12 @@ public class PlayerController : PlatformController
         component.Wallet.Data.Currencies = newWalletCurrencies;
         component.Wallet.Version += 1;
 
-        // string token = _dynamicConfigService.GameConfig.Require<string>("playerServiceToken");
-        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/player/v2/admin/component";
-        // string requestUrl = PlatformEnvironment.Url("/player/v2/admin/player/v2/admin/component");
-        
         TempData["Success"] = "";
         TempData["Failure"] = null;
         
         _apiService
-            .Request(requestUrl)
-            .AddAuthorization(token)
+            .Request(PlatformEnvironment.Url("/player/v2/admin/component"))
+            .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("playerServiceToken"))
             .SetPayload(new GenericData
             {
                 {"component", component.Wallet}

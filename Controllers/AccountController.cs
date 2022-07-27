@@ -16,8 +16,8 @@ using TowerPortal.Services;
 namespace TowerPortal.Controllers;
 
 [AllowAnonymous]
-[Route("account")]
-public class AccountController : PlatformController
+[Route("portal/account")]
+public class AccountController : PortalController
 {
 #pragma warning disable CS0649
     private readonly AccountService _accountService;
@@ -39,7 +39,7 @@ public class AccountController : PlatformController
     {
         await HttpContext.SignOutAsync();
 
-        return Redirect("/");
+        return Redirect("/portal/index");
     }
 
     [Route("signin-google")]
@@ -75,6 +75,6 @@ public class AccountController : PlatformController
             PortalAccount = output
         });
 
-        return Redirect("/");
+        return Redirect("/portal/index");
     }
 }

@@ -13,7 +13,7 @@
       <PackageReference Include="AspNetCore.Identity.MongoDbCore" Version="3.1.2" />
       <PackageReference Include="Google.Apis.Auth.AspNetCore3" Version="1.57.0" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="5.0.13" />
-      <PackageReference Include="platform-csharp-common" Version="1.1.12" />
+      <PackageReference Include="platform-csharp-common" Version="1.1.36" />
     </ItemGroup>
 
     <ItemGroup>
@@ -22,14 +22,20 @@
       <_ContentIncludedByDefault Remove="Views\Secured\Index.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Account\AccessDenied.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Account\Login.cshtml" />
+      <_ContentIncludedByDefault Remove="wwwroot\js\site.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\site.css" />
     </ItemGroup>
 
     <ItemGroup>
       <Folder Include="Settings" />
+      <Folder Include="wwwroot\css" />
     </ItemGroup>
 
     <ItemGroup>
-      <None Include="wwwroot\css\mail.css" />
+      <Content Include=".gitlab\deploy-k8s.yaml" />
+      <Content Include=".gitlab\dev.values.yaml" />
+      <Content Include=".gitlab\prod.values.yaml" />
+      <Content Include=".gitlab\stage-a.values.yaml" />
     </ItemGroup>
 
 </Project>

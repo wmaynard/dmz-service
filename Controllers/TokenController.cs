@@ -14,10 +14,9 @@ using TowerPortal.Utilities;
 namespace TowerPortal.Controllers;
 
 [Authorize]
-[Route("token")]
-public class TokenController : PlatformController
+[Route("portal/token")]
+public class TokenController : PortalController
 {
-    private readonly ApiService _apiService;
     private readonly DynamicConfigService _dynamicConfigService;
     private readonly AccountService _accountService;
     private readonly TokenLogService _tokenLogService;
@@ -145,10 +144,6 @@ public class TokenController : PlatformController
         {
             return View("Error");
         }
-        
-        string token = _dynamicConfigService.GameConfig.Require<string>("portalToken");
-        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/token/admin/";
-        //string requestUrl = PlatformEnvironment.Url("/token/admin/");
 
         if (action == "ban")
         {
@@ -162,8 +157,8 @@ public class TokenController : PlatformController
                     foreach (string playerId in playerIdsList)
                     {
                         _apiService
-                            .Request(requestUrl + "ban")
-                            .AddAuthorization(token)
+                            .Request(PlatformEnvironment.Url("/token/admin/ban"))
+                            .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("portalToken"))
                             .SetPayload(new GenericData
                             {
                                 {"aid", playerId}
@@ -210,8 +205,8 @@ public class TokenController : PlatformController
                     foreach (string playerId in playerIdsList)
                     {
                         _apiService
-                            .Request(requestUrl + "ban")
-                            .AddAuthorization(token)
+                            .Request(PlatformEnvironment.Url("/token/admin/ban"))
+                            .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("portalToken"))
                             .SetPayload(new GenericData
                             {
                                 {"aid", playerId},
@@ -259,8 +254,8 @@ public class TokenController : PlatformController
                 foreach (string playerId in playerIdsList)
                 {
                     _apiService
-                        .Request(requestUrl + "unban")
-                        .AddAuthorization(token)
+                        .Request(PlatformEnvironment.Url("/token/admin/unban"))
+                        .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("portalToken"))
                         .SetPayload(new GenericData
                         {
                             {"aid", playerId}
@@ -305,8 +300,8 @@ public class TokenController : PlatformController
                 foreach (string playerId in playerIdsList)
                 {
                     _apiService
-                        .Request(requestUrl + "invalidate")
-                        .AddAuthorization(token)
+                        .Request(PlatformEnvironment.Url("/token/admin/invalidate"))
+                        .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("portalToken"))
                         .SetPayload(new GenericData
                         {
                             {"aid", playerId}

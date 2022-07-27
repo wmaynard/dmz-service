@@ -15,7 +15,7 @@ namespace TowerPortal.Controllers;
 
 [Authorize]
 [Route("config")]
-public class DynamicConfigController : PlatformController
+public class DynamicConfigController : PortalController
 {
     private readonly ApiService _apiService;
     private readonly AccountService _accountService;

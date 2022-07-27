@@ -5,13 +5,13 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>@ViewData["Title"] - tower-admin-portal</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="~/css/site.css"/>
-    <link rel="stylesheet" href="~/css/mail.css"/>
-    <link rel="stylesheet" href="~/css/player.css"/>
-    <link rel="stylesheet" href="~/css/permissions.css"/>
-    <link rel="stylesheet" href="~/css/token.css"/>
-    <link rel="stylesheet" href="~/css/config.css"/>
+    <link rel="stylesheet" href="~/portal/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="~/portal/css/site.css"/>
+    <link rel="stylesheet" href="~/portal/css/mail.css"/>
+    <link rel="stylesheet" href="~/portal/css/player.css"/>
+    <link rel="stylesheet" href="~/portal/css/permissions.css"/>
+    <link rel="stylesheet" href="~/portal/css/token.css"/>
+    <link rel="stylesheet" href="~/portal/css/config.css"/>
 </head>
 <body>
 <header>
@@ -30,35 +30,35 @@
                     @{
                         if (User?.Identity?.IsAuthenticated ?? false)
                         {
-                            if (ViewData["CurrentAdmin"] != null || ViewData["CurrentManagePermissions"] != null)
+                            if (ViewData.GetPermissions().Admin || ViewData.GetPermissions().ManagePermissions)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Permission" asp-action="List">Permissions</a>
                                 </li>
                             }
 
-                            if (ViewData["CurrentViewConfig"] != null)
+                            if (ViewData.GetPermissions().ViewConfig)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="DynamicConfig" asp-action="Edit">Dynamic Config</a>
                                 </li>
                             }
 
-                            if (ViewData["CurrentViewPlayer"] != null)
+                            if (ViewData.GetPermissions().ViewPlayer)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Player" asp-action="Search">Player</a>
                                 </li>
                             }
 
-                            if (ViewData["CurrentViewMailbox"] != null)
+                            if (ViewData.GetPermissions().ViewMailbox)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Mailbox" asp-action="Global">Mailbox</a>
                                 </li>
                             }
 
-                            if (ViewData["CurrentViewToken"] != null)
+                            if (ViewData.GetPermissions().ViewToken)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Token" asp-action="Ban">Token</a>
@@ -73,7 +73,7 @@
                         else
                         {
                             <li class="nav-item">
-                                <a href="/account/google-login" class="btn btn-danger">Login</a>
+                                <a href="/portal/account/google-login" class="btn btn-danger">Login</a>
                             </li>
                         }
                     }
@@ -90,9 +90,9 @@
 
 <footer class="border-top footer text-muted">
 </footer>
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="~/js/site.js" asp-append-version="true"></script>
+<script src="~/portal/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/portal/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/portal/js/site.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

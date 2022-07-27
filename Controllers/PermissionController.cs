@@ -13,10 +13,9 @@ using TowerPortal.Services;
 namespace TowerPortal.Controllers;
 
 [Authorize]
-[Route("permission")]
-public class PermissionController : PlatformController
+[Route("portal/permission")]
+public class PermissionController : PortalController
 {
-    private readonly ApiService _apiService;
     private readonly DynamicConfigService _dynamicConfigService;
     private readonly AccountService _accountService;
 

@@ -14,6 +14,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
 using RCL.Logging;
 using Rumble.Platform.Common.Attributes;
+using Rumble.Platform.Common.Enums;
 using Rumble.Platform.Common.Extensions;
 using Rumble.Platform.Common.Filters;
 using Rumble.Platform.Common.Interfaces;
@@ -22,6 +23,7 @@ using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Utilities.Serializers;
 using Rumble.Platform.Common.Web;
 using Rumble.Platform.Common.Web.Routing;
+using TowerPortal.Filters;
 using TowerPortal.Utilities;
 
 namespace TowerPortal;
@@ -29,16 +31,16 @@ namespace TowerPortal;
 // [BaseRoute("portal")]
 public class Startup : PlatformStartup
 {
-    public void ConfigureServices(IServiceCollection services)
+    public override void ConfigureServices(IServiceCollection services)
     {
-        BypassFilter<PlatformPerformanceFilter>();
+        base.ConfigureServices(services);
         
         
         string baseRoute = this.HasAttribute(out BaseRoute att)
             ? $"/{att.Route}"
             : "";
         
-        services.ConfigureApplicationCookie(options => options.LoginPath = $"{baseRoute}/account/google-login");
+        services.ConfigureApplicationCookie(options => options.LoginPath = $"{baseRoute}/portal/account/google-login");
 
         services.Configure<CookiePolicyOptions>(options =>
         {
@@ -67,8 +69,8 @@ public class Startup : PlatformStartup
             .AddCookie(options =>
             {
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-                options.LoginPath = $"{baseRoute}/account/google-login";
-                options.LogoutPath = $"{baseRoute}/account/google-logout";
+                options.LoginPath = $"{baseRoute}/portal/account/google-login";
+                options.LogoutPath = $"{baseRoute}/portal/account/google-logout";
                 options.Cookie.SameSite = SameSiteMode.Lax; // Suggestion from SO to resolve Correlation failed Exception
                 options.Events.OnSignedIn = (context) =>
                 {
@@ -103,11 +105,11 @@ public class Startup : PlatformStartup
             })
             .AddGoogle(options =>
             {
+                Log.Local(Owner.Will, "Adding Google auth options.");
                 options.ClientId = PlatformEnvironment.Require("GOOGLE_CLIENT_ID");
                 options.ClientSecret = PlatformEnvironment.Require("GOOGLE_CLIENT_SECRET");
                 options.SaveTokens = true;
-
-                // options.CallbackPath = $"{baseRoute}/account/google-response";
+                options.CallbackPath = "/portal/account/signin-google";
             });
 
         services.AddAuthorization(options =>
@@ -127,11 +129,16 @@ public class Startup : PlatformStartup
         });
 
         services.AddControllersWithViews();
-        
-        base.ConfigureServices(services, Owner.Nathan, warnMS: 30_000, errorMS: 60_000, criticalMS: 90_000, webServerEnabled: true);
-
     }
-    
+
+    protected override PlatformOptions Configure(PlatformOptions options) => options
+        .SetProjectOwner(Owner.Nathan)
+        .SetPerformanceThresholds(warnMS: 30_000, errorMS: 60_000, criticalMS: 90_000)
+        .DisableFeatures(CommonFeature.ConsoleObjectPrinting)
+        .DisableFilters(CommonFilter.Performance)
+        .AddFilter<ViewDataFilter>()
+        .EnableWebServer();
+
     // More debugging on cookie conflicts
     // https://community.auth0.com/t/correlation-failed-unknown-location-error-on-chrome-but-not-in-safari/40013/7
     public bool DisallowsSameSiteNone(string userAgent)
