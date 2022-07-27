@@ -7,6 +7,8 @@ namespace TowerPortal.Models;
 
 public class SearchResult : PlatformDataModel
 {
+    public const string API_KEY_RESULTS = "results";
+    
     internal const string DB_KEY_PLAYER = "player";
     internal const string DB_KEY_SCORE = "score";
     internal const string DB_KEY_CONFIDENCE = "conf";
