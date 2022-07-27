@@ -40,6 +40,7 @@ public class MailboxController : PlatformController
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         bool currentViewToken = currentPermissions.ViewToken;
+        bool currentViewConfig = currentPermissions.ViewConfig;
         bool currentEditMailbox = currentPermissions.EditMailbox;
         if (currentAdmin)
         {
@@ -60,6 +61,10 @@ public class MailboxController : PlatformController
         if (currentViewToken)
         {
             ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
+        if (currentViewConfig)
+        {
+            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
         }
         if (currentEditMailbox)
         {
@@ -151,6 +156,7 @@ public class MailboxController : PlatformController
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         bool currentViewToken = currentPermissions.ViewToken;
+        bool currentViewConfig = currentPermissions.ViewConfig;
         bool currentEditMailbox = currentPermissions.EditMailbox;
         if (currentAdmin)
         {
@@ -171,6 +177,10 @@ public class MailboxController : PlatformController
         if (currentViewToken)
         {
             ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
+        if (currentViewConfig)
+        {
+            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
         }
         if (currentEditMailbox)
         {
@@ -309,6 +319,7 @@ public class MailboxController : PlatformController
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         bool currentViewToken = currentPermissions.ViewToken;
+        bool currentViewConfig = currentPermissions.ViewConfig;
         bool currentEditMailbox = currentPermissions.EditMailbox;
         if (currentAdmin)
         {
@@ -329,6 +340,10 @@ public class MailboxController : PlatformController
         if (currentViewToken)
         {
             ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
+        if (currentViewConfig)
+        {
+            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
         }
         if (currentEditMailbox)
         {
@@ -468,6 +483,7 @@ public class MailboxController : PlatformController
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         bool currentViewToken = currentPermissions.ViewToken;
+        bool currentViewConfig = currentPermissions.ViewConfig;
         bool currentEditMailbox = currentPermissions.EditMailbox;
         if (currentAdmin)
         {
@@ -488,6 +504,10 @@ public class MailboxController : PlatformController
         if (currentViewToken)
         {
             ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
+        if (currentViewConfig)
+        {
+            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
         }
         if (currentEditMailbox)
         {
@@ -620,6 +640,7 @@ public class MailboxController : PlatformController
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         bool currentViewToken = currentPermissions.ViewToken;
+        bool currentViewConfig = currentPermissions.ViewConfig;
         bool currentEditMailbox = currentPermissions.EditMailbox;
         if (currentAdmin)
         {
@@ -640,6 +661,10 @@ public class MailboxController : PlatformController
         if (currentViewToken)
         {
             ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
+        if (currentViewConfig)
+        {
+            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
         }
         if (currentEditMailbox)
         {
@@ -677,6 +702,7 @@ public class MailboxController : PlatformController
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         bool currentViewToken = currentPermissions.ViewToken;
+        bool currentViewConfig = currentPermissions.ViewConfig;
         bool currentEditMailbox = currentPermissions.EditMailbox;
         if (currentAdmin)
         {
@@ -697,6 +723,10 @@ public class MailboxController : PlatformController
         if (currentViewToken)
         {
             ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
+        if (currentViewConfig)
+        {
+            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
         }
         if (currentEditMailbox)
         {
@@ -787,6 +817,7 @@ public class MailboxController : PlatformController
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         bool currentViewToken = currentPermissions.ViewToken;
+        bool currentViewConfig = currentPermissions.ViewConfig;
         bool currentEditMailbox = currentPermissions.EditMailbox;
         if (currentAdmin)
         {
@@ -807,6 +838,10 @@ public class MailboxController : PlatformController
         if (currentViewToken)
         {
             ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
+        if (currentViewConfig)
+        {
+            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
         }
         if (currentEditMailbox)
         {
@@ -838,6 +873,7 @@ public class MailboxController : PlatformController
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         bool currentViewToken = currentPermissions.ViewToken;
+        bool currentViewConfig = currentPermissions.ViewConfig;
         bool currentEditMailbox = currentPermissions.EditMailbox;
         if (currentAdmin)
         {
@@ -858,6 +894,10 @@ public class MailboxController : PlatformController
         if (currentViewToken)
         {
             ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
+        if (currentViewConfig)
+        {
+            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
         }
         if (currentEditMailbox)
         {

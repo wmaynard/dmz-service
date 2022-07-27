@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="~/css/player.css"/>
     <link rel="stylesheet" href="~/css/permissions.css"/>
     <link rel="stylesheet" href="~/css/token.css"/>
+    <link rel="stylesheet" href="~/css/config.css"/>
 </head>
 <body>
 <header>
@@ -33,6 +34,13 @@
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Permission" asp-action="List">Permissions</a>
+                                </li>
+                            }
+
+                            if (ViewData["CurrentViewConfig"] != null)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="DynamicConfig" asp-action="Edit">Dynamic Config</a>
                                 </li>
                             }
 

@@ -1,0 +1,69 @@
+div.settings-container {
+    display: grid;
+    grid-template-areas: "lc sc";
+    grid-template-columns: 1fr 4fr;
+    border: 2px black solid;
+    padding: 5px;
+    height: 800px;
+}
+
+div.list-container {
+    grid-area: lc;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 10px;
+    padding: 10px;
+    border: 1px black solid;
+}
+
+div.section-container {
+    grid-area: sc;
+    overflow: scroll;
+}
+
+div.config-section {
+    margin: 10px;
+    padding: 10px;
+    border: 1px black solid;
+}
+
+div.config-subsection {
+    white-space: nowrap;
+}
+
+label.config-key {
+    display: inline-block;
+    width: 28%;
+    left: 0;
+}
+
+input.config-value {
+    display: inline-block;
+    width: 58%;
+    left: 30%;
+}
+
+button.config-delete {
+    display: inline-block;
+    width: 8%;
+    left: 90%;
+    color: red;
+}
+
+button.new-section-button {
+    width: 80%;
+}
+
+button.new-variable-button {
+    width: 28%;
+}
+
+div.edit-config-submit {
+    display: flex;
+    justify-content: flex-end;
+}
+
+button.variable-save-button {
+    width: 28%;
+}

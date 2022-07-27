@@ -37,6 +37,7 @@ public class PermissionController : PlatformController
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         bool currentViewToken = currentPermissions.ViewToken;
+        bool currentViewConfig = currentPermissions.ViewConfig;
         if (currentAdmin)
         {
             ViewData["CurrentAdmin"] = currentPermissions.Admin;
@@ -56,6 +57,10 @@ public class PermissionController : PlatformController
         if (currentViewToken)
         {
             ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
+        if (currentViewConfig)
+        {
+            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
         }
         
         // Redirect if not allowed
@@ -95,6 +100,7 @@ public class PermissionController : PlatformController
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         bool currentViewToken = currentPermissions.ViewToken;
+        bool currentViewConfig = currentPermissions.ViewConfig;
         if (currentAdmin)
         {
             ViewData["CurrentAdmin"] = currentPermissions.Admin;
@@ -114,6 +120,10 @@ public class PermissionController : PlatformController
         if (currentViewToken)
         {
             ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
+        if (currentViewConfig)
+        {
+            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
         }
         
         // Redirect if not allowed
@@ -135,7 +145,7 @@ public class PermissionController : PlatformController
 
     [HttpPost]
     [Route("account")]
-    public async Task<IActionResult> Account(string id, string managePermissions, string viewPlayer, string editPlayer, string viewMailbox, string editMailbox, string viewToken, string editToken)
+    public async Task<IActionResult> Account(string id, string managePermissions, string viewPlayer, string editPlayer, string viewMailbox, string editMailbox, string viewToken, string editToken, string viewConfig, string editConfig)
     {
         // Checking access permissions
         Account account = Models.Account.FromGoogleClaims(User.Claims); // Models required for some reason?
@@ -148,6 +158,7 @@ public class PermissionController : PlatformController
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         bool currentViewToken = currentPermissions.ViewToken;
+        bool currentViewConfig = currentPermissions.ViewConfig;
         if (currentAdmin)
         {
             ViewData["CurrentAdmin"] = currentPermissions.Admin;
@@ -167,6 +178,10 @@ public class PermissionController : PlatformController
         if (currentViewToken)
         {
             ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
+        if (currentViewConfig)
+        {
+            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
         }
         
         // Redirect if not allowed
@@ -234,6 +249,22 @@ public class PermissionController : PlatformController
             else
             {
                 user.Permissions.EditToken = false;
+            }
+            if (viewConfig != null)
+            {
+                user.Permissions.ViewConfig = true;
+            }
+            else
+            {
+                user.Permissions.ViewConfig = false;
+            }
+            if (editConfig != null)
+            {
+                user.Permissions.EditConfig = true;
+            }
+            else
+            {
+                user.Permissions.EditConfig = false;
             }
             
             _accountService.Update(user);
