@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="~/portal/css/player.css"/>
     <link rel="stylesheet" href="~/portal/css/permissions.css"/>
     <link rel="stylesheet" href="~/portal/css/token.css"/>
+    <link rel="stylesheet" href="~/portal/css/config.css"/>
 </head>
 <body>
 <header>
@@ -29,28 +30,35 @@
                     @{
                         if (User?.Identity?.IsAuthenticated ?? false)
                         {
-                            if (ViewData["CurrentAdmin"] != null || ViewData["CurrentManagePermissions"] != null)
+                            if (ViewData.GetPermissions().Admin || ViewData.GetPermissions().ManagePermissions)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Permission" asp-action="List">Permissions</a>
                                 </li>
                             }
 
-                            if (ViewData["CurrentViewPlayer"] != null)
+                            if (ViewData.GetPermissions().ViewConfig)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="DynamicConfig" asp-action="Edit">Dynamic Config</a>
+                                </li>
+                            }
+
+                            if (ViewData.GetPermissions().ViewPlayer)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Player" asp-action="Search">Player</a>
                                 </li>
                             }
 
-                            if (ViewData["CurrentViewMailbox"] != null)
+                            if (ViewData.GetPermissions().ViewMailbox)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Mailbox" asp-action="Global">Mailbox</a>
                                 </li>
                             }
 
-                            if (ViewData["CurrentViewToken"] != null)
+                            if (ViewData.GetPermissions().ViewToken)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Token" asp-action="Ban">Token</a>

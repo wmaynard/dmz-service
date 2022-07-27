@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -90,6 +91,7 @@ public class PlayerController : PortalController
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         bool currentViewToken = currentPermissions.ViewToken;
+        bool currentViewConfig = currentPermissions.ViewConfig;
         if (currentAdmin)
         {
             ViewData["CurrentAdmin"] = currentPermissions.Admin;
@@ -109,6 +111,10 @@ public class PlayerController : PortalController
         if (currentViewToken)
         {
             ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
+        if (currentViewConfig)
+        {
+            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
         }
         
         // Redirect if not allowed
@@ -137,12 +143,21 @@ public class PlayerController : PortalController
         ViewData["accountId"] = id;
 
         string responseString = response.JSON;
-        
-        DetailsResponse detailsResponse = JsonConvert.DeserializeObject<DetailsResponse>(responseString);
+
+        DetailsResponse detailsResponse = new DetailsResponse();
         // TODO remove newtonsoft, breaking down into models
-        
-        
-        PlayerComponents component = response.Require<PlayerComponents>(key: "components");
+
+        PlayerComponents component = new PlayerComponents();
+
+        try
+        {
+            component = response.Require<PlayerComponents>(key: "components");
+            detailsResponse = JsonConvert.DeserializeObject<DetailsResponse>(responseString);
+        }
+        catch (Exception e)
+        {
+            Log.Error(owner: Owner.Nathan, message: "Failed to parse response from player-service.", data: e);
+        }
         
         ViewData["ClientVersion"] = detailsResponse.Player.ClientVersion;
         ViewData["DateCreated"] = detailsResponse.Player.DateCreated;
@@ -162,8 +177,7 @@ public class PlayerController : PortalController
         ViewData["Components"] = component;
         ViewData["Items"] = detailsResponse.Items;
 
-        PlayerComponents playerComponents = response.Require<PlayerComponents>(key: "components");
-        PlayerWallet playerWallet = playerComponents.Wallet; // TODO simplify if GenericData works
+        PlayerWallet playerWallet = component.Wallet;
         ViewData["WalletCurrencies"] = playerWallet.Data.Currencies;
 
         return View();
@@ -184,6 +198,7 @@ public class PlayerController : PortalController
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         bool currentViewToken = currentPermissions.ViewToken;
+        bool currentViewConfig = currentPermissions.ViewConfig;
         bool currentEditPlayer = currentPermissions.EditPlayer;
         if (currentAdmin)
         {
@@ -204,6 +219,10 @@ public class PlayerController : PortalController
         if (currentViewToken)
         {
             ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
+        if (currentViewConfig)
+        {
+            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
         }
         if (currentEditPlayer)
         {
@@ -263,6 +282,7 @@ public class PlayerController : PortalController
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         bool currentViewToken = currentPermissions.ViewToken;
+        bool currentViewConfig = currentPermissions.ViewConfig;
         bool currentEditPlayer = currentPermissions.EditPlayer;
         if (currentAdmin)
         {
@@ -283,6 +303,10 @@ public class PlayerController : PortalController
         if (currentViewToken)
         {
             ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
+        if (currentViewConfig)
+        {
+            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
         }
         if (currentEditPlayer)
         {
@@ -317,7 +341,16 @@ public class PlayerController : PortalController
             }))
             .Get(out GenericData tempResponse, out int tempCode);
         
-        PlayerComponents component = tempResponse.Require<PlayerComponents>(key: "components");
+        PlayerComponents component = new PlayerComponents();
+
+        try
+        {
+            component = tempResponse.Require<PlayerComponents>(key: "components");
+        }
+        catch (Exception e)
+        {
+            Log.Error(owner: Owner.Nathan, message: "Failed to parse response from player-service.", data: e);
+        }
 
         if (component == null)
         {

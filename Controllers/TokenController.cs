@@ -35,6 +35,7 @@ public class TokenController : PortalController
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         bool currentViewToken = currentPermissions.ViewToken;
+        bool currentViewConfig = currentPermissions.ViewConfig;
         bool currentEditToken = currentPermissions.EditToken;
         if (currentAdmin)
         {
@@ -55,6 +56,10 @@ public class TokenController : PortalController
         if (currentViewToken)
         {
             ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
+        if (currentViewConfig)
+        {
+            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
         }
         if (currentEditToken)
         {
@@ -103,6 +108,7 @@ public class TokenController : PortalController
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         bool currentViewToken = currentPermissions.ViewToken;
+        bool currentViewConfig = currentPermissions.ViewConfig;
         bool currentEditToken = currentPermissions.EditToken;
         if (currentAdmin)
         {
@@ -123,6 +129,10 @@ public class TokenController : PortalController
         if (currentViewToken)
         {
             ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
+        if (currentViewConfig)
+        {
+            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
         }
         if (currentEditToken)
         {

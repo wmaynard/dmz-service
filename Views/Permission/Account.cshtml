@@ -79,6 +79,21 @@
                 <input type="checkbox" checked="@(ViewData.GetPermissions().EditToken)" name="editToken"/>
             </td>
         </tr>
+        <tr class="config-label">
+            <td>Dynamic Config Service</td>
+        </tr>
+        <tr>
+            <td>View Config</td>
+            <td>
+                <input type="checkbox" checked="@(ViewData.GetPermissions().ViewConfig)" name="viewConfig"/>
+            </td>
+        </tr>
+        <tr>
+            <td>Edit Config</td>
+            <td>
+                <input type="checkbox" checked="@(ViewData.GetPermissions().EditConfig)" name="editConfig"/>
+            </td>
+        </tr>
     </table>
     <button type="submit">Save</button>
 </form>

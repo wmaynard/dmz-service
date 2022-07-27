@@ -28,6 +28,7 @@
 
     <ItemGroup>
       <Folder Include="Settings" />
+      <Folder Include="wwwroot\css" />
     </ItemGroup>
 
     <ItemGroup>

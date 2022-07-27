@@ -18,6 +18,8 @@ public class Permissions : PlatformDataModel
 	public bool EditMailbox { get; set; }
 	public bool ViewToken { get; set; }
 	public bool EditToken { get; set; }
+	public bool ViewConfig { get; set; }
+	public bool EditConfig { get; set; }
 
 	public void SetAdmin()
 	{
@@ -30,5 +32,6 @@ public class Permissions : PlatformDataModel
 		ViewPlayer = true;
 		ViewMailbox = true;
 		ViewToken = true;
+		ViewConfig = true;
 	}
 }

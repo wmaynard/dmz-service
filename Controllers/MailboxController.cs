@@ -39,6 +39,7 @@ public class MailboxController : PortalController
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         bool currentViewToken = currentPermissions.ViewToken;
+        bool currentViewConfig = currentPermissions.ViewConfig;
         bool currentEditMailbox = currentPermissions.EditMailbox;
         if (currentAdmin)
         {
@@ -59,6 +60,10 @@ public class MailboxController : PortalController
         if (currentViewToken)
         {
             ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
+        if (currentViewConfig)
+        {
+            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
         }
         if (currentEditMailbox)
         {
@@ -90,14 +95,23 @@ public class MailboxController : PortalController
             {
                 TempData["Success"] = "Failed to fetch global messages.";
                 TempData["Failure"] = true;
-                Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
+                Log.Error(owner: Owner.Nathan, message: "Request to mailbox-service failed.", data: new
                 {
                     Response = apiResponse
                 });
             })
             .Get(out GenericData response, out int code);
-        
-        List<GlobalMessage> globalMessages = response.Require<List<GlobalMessage>>(key: "globalMessages");
+
+        List<GlobalMessage> globalMessages = new List<GlobalMessage>();
+
+        try
+        {
+            globalMessages = response.Require<List<GlobalMessage>>(key: "globalMessages");
+        }
+        catch (Exception e)
+        {
+            Log.Error(owner: Owner.Nathan, message: "Failed to parse response from mailbox-service.", data: e);
+        }
 
         List<GlobalMessage> activeGlobalMessagesList = new List<GlobalMessage>();
         List<GlobalMessage> expiredGlobalMessagesList = new List<GlobalMessage>();
@@ -137,6 +151,7 @@ public class MailboxController : PortalController
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         bool currentViewToken = currentPermissions.ViewToken;
+        bool currentViewConfig = currentPermissions.ViewConfig;
         bool currentEditMailbox = currentPermissions.EditMailbox;
         if (currentAdmin)
         {
@@ -157,6 +172,10 @@ public class MailboxController : PortalController
         if (currentViewToken)
         {
             ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
+        if (currentViewConfig)
+        {
+            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
         }
         if (currentEditMailbox)
         {
@@ -242,7 +261,16 @@ public class MailboxController : PortalController
             }))
             .Get(out GenericData response, out int code);
         
-        List<GlobalMessage> globalMessages = response.Require<List<GlobalMessage>>("globalMessages");
+        List<GlobalMessage> globalMessages = new List<GlobalMessage>();
+
+        try
+        {
+            globalMessages = response.Require<List<GlobalMessage>>(key: "globalMessages");
+        }
+        catch (Exception e)
+        {
+            Log.Error(owner: Owner.Nathan, message: "Failed to parse response from mailbox-service.", data: e);
+        }
 
         List<GlobalMessage> activeGlobalMessagesList = new List<GlobalMessage>();
         List<GlobalMessage> expiredGlobalMessagesList = new List<GlobalMessage>();
@@ -283,6 +311,7 @@ public class MailboxController : PortalController
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         bool currentViewToken = currentPermissions.ViewToken;
+        bool currentViewConfig = currentPermissions.ViewConfig;
         bool currentEditMailbox = currentPermissions.EditMailbox;
         if (currentAdmin)
         {
@@ -303,6 +332,10 @@ public class MailboxController : PortalController
         if (currentViewToken)
         {
             ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
+        if (currentViewConfig)
+        {
+            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
         }
         if (currentEditMailbox)
         {
@@ -438,6 +471,7 @@ public class MailboxController : PortalController
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         bool currentViewToken = currentPermissions.ViewToken;
+        bool currentViewConfig = currentPermissions.ViewConfig;
         bool currentEditMailbox = currentPermissions.EditMailbox;
         if (currentAdmin)
         {
@@ -458,6 +492,10 @@ public class MailboxController : PortalController
         if (currentViewToken)
         {
             ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
+        if (currentViewConfig)
+        {
+            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
         }
         if (currentEditMailbox)
         {
@@ -586,6 +624,7 @@ public class MailboxController : PortalController
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         bool currentViewToken = currentPermissions.ViewToken;
+        bool currentViewConfig = currentPermissions.ViewConfig;
         bool currentEditMailbox = currentPermissions.EditMailbox;
         if (currentAdmin)
         {
@@ -606,6 +645,10 @@ public class MailboxController : PortalController
         if (currentViewToken)
         {
             ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
+        if (currentViewConfig)
+        {
+            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
         }
         if (currentEditMailbox)
         {
@@ -643,6 +686,7 @@ public class MailboxController : PortalController
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         bool currentViewToken = currentPermissions.ViewToken;
+        bool currentViewConfig = currentPermissions.ViewConfig;
         bool currentEditMailbox = currentPermissions.EditMailbox;
         if (currentAdmin)
         {
@@ -663,6 +707,10 @@ public class MailboxController : PortalController
         if (currentViewToken)
         {
             ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
+        if (currentViewConfig)
+        {
+            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
         }
         if (currentEditMailbox)
         {
@@ -749,6 +797,7 @@ public class MailboxController : PortalController
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         bool currentViewToken = currentPermissions.ViewToken;
+        bool currentViewConfig = currentPermissions.ViewConfig;
         bool currentEditMailbox = currentPermissions.EditMailbox;
         if (currentAdmin)
         {
@@ -769,6 +818,10 @@ public class MailboxController : PortalController
         if (currentViewToken)
         {
             ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
+        if (currentViewConfig)
+        {
+            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
         }
         if (currentEditMailbox)
         {
@@ -800,6 +853,7 @@ public class MailboxController : PortalController
         bool currentViewPlayer = currentPermissions.ViewPlayer;
         bool currentViewMailbox = currentPermissions.ViewMailbox;
         bool currentViewToken = currentPermissions.ViewToken;
+        bool currentViewConfig = currentPermissions.ViewConfig;
         bool currentEditMailbox = currentPermissions.EditMailbox;
         if (currentAdmin)
         {
@@ -820,6 +874,10 @@ public class MailboxController : PortalController
         if (currentViewToken)
         {
             ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
+        }
+        if (currentViewConfig)
+        {
+            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
         }
         if (currentEditMailbox)
         {
@@ -861,13 +919,22 @@ public class MailboxController : PortalController
 
         if (response == null)
         {
-            TempData["Success"] = "Response was null.";
+            TempData["Success"] = "Service response was null.";
             TempData["Failure"] = true;
 
             return View();
         }
 
-        Inbox inbox = response.Require<Inbox>(key: "inbox");
+        Inbox inbox = new Inbox();
+        
+        try
+        {
+            inbox = response.Require<Inbox>(key: "inbox");
+        }
+        catch (Exception e)
+        {
+            Log.Error(owner: Owner.Nathan, message: "Failed to parse response from mailbox-service.", data: e);
+        }
         
         List<Message> activeMessagesList = inbox.Messages;
         List<Message> historyMessagesList = inbox.History;
