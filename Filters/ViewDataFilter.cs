@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using RCL.Logging;
@@ -27,14 +28,21 @@ public class ViewDataFilter : PlatformFilter, IActionFilter
 			return;
 		}
 
-		Account googleAccount = Account.FromGoogleClaims(controller.User.Claims);
-		Account mongoAccount = accountService.FindOne(filter: account => account.Email == googleAccount.Email);
+		try
+		{
+			Account googleAccount = Account.FromGoogleClaims(controller.User.Claims);
+			Account mongoAccount = accountService.FindOne(filter: account => account.Email == googleAccount.Email);
 
-		Log.Local(Owner.Will, "Setting the ViewData permissions object");
-		Permissions permissions = accountService.CheckPermissions(mongoAccount);
-		controller.ViewData.SetPermissions(permissions);
+			Log.Local(Owner.Will, "Setting the ViewData permissions object");
+			Permissions permissions = accountService.CheckPermissions(mongoAccount);
+			controller.ViewData.SetPermissions(permissions);
 		
-		// TODO: Update places 
+			// TODO: Update places 
+		}
+		catch (Exception e)
+		{
+			Log.Local(Owner.Will, "There was a problem in the filter; unable to authenticate.  May happen on health checks.", exception: e);
+		}
 	}
 
 	public void OnActionExecuted(ActionExecutedContext context) { }
