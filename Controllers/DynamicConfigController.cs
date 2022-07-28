@@ -7,14 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
-using Rumble.Platform.Common.Web;
 using TowerPortal.Models;
 using TowerPortal.Services;
 
 namespace TowerPortal.Controllers;
 
 [Authorize]
-[Route("config")]
+[Route("portal/config")]
 public class DynamicConfigController : PortalController
 {
     private readonly ApiService _apiService;

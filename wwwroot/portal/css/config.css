@@ -17,6 +17,59 @@ div.list-container {
     border: 1px black solid;
 }
 
+.overlay {
+    text-align: center;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 3;
+}
+
+.new-section-container,
+.new-variable-container,
+.delete-variable-container {
+    display: block;
+    position: sticky;
+    padding: 10px;
+    border: 10px solid white;
+    border-radius: 10px;
+    background-color: white;
+    opacity: 100%;
+    z-index: 4;
+}
+
+.new-section-container {
+    top: 38%;
+    left: 25%;
+    right: 25%;
+    width: 50%;
+    height: auto;
+}
+.new-variable-container {
+    top: 28%;
+    left: 20%;
+    right: 20%;
+    width: 60%;
+    height: auto;
+}
+
+.delete-variable-container {
+    top: 36%;
+    left: 30%;
+    right: 30%;
+    width: 40%;
+    height: auto;
+}
+
+form.delete-form {
+    margin-bottom: 5px;
+}
+
 div.section-container {
     grid-area: sc;
     overflow: scroll;
@@ -44,19 +97,21 @@ input.config-value {
     left: 30%;
 }
 
-button.config-delete {
+.config-item a {
     display: inline-block;
     width: 8%;
     left: 90%;
     color: red;
+    text-decoration: none;
 }
 
-button.new-section-button {
-    width: 80%;
-}
-
-button.new-variable-button {
-    width: 28%;
+.list-container a:last-child,
+.edit-config-fields>a {
+    border: 1px solid black;
+    border-radius: 2px;
+    padding: 2px;
+    color: black;
+    text-decoration: none;
 }
 
 div.edit-config-submit {
@@ -66,4 +121,60 @@ div.edit-config-submit {
 
 button.variable-save-button {
     width: 28%;
+}
+
+form.section-info,
+form.variable-info {
+    display: grid;
+    grid-template-areas: "l1 i1 i1 i1 i1"
+                         "l2 i2 i2 i2 i2"
+                         "b . . . c";
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+}
+
+form.section-info label,
+form.section-info input,
+form.variable-info label,
+form.variable-info input,
+form.variable-info textarea {
+    margin-top: 5px;
+    text-align: left;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+form.variable-info textarea {
+    resize: none;
+}
+
+form.section-info label.section-name,
+form.variable-info label.variable-key {
+    grid-area: l1;
+}
+
+form.section-info label.section-friendly-name,
+form.variable-info label.variable-value {
+    grid-area: l2;
+}
+
+form.section-info input.section-name,
+form.variable-info input.variable-key {
+    grid-area: i1;
+}
+
+form.section-info input.section-friendly-name,
+form.variable-info textarea.variable-value {
+    grid-area: i2;
+    margin-bottom: 10px;
+}
+
+form.section-info button,
+form.variable-info button {
+    grid-area: b;
+}
+
+form.section-info a,
+form.variable-info a {
+    grid-area: c;
 }

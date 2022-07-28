@@ -45,10 +45,10 @@
             <div class="new-section-container">
                 <h1>New Section</h1>
                 <form class="section-info" method="post" asp-controller="DynamicConfig" asp-action="NewSection">
-                    <label for="sectionName">Name</label>
-                    <input id="sectionName" type="text" name="name" placeholder="Name">
-                    <label for="sectionFriendlyName">Friendly Name</label>
-                    <input id="sectionFriendlyName" type="text" name="friendlyName" placeholder="friendly-name">
+                    <label for="sectionName" class="section-name">Name</label>
+                    <input id="sectionName" class="section-name" type="text" name="name" placeholder="Name">
+                    <label for="sectionFriendlyName" class="section-friendly-name">Friendly Name</label>
+                    <input id="sectionFriendlyName" class="section-friendly-name" type="text" name="friendlyName" placeholder="friendly-name">
                     
                     <button class="section-confirm" disabled="@(!ViewData.GetPermissions().EditConfig)" type="submit">Confirm</button>
                     @Html.ActionLink(linkText: "Cancel", actionName: "HideOverlay", controllerName: "DynamicConfig", routeValues: new {}, htmlAttributes: new {})
@@ -61,10 +61,10 @@
                 <h1>New Section</h1>
                 <form class="variable-info" method="post" asp-controller="DynamicConfig" asp-action="NewVariable">
                     <input id="variableName" class="invisible" name="name" value="@TempData["VariableSection"]"/>
-                    <label for="variableKey">Key</label>
-                    <input id="variableKey" type="text" name="key" placeholder="Key">
-                    <label for="variableValue">Value</label>
-                    <input id="variableValue" type="text" name="value" placeholder="Value">
+                    <label for="variableKey" class="variable-key">Key</label>
+                    <input id="variableKey" class="variable-key" type="text" name="key" placeholder="Key"/>
+                    <label for="variableValue" class="variable-value">Value</label>
+                    <textarea id="variableValue" class="variable-value" name="value" placeholder="Value" rows="10"></textarea>
 
                     <button class="section-confirm" disabled="@(!ViewData.GetPermissions().EditConfig)" type="submit">Confirm</button>
                     @Html.ActionLink(linkText: "Cancel", actionName: "HideOverlay", controllerName: "DynamicConfig", routeValues: new {}, htmlAttributes: new {})
@@ -73,13 +73,12 @@
         }
         @if (TempData["VisibleDelete"] != null)
         {
-            <div class="delete-container">
-                <h1>Delete Key-value</h1>
-                <p>Are you sure you would like to delete this key-value pair?</p>
+            <div class="delete-variable-container">
+                <h1>Delete Key</h1>
+                <p>Are you sure you would like to delete this key?</p>
                 <form class="delete-form" method="post" asp-controller="DynamicConfig" asp-action="Delete">
                     <p>Section: @(TempData["VariableSection"])</p>
                     <p>Key: @(TempData["VariableKey"])</p>
-                    <p>Value: @(TempData["VariableValue"])</p>
                     <input for="name" class="invisible" name="name" value="@TempData["VariableSection"]">
                     <input for="key" class="invisible" name="key" value="@TempData["VariableKey"]">
                     <input for="value" class="invisible" name="value" value="@TempData["VariableValue"]">
