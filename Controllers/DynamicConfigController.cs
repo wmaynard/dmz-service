@@ -480,9 +480,9 @@ public class DynamicConfigController : PortalController
             return View("Error");
         }
 
-        string name = collection["name"];
-        string key = collection["key"];
-        string value = collection["value"];
+        string[] name = collection["name"];
+        string[] key = collection["key"];
+        string[] value = collection["value"];
 
         string token = _dynamicConfigService.GameConfig.Require<string>("portalToken");
         string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/config/settings/update";

@@ -85,24 +85,27 @@ div.config-subsection {
     white-space: nowrap;
 }
 
+.config-item {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+}
+
 label.config-key {
     display: inline-block;
-    width: 28%;
-    left: 0;
+    width: 22%;
 }
 
 input.config-value {
     display: inline-block;
-    width: 58%;
-    left: 30%;
+    width: 75%;
 }
 
 .config-item a {
-    display: inline-block;
-    width: 8%;
-    left: 90%;
+    display: flex;
     color: red;
     text-decoration: none;
+    align-items: center;
 }
 
 .list-container a:last-child,
@@ -114,13 +117,8 @@ input.config-value {
     text-decoration: none;
 }
 
-div.edit-config-submit {
-    display: flex;
-    justify-content: flex-end;
-}
-
 button.variable-save-button {
-    width: 28%;
+    margin: 0 10px 0 10px;
 }
 
 form.section-info,

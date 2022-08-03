@@ -112,6 +112,7 @@
                             <div class="config-item">
                                 <label class="config-key">@item[1]</label>
                                 <input class="config-value" name="value" value="@item[2]"/>
+                                <button class="variable-save-button" disabled="@(!ViewData.GetPermissions().EditConfig)" type="submit">Save</button>
                                 @Html.ActionLink(linkText: "X", actionName: "ShowDeleteOverlay", controllerName: "DynamicConfig", routeValues: new
                                 {
                                     name = @item[0],
@@ -131,9 +132,6 @@
                             {
                                 name = @item[0]
                             })
-                        </div>
-                        <div class="edit-config-submit">
-                            <button class="variable-save-button" disabled="@(!ViewData.GetPermissions().EditConfig)" type="submit">Save</button>
                         </div>
                     </form>
                 </div>
