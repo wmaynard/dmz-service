@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
+using Rumble.Platform.Common.Models.Config;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using TowerPortal.Models;
@@ -16,9 +17,10 @@ namespace TowerPortal.Controllers;
 [Route("portal/config")]
 public class DynamicConfigController : PortalController
 {
-    private readonly ApiService _apiService;
-    private readonly AccountService _accountService;
+    private readonly ApiService           _apiService;
+    private readonly AccountService       _accountService;
     private readonly DynamicConfigService _dynamicConfigService;
+    private readonly DC2Service           _dc2Service;
 
     [Route("edit")]
     public async Task<IActionResult> Edit()
@@ -65,7 +67,11 @@ public class DynamicConfigController : PortalController
         {
             return View("Error");
         }
+
+        Section[] sections = _dc2Service.GetAdminData();
+        ViewData["Data"] = sections;
         
+        /*
         string token = _dynamicConfigService.GameConfig.Require<string>("portalToken");
         string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/config/settings";
         //string requestUrl = PlatformEnvironment.Url("/config/settings");
@@ -150,6 +156,7 @@ public class DynamicConfigController : PortalController
 
         ViewData["Names"] = names;
         ViewData["Data"] = data;
+        */
         
         return View();
     }
@@ -480,9 +487,9 @@ public class DynamicConfigController : PortalController
             return View("Error");
         }
 
-        string[] name = collection["name"];
-        string[] key = collection["key"];
-        string[] value = collection["value"];
+        string name = collection["name"];
+        string key = collection["key"];
+        string value = collection["value"];
 
         string token = _dynamicConfigService.GameConfig.Require<string>("portalToken");
         string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/config/settings/update";

@@ -89,6 +89,7 @@ div.config-subsection {
     display: flex;
     flex-wrap: nowrap;
     justify-content: space-between;
+    margin: 5px 0;
 }
 
 label.config-key {
@@ -99,6 +100,7 @@ label.config-key {
 input.config-value {
     display: inline-block;
     width: 75%;
+    height: min-content;
 }
 
 .config-item a {
@@ -108,8 +110,28 @@ input.config-value {
     align-items: center;
 }
 
+.config-item p {
+    display: flex;
+    align-items: center;
+}
+
+.config-item p,
+.list-container p:last-child,
+.config-section>p{
+    margin: 0;
+}
+
+.config-item p:hover,
+.list-container p:last-child:hover,
+.config-section>p:hover,
+button:disabled {
+    cursor: not-allowed;
+}
+
 .list-container a:last-child,
-.edit-config-fields>a {
+.config-section>a,
+.list-container p:last-child,
+.config-section>p {
     border: 1px solid black;
     border-radius: 2px;
     padding: 2px;
@@ -117,8 +139,13 @@ input.config-value {
     text-decoration: none;
 }
 
+.config-section>p {
+    width: 101px;
+}
+
 button.variable-save-button {
     margin: 0 10px 0 10px;
+    height: min-content;
 }
 
 form.section-info,

@@ -1,4 +1,5 @@
 @using TowerPortal.Extensions
+@using Rumble.Platform.Common.Models.Config
 @{
     ViewData["Title"] = "Dynamic Config";
 }
@@ -93,48 +94,72 @@
 <div class="settings-container">
     <div class="list-container">
         <h5 class="list-label">dynamic-config</h5>
-        @foreach (List<string> item in (List<List<string>>) @ViewData["Data"])
+        @foreach (Section item in (Section[]) @ViewData["Data"])
         {
-            <a class="list-link" href=@($"#{item[0]}")>@item[0]</a>
+            <a class="list-link" href=@($"#{item.FriendlyName}")>@item.FriendlyName</a>
         }
-        @Html.ActionLink(linkText: "New Section", actionName: "ShowNewSectionOverlay", controllerName: "DynamicConfig", routeValues: new { }, htmlAttributes: new { })
+        @if (ViewData.GetPermissions().EditConfig)
+        {
+            @Html.ActionLink(linkText: "New Section", actionName: "ShowNewSectionOverlay", controllerName: "DynamicConfig", routeValues: new {}, htmlAttributes: new {})
+        }
+        else
+        {
+            <p>New Section</p>
+        }
     </div>
     <div class="section-container">
-        @foreach (List<string> item in (List<List<string>>) @ViewData["Data"])
+        @foreach (Section item in (Section[]) @ViewData["Data"])
         {
-            <div class="config-section">
-                <h4 id=@($"{item[0]}")>@($"{item[0]}")</h4>
-                <div class="config-subsection">
-                    <form class="edit-config-form" method="post" asp-controller="DynamicConfig" asp-action="Edit">
-                        <input class="invisible" name="name" value="@item[0]"/>
-                        <div class="edit-config-fields">
-                            <input class="invisible" name="key" value="@item[1]"/>
-                            <div class="config-item">
-                                <label class="config-key">@item[1]</label>
-                                <input class="config-value" name="value" value="@item[2]"/>
-                                <button class="variable-save-button" disabled="@(!ViewData.GetPermissions().EditConfig)" type="submit">Save</button>
-                                @Html.ActionLink(linkText: "X", actionName: "ShowDeleteOverlay", controllerName: "DynamicConfig", routeValues: new
-                                {
-                                    name = @item[0],
-                                    key = @item[1],
-                                    value = @item[2]
-                                }, htmlAttributes: new
-                                {
-                                    name = @item[0],
-                                    key = @item[1],
-                                    value = @item[2]
-                                })
+            <div class="config-section" id=@($"{item.FriendlyName}")>
+                <h4>@($"{item.FriendlyName}")</h4>
+                @foreach (string key in item.Data.Keys)
+                {
+                    <div class="config-subsection">
+                        <form class="edit-config-form" method="post" asp-controller="DynamicConfig" asp-action="Edit">
+                            <input class="invisible" name="name" value="@item.Name"/>
+                            <div class="edit-config-fields">
+                                <input class="invisible" name="key" value="@key"/>
+                                <div class="config-item">
+                                    <label class="config-key">@key</label>
+                                    <input class="config-value" name="value" value="@item.Data[($"{key}")].Value" disabled="@(!ViewData.GetPermissions().EditConfig)"/>
+                                    <button class="variable-save-button" disabled="@(!ViewData.GetPermissions().EditConfig)" type="submit">Save</button>
+                                    @if (ViewData.GetPermissions().EditConfig)
+                                    {
+                                        @Html.ActionLink(linkText: "X", actionName: "ShowDeleteOverlay", controllerName: "DynamicConfig", routeValues: new
+                                                                                                                                                       {
+                                                                                                                                                           name = @item.Name,
+                                                                                                                                                           key = @key,
+                                                                                                                                                           value = @item.Data[($"{key}")].Value
+                                                                                                                                                       }, htmlAttributes: new
+                                                                                                                                                                          {
+                                                                                                                                                                              name = @item.Name,
+                                                                                                                                                                              key = @key,
+                                                                                                                                                                              value = @item.Data[($"{key}")].Value
+                                                                                                                                                                          })
+                                    }
+                                    else
+                                    {
+                                        <p>X</p>
+                                    }
+                                </div>
                             </div>
-                            @Html.ActionLink(linkText: "New Variable", actionName: "ShowNewVariableOverlay", controllerName: "DynamicConfig", routeValues: new
-                            {
-                                name = @item[0]
-                            }, htmlAttributes: new
-                            {
-                                name = @item[0]
-                            })
-                        </div>
-                    </form>
-                </div>
+                        </form>
+                    </div>
+                }
+                @if (ViewData.GetPermissions().EditConfig)
+                {
+                    @Html.ActionLink(linkText: "New Variable", actionName: "ShowNewVariableOverlay", controllerName: "DynamicConfig", routeValues: new
+                                                                                                                                                   {
+                                                                                                                                                       name = @item.Name
+                                                                                                                                                   }, htmlAttributes: new
+                                                                                                                                                                      {
+                                                                                                                                                                          name = @item.Name
+                                                                                                                                                                      })
+                }
+                else
+                {
+                    <p>New Variable</p>
+                }
             </div>
         }
     </div>
