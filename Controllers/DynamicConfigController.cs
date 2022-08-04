@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -71,93 +69,6 @@ public class DynamicConfigController : PortalController
         Section[] sections = _dc2Service.GetAdminData();
         ViewData["Data"] = sections;
         
-        /*
-        string token = _dynamicConfigService.GameConfig.Require<string>("portalToken");
-        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/config/settings";
-        //string requestUrl = PlatformEnvironment.Url("/config/settings");
-
-        if ((string) TempData["Success"] != "Successfully updated dynamic config settings." ||
-            (string) TempData["Success"] != "Failed to update dynamic config settings.")
-        {
-            TempData["UpdateSuccess"] = (string) TempData["Success"];
-        }
-        else
-        {
-            TempData["UpdateSuccess"] = null;
-        }
-        
-        TempData["Success"] = "";
-        TempData["Failure"] = null;
-
-        _apiService
-            .Request(requestUrl + "?game=" + PlatformEnvironment.GameSecret + "&secret=" + PlatformEnvironment.RumbleSecret)
-            //.AddParameter(key: "game", value: PlatformEnvironment.GameSecret)
-            //.AddParameter(key: "secret", value: PlatformEnvironment.RumbleSecret)
-            .AddAuthorization(token)
-            .OnSuccess((sender, apiResponse) =>
-            {
-                TempData["Success"] = "Successfully fetched dynamic config settings.";
-                TempData["Failure"] = null;
-                Log.Local(Owner.Nathan, "Request to dynamic-config-service succeeded.");
-            })
-            .OnFailure((sender, apiResponse) =>
-            {
-                TempData["Success"] = "Failed to fetch dynamic config settings.";
-                TempData["Failure"] = true;
-                Log.Error(Owner.Nathan, "Request to dynamic-config-service failed.", data: new
-                {
-                    Response = apiResponse
-                });
-            })
-            .Get(out GenericData response, out int code);
-
-        List<List<string>> data = new List<List<string>>(); // TODO refactor into model
-        
-        if (response == null)
-        {
-            TempData["Success"] = "Service response was null.";
-            TempData["Failure"] = true;
-            
-            ViewData["Data"] = data;
-            
-            return View();
-        }
-
-        List<string> names = new List<string>();
-        foreach (string name in response.Keys)
-        {
-            names.Add(name);
-        }
-        
-        List<List<string>> dataEntries = new List<List<string>>();
-        
-        foreach (GenericData genericData in response.Values)
-        {
-            string key = genericData.Keys.First();
-            string value = genericData.Values.First().ToString();
-            List<string> dataEntry = new List<string>
-            {
-                key,
-                value
-            };
-            dataEntries.Add(dataEntry);
-        }
-
-        for (int i = 0; i < names.Count; i++)
-        {
-            List<string> combinedData = new List<string>
-            {
-                names[i],
-                dataEntries[i][0],
-                dataEntries[i][1]
-            };
-            data.Add(combinedData);
-        }
-
-        ViewData["Names"] = names;
-        ViewData["Data"] = data;
-        */
-        
         return View();
     }
 
@@ -217,16 +128,15 @@ public class DynamicConfigController : PortalController
         string friendlyName = collection["friendlyName"];
 
         string token = _dynamicConfigService.GameConfig.Require<string>("portalToken");
-        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/config/settings/new";
-        //string requestUrl = PlatformEnvironment.Url("/config/settings/new");
+        string requestUrl = PlatformEnvironment.Url("/config/settings/new");
         
         TempData["Success"] = "";
         TempData["Failure"] = null;
         
         _apiService
-            .Request(requestUrl + "?game=" + PlatformEnvironment.GameSecret + "&secret=" + PlatformEnvironment.RumbleSecret)
-            //.AddParameter(key: "game", value: PlatformEnvironment.GameSecret)
-            //.AddParameter(key: "secret", value: PlatformEnvironment.RumbleSecret)
+            .Request(requestUrl)
+            .AddParameter(key: "game", value: PlatformEnvironment.GameSecret)
+            .AddParameter(key: "secret", value: PlatformEnvironment.RumbleSecret)
             .AddAuthorization(token)
             .SetPayload(new GenericData
             {
@@ -310,16 +220,16 @@ public class DynamicConfigController : PortalController
         string value = collection["value"];
 
         string token = _dynamicConfigService.GameConfig.Require<string>("portalToken");
-        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/config/settings/update";
-        //string requestUrl = PlatformEnvironment.Url("/config/settings/update");
+        string requestUrl = PlatformEnvironment.Url("/config/settings/update");
         
         TempData["Success"] = "";
         TempData["Failure"] = null;
         
         _apiService
-            .Request(requestUrl + "?game=" + PlatformEnvironment.GameSecret + "&secret=" + PlatformEnvironment.RumbleSecret)
-            //.AddParameter(key: "game", value: PlatformEnvironment.GameSecret)
-            //.AddParameter(key: "secret", value: PlatformEnvironment.RumbleSecret)
+            //.Request(requestUrl + "?game=" + PlatformEnvironment.GameSecret + "&secret=" + PlatformEnvironment.RumbleSecret)
+            .Request(requestUrl)
+            .AddParameter(key: "game", value: PlatformEnvironment.GameSecret)
+            .AddParameter(key: "secret", value: PlatformEnvironment.RumbleSecret)
             .AddAuthorization(token)
             .SetPayload(new GenericData
             {
@@ -404,16 +314,15 @@ public class DynamicConfigController : PortalController
         string key = collection["key"];
 
         string token = _dynamicConfigService.GameConfig.Require<string>("portalToken");
-        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/config/settings/value";
-        //string requestUrl = PlatformEnvironment.Url("/config/settings/value");
+        string requestUrl = PlatformEnvironment.Url("/config/settings/value");
         
         TempData["Success"] = "";
         TempData["Failure"] = null;
         
         _apiService
-            .Request(requestUrl + "?name=" + name + "&key=" + key)
-            //.AddParameter(key: "name", value: name)
-            //.AddParameter(key: "key", value: key)
+            .Request(requestUrl)
+            .AddParameter(key: "name", value: name)
+            .AddParameter(key: "key", value: key)
             .AddAuthorization(token)
             .OnSuccess(((sender, apiResponse) =>
             {
@@ -492,16 +401,13 @@ public class DynamicConfigController : PortalController
         string value = collection["value"];
 
         string token = _dynamicConfigService.GameConfig.Require<string>("portalToken");
-        string requestUrl = $"{PlatformEnvironment.Optional<string>("PLATFORM_URL").TrimEnd('/')}/config/settings/update";
-        //string requestUrl = PlatformEnvironment.Url("/config/settings/update");
+        string requestUrl = PlatformEnvironment.Url("/config/settings/update");
         
         TempData["Success"] = "";
         TempData["Failure"] = null;
         
         _apiService
-            .Request(requestUrl + "?game=" + PlatformEnvironment.GameSecret + "&secret=" + PlatformEnvironment.RumbleSecret)
-            //.AddParameter(key: "game", value: PlatformEnvironment.GameSecret)
-            //.AddParameter(key: "secret", value: PlatformEnvironment.RumbleSecret)
+            .Request(requestUrl)
             .AddAuthorization(token)
             .SetPayload(new GenericData
             {
