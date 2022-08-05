@@ -1,4 +1,5 @@
 @using TowerPortal.Extensions
+@using Rumble.Platform.Common.Models.Config
 @{
     ViewData["Title"] = "Dynamic Config";
 }
@@ -45,10 +46,10 @@
             <div class="new-section-container">
                 <h1>New Section</h1>
                 <form class="section-info" method="post" asp-controller="DynamicConfig" asp-action="NewSection">
-                    <label for="sectionName">Name</label>
-                    <input id="sectionName" type="text" name="name" placeholder="Name">
-                    <label for="sectionFriendlyName">Friendly Name</label>
-                    <input id="sectionFriendlyName" type="text" name="friendlyName" placeholder="friendly-name">
+                    <label for="sectionName" class="section-name">Name</label>
+                    <input id="sectionName" class="section-name" type="text" name="name" placeholder="Name">
+                    <label for="sectionFriendlyName" class="section-friendly-name">Friendly Name</label>
+                    <input id="sectionFriendlyName" class="section-friendly-name" type="text" name="friendlyName" placeholder="friendly-name">
                     
                     <button class="section-confirm" disabled="@(!ViewData.GetPermissions().EditConfig)" type="submit">Confirm</button>
                     @Html.ActionLink(linkText: "Cancel", actionName: "HideOverlay", controllerName: "DynamicConfig", routeValues: new {}, htmlAttributes: new {})
@@ -61,10 +62,10 @@
                 <h1>New Section</h1>
                 <form class="variable-info" method="post" asp-controller="DynamicConfig" asp-action="NewVariable">
                     <input id="variableName" class="invisible" name="name" value="@TempData["VariableSection"]"/>
-                    <label for="variableKey">Key</label>
-                    <input id="variableKey" type="text" name="key" placeholder="Key">
-                    <label for="variableValue">Value</label>
-                    <input id="variableValue" type="text" name="value" placeholder="Value">
+                    <label for="variableKey" class="variable-key">Key</label>
+                    <input id="variableKey" class="variable-key" type="text" name="key" placeholder="Key"/>
+                    <label for="variableValue" class="variable-value">Value</label>
+                    <textarea id="variableValue" class="variable-value" name="value" placeholder="Value" rows="10"></textarea>
 
                     <button class="section-confirm" disabled="@(!ViewData.GetPermissions().EditConfig)" type="submit">Confirm</button>
                     @Html.ActionLink(linkText: "Cancel", actionName: "HideOverlay", controllerName: "DynamicConfig", routeValues: new {}, htmlAttributes: new {})
@@ -73,13 +74,12 @@
         }
         @if (TempData["VisibleDelete"] != null)
         {
-            <div class="delete-container">
-                <h1>Delete Key-value</h1>
-                <p>Are you sure you would like to delete this key-value pair?</p>
+            <div class="delete-variable-container">
+                <h1>Delete Key</h1>
+                <p>Are you sure you would like to delete this key?</p>
                 <form class="delete-form" method="post" asp-controller="DynamicConfig" asp-action="Delete">
                     <p>Section: @(TempData["VariableSection"])</p>
                     <p>Key: @(TempData["VariableKey"])</p>
-                    <p>Value: @(TempData["VariableValue"])</p>
                     <input for="name" class="invisible" name="name" value="@TempData["VariableSection"]">
                     <input for="key" class="invisible" name="key" value="@TempData["VariableKey"]">
                     <input for="value" class="invisible" name="value" value="@TempData["VariableValue"]">
@@ -94,50 +94,72 @@
 <div class="settings-container">
     <div class="list-container">
         <h5 class="list-label">dynamic-config</h5>
-        @foreach (List<string> item in (List<List<string>>) @ViewData["Data"])
+        @foreach (Section item in (Section[]) @ViewData["Data"])
         {
-            <a class="list-link" href=@($"#{item[0]}")>@item[0]</a>
+            <a class="list-link" href=@($"#{item.FriendlyName}")>@item.FriendlyName</a>
         }
-        @Html.ActionLink(linkText: "New Section", actionName: "ShowNewSectionOverlay", controllerName: "DynamicConfig", routeValues: new { }, htmlAttributes: new { })
+        @if (ViewData.GetPermissions().EditConfig)
+        {
+            @Html.ActionLink(linkText: "New Section", actionName: "ShowNewSectionOverlay", controllerName: "DynamicConfig", routeValues: new {}, htmlAttributes: new {})
+        }
+        else
+        {
+            <p>New Section</p>
+        }
     </div>
     <div class="section-container">
-        @foreach (List<string> item in (List<List<string>>) @ViewData["Data"])
+        @foreach (Section item in (Section[]) @ViewData["Data"])
         {
-            <div class="config-section">
-                <h4 id=@($"{item[0]}")>@($"{item[0]}")</h4>
-                <div class="config-subsection">
-                    <form class="edit-config-form" method="post" asp-controller="DynamicConfig" asp-action="Edit">
-                        <input class="invisible" name="name" value="@item[0]"/>
-                        <div class="edit-config-fields">
-                            <input class="invisible" name="key" value="@item[1]"/>
-                            <div class="config-item">
-                                <label class="config-key">@item[1]</label>
-                                <input class="config-value" name="value" value="@item[2]"/>
-                                @Html.ActionLink(linkText: "X", actionName: "ShowDeleteOverlay", controllerName: "DynamicConfig", routeValues: new
-                                {
-                                    name = @item[0],
-                                    key = @item[1],
-                                    value = @item[2]
-                                }, htmlAttributes: new
-                                {
-                                    name = @item[0],
-                                    key = @item[1],
-                                    value = @item[2]
-                                })
+            <div class="config-section" id=@($"{item.FriendlyName}")>
+                <h4>@($"{item.FriendlyName}")</h4>
+                @foreach (string key in item.Data.Keys)
+                {
+                    <div class="config-subsection">
+                        <form class="edit-config-form" method="post" asp-controller="DynamicConfig" asp-action="Edit">
+                            <input class="invisible" name="name" value="@item.Name"/>
+                            <div class="edit-config-fields">
+                                <input class="invisible" name="key" value="@key"/>
+                                <div class="config-item">
+                                    <label class="config-key">@key</label>
+                                    <input class="config-value" name="value" value="@item.Data[($"{key}")].Value" disabled="@(!ViewData.GetPermissions().EditConfig)"/>
+                                    <button class="variable-save-button" disabled="@(!ViewData.GetPermissions().EditConfig)" type="submit">Save</button>
+                                    @if (ViewData.GetPermissions().EditConfig)
+                                    {
+                                        @Html.ActionLink(linkText: "X", actionName: "ShowDeleteOverlay", controllerName: "DynamicConfig", routeValues: new
+                                                                                                                                                       {
+                                                                                                                                                           name = @item.Name,
+                                                                                                                                                           key = @key,
+                                                                                                                                                           value = @item.Data[($"{key}")].Value
+                                                                                                                                                       }, htmlAttributes: new
+                                                                                                                                                                          {
+                                                                                                                                                                              name = @item.Name,
+                                                                                                                                                                              key = @key,
+                                                                                                                                                                              value = @item.Data[($"{key}")].Value
+                                                                                                                                                                          })
+                                    }
+                                    else
+                                    {
+                                        <p>X</p>
+                                    }
+                                </div>
                             </div>
-                            @Html.ActionLink(linkText: "New Variable", actionName: "ShowNewVariableOverlay", controllerName: "DynamicConfig", routeValues: new
-                            {
-                                name = @item[0]
-                            }, htmlAttributes: new
-                            {
-                                name = @item[0]
-                            })
-                        </div>
-                        <div class="edit-config-submit">
-                            <button class="variable-save-button" disabled="@(!ViewData.GetPermissions().EditConfig)" type="submit">Save</button>
-                        </div>
-                    </form>
-                </div>
+                        </form>
+                    </div>
+                }
+                @if (ViewData.GetPermissions().EditConfig)
+                {
+                    @Html.ActionLink(linkText: "New Variable", actionName: "ShowNewVariableOverlay", controllerName: "DynamicConfig", routeValues: new
+                                                                                                                                                   {
+                                                                                                                                                       name = @item.Name
+                                                                                                                                                   }, htmlAttributes: new
+                                                                                                                                                                      {
+                                                                                                                                                                          name = @item.Name
+                                                                                                                                                                      })
+                }
+                else
+                {
+                    <p>New Variable</p>
+                }
             </div>
         }
     </div>

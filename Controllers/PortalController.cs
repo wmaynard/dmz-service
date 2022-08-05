@@ -6,5 +6,5 @@ namespace TowerPortal.Controllers;
 
 public abstract class PortalController : PlatformController
 {
-	public Permissions UserPermissions => ViewData.GetPermissions();
+  public Permissions UserPermissions => ViewData.GetPermissions();
 }
