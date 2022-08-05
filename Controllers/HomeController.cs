@@ -38,10 +38,7 @@ public class HomeController : PortalController
             mongoAccount.Permissions.SetAdmin();
             _accountService.Update(mongoAccount);
         }
-        
-        mongoAccount.Permissions.SetUser();
-        _accountService.Update(mongoAccount);
-        
+
         ViewData["Permissions"] = mongoAccount.Permissions;
         Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
         // Tab view permissions

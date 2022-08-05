@@ -68,6 +68,9 @@ public class AccountController : PortalController
                 PortalAccount = output
             });
             _accountService.Create(output);
+            
+            output.Permissions.SetUser();
+            _accountService.Update(output);
         }
         
         Log.Info(Owner.Will, "Account logged in successfully.", data: new
