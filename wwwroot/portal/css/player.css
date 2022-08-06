@@ -23,3 +23,7 @@ div.wallet-currency-item {
     margin-bottom: 0;
 }
 
+button:disabled {
+    cursor: not-allowed;
+}
+

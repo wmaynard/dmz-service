@@ -28,38 +28,38 @@
         <div class="send-group-container">
             <form class="message-info" method="post" asp-controller="Mailbox" asp-action="Group">
                 <label for="groupPlayerIds" class="playerIds">Player IDs* (separated by "," or "|")</label>
-                <input id="groupPlayerIds" class="playerIds" type="text" name="playerIds" placeholder="ex: 6140bd998caf79f468e6f8a6, 60e7ea01907cf6e93a7578c2" required>
+                <input id="groupPlayerIds" class="playerIds" type="text" name="playerIds" disabled="@(!ViewData.GetPermissions().EditMailbox)" placeholder="ex: 6140bd998caf79f468e6f8a6, 60e7ea01907cf6e93a7578c2" required>
                 <br/>
                 <label for="groupSubject" class="groupSubject">Subject*</label>
-                <input id="groupSubject" class="groupSubject" type="text" name="subject" placeholder="Subject" maxlength="29" required>
+                <input id="groupSubject" class="groupSubject" type="text" name="subject" disabled="@(!ViewData.GetPermissions().EditMailbox)" placeholder="Subject" maxlength="29" required>
                 <br/>
                 <label for="groupBody" class="groupBody">Body*</label>
-                <textarea id="groupBody" class="groupBody" type="text" name="body" placeholder="Body" rows="3" required></textarea>
+                <textarea id="groupBody" class="groupBody" type="text" name="body" disabled="@(!ViewData.GetPermissions().EditMailbox)" placeholder="Body" rows="3" required></textarea>
                 <br/>
                 <label for="groupAttachments" class="groupAttachments">Attachments (separated by "," or "|")</label>
-                <input id="groupAttachments" class="groupAttachments" type="text" name="attachments" placeholder="ex: currency soft_currency 1500 | hero warlord">
+                <input id="groupAttachments" class="groupAttachments" type="text" name="attachments" disabled="@(!ViewData.GetPermissions().EditMailbox)" placeholder="ex: currency soft_currency 1500 | hero warlord">
                 <br/>
                 <label for="groupVisibleFrom" class="groupVisibleFrom">Visible From (UTC)*</label>
-                <input id="groupVisibleFrom" class="groupVisibleFrom" name="visibleFrom" type="datetime-local" value="@ViewData["Today"]" required>
+                <input id="groupVisibleFrom" class="groupVisibleFrom" name="visibleFrom" type="datetime-local" disabled="@(!ViewData.GetPermissions().EditMailbox)" value="@ViewData["Today"]" required>
                 <br/>
                 <label for="groupExpiration" class="groupExpiration">Expiration (UTC)*</label>
-                <input id="groupExpiration" class="groupExpiration" name="expiration" type="datetime-local" value="@ViewData["Week"]" required>
+                <input id="groupExpiration" class="groupExpiration" name="expiration" type="datetime-local" disabled="@(!ViewData.GetPermissions().EditMailbox)" value="@ViewData["Week"]" required>
                 <br/>
                 <label for="groupIcon" class="groupIcon">Icon</label>
-                <select id="groupIcon" class="groupIcon" name="icon" placeholder="Icon">
+                <select id="groupIcon" class="groupIcon" name="icon" disabled="@(!ViewData.GetPermissions().EditMailbox)" placeholder="Icon">
                     <option value="">default (empty)</option>
                     <option value="atlas-icons[pvp]">atlas-icons[pvp]</option>
                 </select>
                 <br/>
                 <label for="groupBanner" class="groupBanner">Banner</label>
-                <select id="groupBanner" class="groupBanner" name="banner" placeholder="Banner">
+                <select id="groupBanner" class="groupBanner" name="banner" disabled="@(!ViewData.GetPermissions().EditMailbox)" placeholder="Banner">
                     <option value="">default (empty)</option>
                     <option value="atlas-events[gold_blitz]">atlas-events[gold_blitz]</option>
                     <option value="atlas-dialog_banners[star_rewards_dialog_banner]">atlas-dialog_banners[star_rewards_dialog_banner]</option>
                 </select>
                 <br/>
                 <label for="groupInternalNote" class="groupInternalNote">Internal Note</label>
-                <input id="groupInternalNote" class="groupInternalNote" type="text" name="internalNote" placeholder="Internal Note">
+                <input id="groupInternalNote" class="groupInternalNote" type="text" name="internalNote" disabled="@(!ViewData.GetPermissions().EditMailbox)" placeholder="Internal Note">
                 <br/>
                 <button id="sendGroupMessageButton" disabled="@(!ViewData.GetPermissions().EditMailbox)" type="submit">Send</button>
             </form>

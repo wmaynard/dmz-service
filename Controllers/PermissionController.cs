@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
-using Rumble.Platform.Common.Web;
 using TowerPortal.Models;
 using TowerPortal.Services;
 
@@ -27,43 +26,7 @@ public class PermissionController : PortalController
         TempData["Failure"] = null;
 
         // Checking access permissions
-        Account account = Models.Account.FromGoogleClaims(User.Claims); // Models required for some reason?
-        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
-        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
-        // Tab view permissions
-        bool currentAdmin = currentPermissions.Admin;
-        bool currentManagePermissions = currentPermissions.ManagePermissions;
-        bool currentViewPlayer = currentPermissions.ViewPlayer;
-        bool currentViewMailbox = currentPermissions.ViewMailbox;
-        bool currentViewToken = currentPermissions.ViewToken;
-        bool currentViewConfig = currentPermissions.ViewConfig;
-        if (currentAdmin)
-        {
-            ViewData["CurrentAdmin"] = currentPermissions.Admin;
-        }
-        if (currentManagePermissions)
-        {
-            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
-        }
-        if (currentViewPlayer)
-        {
-            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
-        }
-        if (currentViewMailbox)
-        {
-            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
-        }
-        if (currentViewToken)
-        {
-            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
-        }
-        if (currentViewConfig)
-        {
-            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
-        }
-        
-        // Redirect if not allowed
-        if (currentAdmin == false && currentManagePermissions == false)
+        if (!UserPermissions.Admin && !UserPermissions.ManagePermissions)
         {
             return View("Error");
         }
@@ -90,51 +53,20 @@ public class PermissionController : PortalController
     public async Task<IActionResult> Account(string id)
     {
         // Checking access permissions
-        Account account = Models.Account.FromGoogleClaims(User.Claims); // Models required for some reason?
-        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
-        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
-        // Tab view permissions
-        bool currentAdmin = currentPermissions.Admin;
-        bool currentManagePermissions = currentPermissions.ManagePermissions;
-        bool currentViewPlayer = currentPermissions.ViewPlayer;
-        bool currentViewMailbox = currentPermissions.ViewMailbox;
-        bool currentViewToken = currentPermissions.ViewToken;
-        bool currentViewConfig = currentPermissions.ViewConfig;
-        if (currentAdmin)
-        {
-            ViewData["CurrentAdmin"] = currentPermissions.Admin;
-        }
-        if (currentManagePermissions)
-        {
-            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
-        }
-        if (currentViewPlayer)
-        {
-            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
-        }
-        if (currentViewMailbox)
-        {
-            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
-        }
-        if (currentViewToken)
-        {
-            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
-        }
-        if (currentViewConfig)
-        {
-            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
-        }
-        
-        // Redirect if not allowed
-        if (currentAdmin == false && currentManagePermissions == false)
+        if (!UserPermissions.Admin && !UserPermissions.ManagePermissions)
         {
             return View("Error");
         }
         
+        // Following is for the current user's permissions, since permissions on this page is used for the user being modified.
+        // TODO refactor as this is inconsistent with others of the same use
+        ViewData["CurrentAdmin"] = UserPermissions.Admin;
+        ViewData["CurrentManagePermissions"] = UserPermissions.ManagePermissions;
+        
         ViewData["Environment"] = PlatformEnvironment.Optional<string>(key: "RUMBLE_DEPLOYMENT");
         
         Account user = _accountService.Get(id);
-        ViewData["Permissions"] = user.Permissions; // Inconsistent with others of same name, since this is needed for permissions page
+        ViewData["Permissions"] = user.Permissions; // TODO Note above
 
         TempData["AccountId"] = id;
         ViewData["Account"] = user.Email;
@@ -147,44 +79,7 @@ public class PermissionController : PortalController
     public async Task<IActionResult> Account(string id, string managePermissions, string viewPlayer, string editPlayer, string viewMailbox, string editMailbox, string viewToken, string editToken, string viewConfig, string editConfig)
     {
         // Checking access permissions
-        Account account = Models.Account.FromGoogleClaims(User.Claims); // Models required for some reason?
-        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
-        ViewData["Permissions"] = mongoAccount.Permissions;
-        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
-        // Tab view permissions
-        bool currentAdmin = currentPermissions.Admin;
-        bool currentManagePermissions = currentPermissions.ManagePermissions;
-        bool currentViewPlayer = currentPermissions.ViewPlayer;
-        bool currentViewMailbox = currentPermissions.ViewMailbox;
-        bool currentViewToken = currentPermissions.ViewToken;
-        bool currentViewConfig = currentPermissions.ViewConfig;
-        if (currentAdmin)
-        {
-            ViewData["CurrentAdmin"] = currentPermissions.Admin;
-        }
-        if (currentManagePermissions)
-        {
-            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
-        }
-        if (currentViewPlayer)
-        {
-            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
-        }
-        if (currentViewMailbox)
-        {
-            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
-        }
-        if (currentViewToken)
-        {
-            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
-        }
-        if (currentViewConfig)
-        {
-            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
-        }
-        
-        // Redirect if not allowed
-        if (currentAdmin == false && currentManagePermissions == false)
+        if (!UserPermissions.Admin && !UserPermissions.ManagePermissions)
         {
             return View("Error");
         }
@@ -196,10 +91,6 @@ public class PermissionController : PortalController
             if (managePermissions != null)
             {
                 user.Permissions.ManagePermissions = true;
-            }
-            else
-            {
-                user.Permissions.ManagePermissions = false;
             }
             if (viewPlayer != null)
             {

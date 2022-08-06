@@ -25,49 +25,7 @@ public class TokenController : PortalController
     public async Task<IActionResult> Ban()
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims);
-        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
-        ViewData["Permissions"] = mongoAccount.Permissions;
-        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
-        // Tab view permissions
-        bool currentAdmin = currentPermissions.Admin;
-        bool currentManagePermissions = currentPermissions.ManagePermissions;
-        bool currentViewPlayer = currentPermissions.ViewPlayer;
-        bool currentViewMailbox = currentPermissions.ViewMailbox;
-        bool currentViewToken = currentPermissions.ViewToken;
-        bool currentViewConfig = currentPermissions.ViewConfig;
-        bool currentEditToken = currentPermissions.EditToken;
-        if (currentAdmin)
-        {
-            ViewData["CurrentAdmin"] = currentPermissions.Admin;
-        }
-        if (currentManagePermissions)
-        {
-            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
-        }
-        if (currentViewPlayer)
-        {
-            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
-        }
-        if (currentViewMailbox)
-        {
-            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
-        }
-        if (currentViewToken)
-        {
-            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
-        }
-        if (currentViewConfig)
-        {
-            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
-        }
-        if (currentEditToken)
-        {
-            ViewData["CurrentEditToken"] = currentPermissions.EditToken;
-        }
-        
-        // Redirect if not allowed
-        if (currentViewToken == false)
+        if (!UserPermissions.ViewToken)
         {
             return View("Error");
         }
@@ -98,49 +56,7 @@ public class TokenController : PortalController
     public async Task<IActionResult> Ban(string playerIds, string action, string unbanTime, string note)
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims);
-        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
-        ViewData["Permissions"] = mongoAccount.Permissions;
-        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
-        // Tab view permissions
-        bool currentAdmin = currentPermissions.Admin;
-        bool currentManagePermissions = currentPermissions.ManagePermissions;
-        bool currentViewPlayer = currentPermissions.ViewPlayer;
-        bool currentViewMailbox = currentPermissions.ViewMailbox;
-        bool currentViewToken = currentPermissions.ViewToken;
-        bool currentViewConfig = currentPermissions.ViewConfig;
-        bool currentEditToken = currentPermissions.EditToken;
-        if (currentAdmin)
-        {
-            ViewData["CurrentAdmin"] = currentPermissions.Admin;
-        }
-        if (currentManagePermissions)
-        {
-            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
-        }
-        if (currentViewPlayer)
-        {
-            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
-        }
-        if (currentViewMailbox)
-        {
-            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
-        }
-        if (currentViewToken)
-        {
-            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
-        }
-        if (currentViewConfig)
-        {
-            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
-        }
-        if (currentEditToken)
-        {
-            ViewData["CurrentEditToken"] = currentPermissions.EditToken;
-        }
-        
-        // Redirect if not allowed
-        if (currentViewToken == false || currentEditToken == false)
+        if (!UserPermissions.ViewToken || !UserPermissions.EditToken)
         {
             return View("Error");
         }
@@ -152,7 +68,7 @@ public class TokenController : PortalController
                 try
                 {
                     List<string> playerIdsList = ParseMessageData.ParseIds(playerIds);
-                    string actor = mongoAccount.Name;
+                    string actor = User?.Identity?.Name;
 
                     foreach (string playerId in playerIdsList)
                     {
@@ -200,7 +116,7 @@ public class TokenController : PortalController
                     List<string> playerIdsList = ParseMessageData.ParseIds(playerIds);
                     long unbanTimeUnix = ParseMessageData.ParseDateTime(unbanTime + "T00:00");
                     long duration = unbanTimeUnix - Account.UnixTime;
-                    string actor = mongoAccount.Name;
+                    string actor = User?.Identity?.Name;
 
                     foreach (string playerId in playerIdsList)
                     {
@@ -249,7 +165,7 @@ public class TokenController : PortalController
             try
             {
                 List<string> playerIdsList = ParseMessageData.ParseIds(playerIds);
-                string actor = mongoAccount.Name;
+                string actor = User?.Identity?.Name;
 
                 foreach (string playerId in playerIdsList)
                 {
@@ -295,7 +211,7 @@ public class TokenController : PortalController
             try
             {
                 List<string> playerIdsList = ParseMessageData.ParseIds(playerIds);
-                string actor = mongoAccount.Name;
+                string actor = User?.Identity?.Name;
 
                 foreach (string playerId in playerIdsList)
                 {
