@@ -110,20 +110,13 @@ input.config-value {
     align-items: center;
 }
 
-.config-item p {
+p.disabled-link {
     display: flex;
     align-items: center;
-}
-
-.config-item p,
-.list-container p:last-child,
-.config-section>p{
     margin: 0;
 }
 
-.config-item p:hover,
-.list-container p:last-child:hover,
-.config-section>p:hover,
+p.disabled-link:hover,
 button:disabled {
     cursor: not-allowed;
 }

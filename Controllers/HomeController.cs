@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Services;
-using Rumble.Platform.Common.Web;
 using TowerPortal.Models;
 using TowerPortal.Services;
 
@@ -38,44 +37,7 @@ public class HomeController : PortalController
             mongoAccount.Permissions.SetAdmin();
             _accountService.Update(mongoAccount);
         }
-        
-        mongoAccount.Permissions.SetUser();
-        _accountService.Update(mongoAccount);
-        
-        ViewData["Permissions"] = mongoAccount.Permissions;
-        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
-        // Tab view permissions
-        bool currentAdmin = currentPermissions.Admin;
-        bool currentManagePermissions = currentPermissions.ManagePermissions;
-        bool currentViewPlayer = currentPermissions.ViewPlayer;
-        bool currentViewMailbox = currentPermissions.ViewMailbox;
-        bool currentViewToken = currentPermissions.ViewToken;
-        bool currentViewConfig = currentPermissions.ViewConfig;
-        if (currentAdmin)
-        {
-            ViewData["CurrentAdmin"] = currentPermissions.Admin;
-        }
-        if (currentManagePermissions)
-        {
-            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
-        }
-        if (currentViewPlayer)
-        {
-            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
-        }
-        if (currentViewMailbox)
-        {
-            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
-        }
-        if (currentViewToken)
-        {
-            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
-        }
-        if (currentViewConfig)
-        {
-            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
-        }
-        
+
         return View();
     }
 

@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
 using Rumble.Platform.Common.Utilities;
-using Rumble.Platform.Common.Web;
 using TowerPortal.Models;
 using TowerPortal.Services;
 
@@ -68,6 +67,9 @@ public class AccountController : PortalController
                 PortalAccount = output
             });
             _accountService.Create(output);
+            
+            output.Permissions.SetUser();
+            _accountService.Update(output);
         }
         
         Log.Info(Owner.Will, "Account logged in successfully.", data: new
