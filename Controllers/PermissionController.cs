@@ -58,15 +58,12 @@ public class PermissionController : PortalController
             return View("Error");
         }
         
-        // Following is for the current user's permissions, since permissions on this page is used for the user being modified.
-        // TODO refactor as this is inconsistent with others of the same use
-        ViewData["CurrentAdmin"] = UserPermissions.Admin;
-        ViewData["CurrentManagePermissions"] = UserPermissions.ManagePermissions;
-        
         ViewData["Environment"] = PlatformEnvironment.Optional<string>(key: "RUMBLE_DEPLOYMENT");
         
         Account user = _accountService.Get(id);
-        ViewData["Permissions"] = user.Permissions; // TODO Note above
+        
+        // This is used because there are two sets of permissions to look at TODO perhaps will need another filter to access this more easily
+        ViewData["UserPermissions"] = user.Permissions;
 
         TempData["AccountId"] = id;
         ViewData["Account"] = user.Email;
