@@ -96,38 +96,38 @@
         <div class="send-global-container">
             <form class="message-info" method="post" asp-controller="Mailbox" asp-action="Global">
                 <label for="newSubject" class="subject">Subject*</label>
-                <input id="newSubject" class="subject" type="text" name="subject" placeholder="Subject" maxlength="29" required>
+                <input id="newSubject" class="subject" type="text" name="subject" placeholder="Subject" maxlength="29" disabled="@(!ViewData.GetPermissions().EditMailbox)" required>
                 <br/>
                 <label for="newBody" class="body">Body*</label>
-                <textarea id="newBody" class="body" type="text" name="body" placeholder="Body" rows="3" required></textarea>
+                <textarea id="newBody" class="body" type="text" name="body" placeholder="Body" rows="3" disabled="@(!ViewData.GetPermissions().EditMailbox)" required></textarea>
                 <br/>
                 <label for="newAttachments" class="attachments">Attachments (separated by "," or "|")</label>
-                <input id="newAttachments" class="attachments" type="text" name="attachments" placeholder="ex: currency soft_currency 1500 | hero warlord">
+                <input id="newAttachments" class="attachments" type="text" name="attachments" disabled="@(!ViewData.GetPermissions().EditMailbox)" placeholder="ex: currency soft_currency 1500 | hero warlord">
                 <br/>
                 <label for="newVisibleFrom" class="visibleFrom">Visible From (UTC)*</label>
-                <input id="newVisibleFrom" class="visibleFrom" name="visibleFrom" type="datetime-local" value="@ViewData["Today"]" required>
+                <input id="newVisibleFrom" class="visibleFrom" name="visibleFrom" type="datetime-local" disabled="@(!ViewData.GetPermissions().EditMailbox)" value="@ViewData["Today"]" required>
                 <br/>
                 <label for="newExpiration" class="expiration">Expiration (UTC)*</label>
-                <input id="newExpiration" class="expiration" name="expiration" type="datetime-local" value="@ViewData["Week"]" required>
+                <input id="newExpiration" class="expiration" name="expiration" type="datetime-local" disabled="@(!ViewData.GetPermissions().EditMailbox)" value="@ViewData["Week"]" required>
                 <br/>
                 <label for="newIcon" class="icon">Icon</label>
-                <select id="newIcon" class="icon" name="icon" placeholder="Icon">
+                <select id="newIcon" class="icon" name="icon" disabled="@(!ViewData.GetPermissions().EditMailbox)" placeholder="Icon">
                     <option value="">default (empty)</option>
                     <option value="atlas-icons[pvp]">atlas-icons[pvp]</option>
                 </select>
                 <br/>
                 <label for="newBanner" class="banner">Banner</label>
-                <select id="newBanner" class="banner" name="banner" placeholder="Banner">
+                <select id="newBanner" class="banner" name="banner" disabled="@(!ViewData.GetPermissions().EditMailbox)" placeholder="Banner">
                     <option value="">default (empty)</option>
                     <option value="atlas-events[gold_blitz]">atlas-events[gold_blitz]</option>
                     <option value="atlas-dialog_banners[star_rewards_dialog_banner]">atlas-dialog_banners[star_rewards_dialog_banner]</option>
                 </select>
                 <br/>
                 <label for="newForAccountsBefore" class="forAccountsBefore">For Accounts Before (UTC)</label>
-                <input id="newForAccountsBefore" class="forAccountsBefore" name="forAccountsBefore" type="datetime-local">
+                <input id="newForAccountsBefore" class="forAccountsBefore" name="forAccountsBefore" type="datetime-local" disabled="@(!ViewData.GetPermissions().EditMailbox)">
                 <br/>
                 <label for="newInternalNote" class="internalNote">Internal Note</label>
-                <input id="newInternalNote" class="internalNote" type="text" name="internalNote" placeholder="Internal Note">
+                <input id="newInternalNote" class="internalNote" type="text" name="internalNote" disabled="@(!ViewData.GetPermissions().EditMailbox)" placeholder="Internal Note">
                 <br/>
                 <button id="sendGlobalMessageButton" disabled="@(!ViewData.GetPermissions().EditMailbox)" type="submit">Send</button>
             </form>
@@ -176,36 +176,50 @@
                             <td></td>
                         }
                         <td>
-                            @Html.ActionLink(linkText: "Edit", actionName: "ShowEditOverlay", controllerName: "Mailbox", routeValues: new
+                            @if (ViewData.GetPermissions().EditMailbox)
                             {
-                                id = data.Id,
-                                subject = data.Subject,
-                                body = data.Body,
-                                attachments = data.Attachments,
-                                visibleFrom = data.VisibleFrom,
-                                expiration = data.Expiration,
-                                internalNote = data.InternalNote,
-                                forAccountsBefore = data.ForAccountsBefore
-                            }, htmlAttributes: new
+                                @Html.ActionLink(linkText: "Edit", actionName: "ShowEditOverlay", controllerName: "Mailbox", routeValues: new
+                                                                                                                                          {
+                                                                                                                                              id = data.Id,
+                                                                                                                                              subject = data.Subject,
+                                                                                                                                              body = data.Body,
+                                                                                                                                              attachments = data.Attachments,
+                                                                                                                                              visibleFrom = data.VisibleFrom,
+                                                                                                                                              expiration = data.Expiration,
+                                                                                                                                              internalNote = data.InternalNote,
+                                                                                                                                              forAccountsBefore = data.ForAccountsBefore
+                                                                                                                                          }, htmlAttributes: new
+                                                                                                                                                             {
+                                                                                                                                                                 id = data.Id,
+                                                                                                                                                                 subject = data.Subject,
+                                                                                                                                                                 body = data.Body,
+                                                                                                                                                                 attachments = data.Attachments,
+                                                                                                                                                                 visibleFrom = data.VisibleFrom,
+                                                                                                                                                                 expiration = data.Expiration,
+                                                                                                                                                                 internalNote = data.InternalNote,
+                                                                                                                                                                 forAccountsBefore = data.ForAccountsBefore
+                                                                                                                                                             })
+                            }
+                            else
                             {
-                                id = data.Id,
-                                subject = data.Subject,
-                                body = data.Body,
-                                attachments = data.Attachments,
-                                visibleFrom = data.VisibleFrom,
-                                expiration = data.Expiration,
-                                internalNote = data.InternalNote,
-                                forAccountsBefore = data.ForAccountsBefore
-                            })
+                                <p class="disabled-link">Edit</p>
+                            }
                         </td>
                         <td>
-                            @Html.ActionLink(linkText: "Delete", actionName: "ShowDeleteOverlay", controllerName: "Mailbox", routeValues: new
+                            @if (ViewData.GetPermissions().EditMailbox)
                             {
-                                id = data.Id
-                            }, htmlAttributes: new
+                                @Html.ActionLink(linkText: "Delete", actionName: "ShowDeleteOverlay", controllerName: "Mailbox", routeValues: new
+                                                                                                                                              {
+                                                                                                                                                  id = data.Id
+                                                                                                                                              }, htmlAttributes: new
+                                                                                                                                                                 {
+                                                                                                                                                                     id = data.Id
+                                                                                                                                                                 })
+                            }
+                            else
                             {
-                                id = data.Id
-                            })
+                                <p class="disabled-link">Delete</p>
+                            }
                         </td>
                     </tr>
                 }
@@ -255,27 +269,34 @@
                             <td></td>
                         }
                         <td>
-                            @Html.ActionLink(linkText: "Edit", actionName: "ShowEditOverlay", controllerName: "Mailbox", routeValues: new
+                            @if (ViewData.GetPermissions().EditMailbox)
                             {
-                                id = data.Id,
-                                subject = data.Subject,
-                                body = data.Body,
-                                attachments = data.Attachments,
-                                visibleFrom = data.VisibleFrom,
-                                expiration = data.Expiration,
-                                internalNote = data.InternalNote,
-                                forAccountsBefore = data.ForAccountsBefore
-                            }, htmlAttributes: new
+                                @Html.ActionLink(linkText: "Edit", actionName: "ShowEditOverlay", controllerName: "Mailbox", routeValues: new
+                                                                                                                                          {
+                                                                                                                                              id = data.Id,
+                                                                                                                                              subject = data.Subject,
+                                                                                                                                              body = data.Body,
+                                                                                                                                              attachments = data.Attachments,
+                                                                                                                                              visibleFrom = data.VisibleFrom,
+                                                                                                                                              expiration = data.Expiration,
+                                                                                                                                              internalNote = data.InternalNote,
+                                                                                                                                              forAccountsBefore = data.ForAccountsBefore
+                                                                                                                                          }, htmlAttributes: new
+                                                                                                                                                             {
+                                                                                                                                                                 id = data.Id,
+                                                                                                                                                                 subject = data.Subject,
+                                                                                                                                                                 body = data.Body,
+                                                                                                                                                                 attachments = data.Attachments,
+                                                                                                                                                                 visibleFrom = data.VisibleFrom,
+                                                                                                                                                                 expiration = data.Expiration,
+                                                                                                                                                                 internalNote = data.InternalNote,
+                                                                                                                                                                 forAccountsBefore = data.ForAccountsBefore
+                                                                                                                                                             })
+                            }
+                            else
                             {
-                                id = data.Id,
-                                subject = data.Subject,
-                                body = data.Body,
-                                attachments = data.Attachments,
-                                visibleFrom = data.VisibleFrom,
-                                expiration = data.Expiration,
-                                internalNote = data.InternalNote,
-                                forAccountsBefore = data.ForAccountsBefore
-                            })
+                                <p class="disabled-link">Edit</p>
+                            }
                         </td>
                         <td>
                             True

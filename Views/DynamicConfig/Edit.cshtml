@@ -4,20 +4,6 @@
     ViewData["Title"] = "Dynamic Config";
 }
 
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('button[class="new-section-button"]').click(function () {
-            
-        })
-    })
-    
-    $(document).ready(function() {
-        $('button[class="new-variable-button"]').click(function () {
-            
-        })
-    })
-</script>
-
 <h2>@ViewData["Title"]</h2>
 
 <div class="error-container">
@@ -104,7 +90,7 @@
         }
         else
         {
-            <p>New Section</p>
+            <p class="disabled-link">New Section</p>
         }
     </div>
     <div class="section-container">
@@ -158,7 +144,7 @@
                 }
                 else
                 {
-                    <p>New Variable</p>
+                    <p class="disabled-link">New Variable</p>
                 }
             </div>
         }

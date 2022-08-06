@@ -417,3 +417,14 @@ table#messageHistory tr td:nth-child(11) {
     /* Expired */
     width: 5%;
 }
+
+p.disabled-link {
+    display: flex;
+    align-items: center;
+    margin: 0;
+}
+
+p.disabled-link:hover,
+button:disabled {
+    cursor: not-allowed;
+}

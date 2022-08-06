@@ -30,7 +30,7 @@
             <tr class="permissions-label">
                 <td>Manage Permissions</td>
                 <td>
-                    <input type="checkbox" checked = "@(ViewData.GetPermissions().ManagePermissions)" disabled="@(ViewData.GetPermissions().Admin)" name="managePermissions"/>
+                    <input type="checkbox" checked="@(ViewData.GetPermissions().ManagePermissions)" disabled="@(ViewData.GetPermissions().Admin || ViewData.GetPermissions().ManagePermissions)" name="managePermissions"/>
                 </td>
             </tr>
         }

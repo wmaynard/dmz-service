@@ -9,7 +9,6 @@ using Newtonsoft.Json;
 using RCL.Logging;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
-using Rumble.Platform.Common.Web;
 using TowerPortal.Models;
 using TowerPortal.Services;
 
@@ -31,15 +30,15 @@ public class PlayerController : PortalController
 
         // Exit early if there's invalid data; easier to read.
         if (!UserPermissions.ViewPlayer)
+        {
             return View("Error");
+        }
+
         if (query == null)
         {
             ViewData["Data"] = new List<List<string>>();
             return View();
         }
-
-        List<string> searchId = new List<string>();
-        List<string> searchUser = new List<string>();
 
         // Use the API Service to simplify web requests
         _apiService
@@ -81,44 +80,7 @@ public class PlayerController : PortalController
     public async Task<IActionResult> Details(string id)
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims);
-        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
-        ViewData["Permissions"] = mongoAccount.Permissions;
-        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
-        // Tab view permissions
-        bool currentAdmin = currentPermissions.Admin;
-        bool currentManagePermissions = currentPermissions.ManagePermissions;
-        bool currentViewPlayer = currentPermissions.ViewPlayer;
-        bool currentViewMailbox = currentPermissions.ViewMailbox;
-        bool currentViewToken = currentPermissions.ViewToken;
-        bool currentViewConfig = currentPermissions.ViewConfig;
-        if (currentAdmin)
-        {
-            ViewData["CurrentAdmin"] = currentPermissions.Admin;
-        }
-        if (currentManagePermissions)
-        {
-            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
-        }
-        if (currentViewPlayer)
-        {
-            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
-        }
-        if (currentViewMailbox)
-        {
-            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
-        }
-        if (currentViewToken)
-        {
-            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
-        }
-        if (currentViewConfig)
-        {
-            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
-        }
-        
-        // Redirect if not allowed
-        if (currentViewPlayer == false)
+        if (!UserPermissions.ViewPlayer)
         {
             return View("Error");
         }
@@ -188,49 +150,7 @@ public class PlayerController : PortalController
     public async Task<IActionResult> EditScreenname(string accountId, string editScreenname)
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims);
-        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
-        ViewData["Permissions"] = mongoAccount.Permissions;
-        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
-        // Tab view permissions
-        bool currentAdmin = currentPermissions.Admin;
-        bool currentManagePermissions = currentPermissions.ManagePermissions;
-        bool currentViewPlayer = currentPermissions.ViewPlayer;
-        bool currentViewMailbox = currentPermissions.ViewMailbox;
-        bool currentViewToken = currentPermissions.ViewToken;
-        bool currentViewConfig = currentPermissions.ViewConfig;
-        bool currentEditPlayer = currentPermissions.EditPlayer;
-        if (currentAdmin)
-        {
-            ViewData["CurrentAdmin"] = currentPermissions.Admin;
-        }
-        if (currentManagePermissions)
-        {
-            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
-        }
-        if (currentViewPlayer)
-        {
-            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
-        }
-        if (currentViewMailbox)
-        {
-            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
-        }
-        if (currentViewToken)
-        {
-            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
-        }
-        if (currentViewConfig)
-        {
-            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
-        }
-        if (currentEditPlayer)
-        {
-            ViewData["CurrentEditPlayer"] = currentPermissions.EditPlayer;
-        }
-        
-        // Redirect if not allowed
-        if (currentEditPlayer == false)
+        if (!UserPermissions.ViewPlayer || !UserPermissions.EditPlayer)
         {
             return View("Error");
         }
@@ -272,49 +192,7 @@ public class PlayerController : PortalController
     // hard coded in currencies, possibly subject to changes
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims);
-        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
-        ViewData["Permissions"] = mongoAccount.Permissions;
-        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
-        // Tab view permissions
-        bool currentAdmin = currentPermissions.Admin;
-        bool currentManagePermissions = currentPermissions.ManagePermissions;
-        bool currentViewPlayer = currentPermissions.ViewPlayer;
-        bool currentViewMailbox = currentPermissions.ViewMailbox;
-        bool currentViewToken = currentPermissions.ViewToken;
-        bool currentViewConfig = currentPermissions.ViewConfig;
-        bool currentEditPlayer = currentPermissions.EditPlayer;
-        if (currentAdmin)
-        {
-            ViewData["CurrentAdmin"] = currentPermissions.Admin;
-        }
-        if (currentManagePermissions)
-        {
-            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
-        }
-        if (currentViewPlayer)
-        {
-            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
-        }
-        if (currentViewMailbox)
-        {
-            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
-        }
-        if (currentViewToken)
-        {
-            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
-        }
-        if (currentViewConfig)
-        {
-            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
-        }
-        if (currentEditPlayer)
-        {
-            ViewData["CurrentEditPlayer"] = currentPermissions.EditPlayer;
-        }
-        
-        // Redirect if not allowed
-        if (currentEditPlayer == false)
+        if (!UserPermissions.ViewPlayer || !UserPermissions.EditPlayer)
         {
             return View("Error");
         }

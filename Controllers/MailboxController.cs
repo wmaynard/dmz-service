@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
-using Rumble.Platform.Common.Web;
 using TowerPortal.Models;
 using TowerPortal.Services;
 using TowerPortal.Utilities;
@@ -29,49 +28,7 @@ public class MailboxController : PortalController
     public async Task<IActionResult> Global()
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims);
-        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
-        ViewData["Permissions"] = mongoAccount.Permissions;
-        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
-        // Tab view permissions
-        bool currentAdmin = currentPermissions.Admin;
-        bool currentManagePermissions = currentPermissions.ManagePermissions;
-        bool currentViewPlayer = currentPermissions.ViewPlayer;
-        bool currentViewMailbox = currentPermissions.ViewMailbox;
-        bool currentViewToken = currentPermissions.ViewToken;
-        bool currentViewConfig = currentPermissions.ViewConfig;
-        bool currentEditMailbox = currentPermissions.EditMailbox;
-        if (currentAdmin)
-        {
-            ViewData["CurrentAdmin"] = currentPermissions.Admin;
-        }
-        if (currentManagePermissions)
-        {
-            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
-        }
-        if (currentViewPlayer)
-        {
-            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
-        }
-        if (currentViewMailbox)
-        {
-            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
-        }
-        if (currentViewToken)
-        {
-            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
-        }
-        if (currentViewConfig)
-        {
-            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
-        }
-        if (currentEditMailbox)
-        {
-            ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
-        }
-        
-        // Redirect if not allowed
-        if (currentViewMailbox == false)
+        if (!UserPermissions.ViewMailbox)
         {
             return View("Error");
         }
@@ -141,49 +98,7 @@ public class MailboxController : PortalController
         string icon, string banner, string internalNote, string forAccountsBefore)
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims);
-        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
-        ViewData["Permissions"] = mongoAccount.Permissions;
-        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
-        // Tab view permissions
-        bool currentAdmin = currentPermissions.Admin;
-        bool currentManagePermissions = currentPermissions.ManagePermissions;
-        bool currentViewPlayer = currentPermissions.ViewPlayer;
-        bool currentViewMailbox = currentPermissions.ViewMailbox;
-        bool currentViewToken = currentPermissions.ViewToken;
-        bool currentViewConfig = currentPermissions.ViewConfig;
-        bool currentEditMailbox = currentPermissions.EditMailbox;
-        if (currentAdmin)
-        {
-            ViewData["CurrentAdmin"] = currentPermissions.Admin;
-        }
-        if (currentManagePermissions)
-        {
-            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
-        }
-        if (currentViewPlayer)
-        {
-            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
-        }
-        if (currentViewMailbox)
-        {
-            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
-        }
-        if (currentViewToken)
-        {
-            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
-        }
-        if (currentViewConfig)
-        {
-            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
-        }
-        if (currentEditMailbox)
-        {
-            ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
-        }
-        
-        // Redirect if not allowed
-        if (currentViewMailbox == false || currentEditMailbox == false)
+        if (!UserPermissions.ViewMailbox || !UserPermissions.EditMailbox)
         {
             return View("Error");
         }
@@ -301,49 +216,7 @@ public class MailboxController : PortalController
         string icon, string banner, string status, string internalNote, string forAccountsBefore)
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims);
-        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
-        ViewData["Permissions"] = mongoAccount.Permissions;
-        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
-        // Tab view permissions
-        bool currentAdmin = currentPermissions.Admin;
-        bool currentManagePermissions = currentPermissions.ManagePermissions;
-        bool currentViewPlayer = currentPermissions.ViewPlayer;
-        bool currentViewMailbox = currentPermissions.ViewMailbox;
-        bool currentViewToken = currentPermissions.ViewToken;
-        bool currentViewConfig = currentPermissions.ViewConfig;
-        bool currentEditMailbox = currentPermissions.EditMailbox;
-        if (currentAdmin)
-        {
-            ViewData["CurrentAdmin"] = currentPermissions.Admin;
-        }
-        if (currentManagePermissions)
-        {
-            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
-        }
-        if (currentViewPlayer)
-        {
-            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
-        }
-        if (currentViewMailbox)
-        {
-            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
-        }
-        if (currentViewToken)
-        {
-            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
-        }
-        if (currentViewConfig)
-        {
-            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
-        }
-        if (currentEditMailbox)
-        {
-            ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
-        }
-        
-        // Redirect if not allowed
-        if (currentViewMailbox == false || currentEditMailbox == false)
+        if (!UserPermissions.ViewMailbox || !UserPermissions.EditMailbox)
         {
             return View("Error");
         }
@@ -461,49 +334,7 @@ public class MailboxController : PortalController
     public async Task<IActionResult> Delete(string id)
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims);
-        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
-        ViewData["Permissions"] = mongoAccount.Permissions;
-        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
-        // Tab view permissions
-        bool currentAdmin = currentPermissions.Admin;
-        bool currentManagePermissions = currentPermissions.ManagePermissions;
-        bool currentViewPlayer = currentPermissions.ViewPlayer;
-        bool currentViewMailbox = currentPermissions.ViewMailbox;
-        bool currentViewToken = currentPermissions.ViewToken;
-        bool currentViewConfig = currentPermissions.ViewConfig;
-        bool currentEditMailbox = currentPermissions.EditMailbox;
-        if (currentAdmin)
-        {
-            ViewData["CurrentAdmin"] = currentPermissions.Admin;
-        }
-        if (currentManagePermissions)
-        {
-            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
-        }
-        if (currentViewPlayer)
-        {
-            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
-        }
-        if (currentViewMailbox)
-        {
-            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
-        }
-        if (currentViewToken)
-        {
-            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
-        }
-        if (currentViewConfig)
-        {
-            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
-        }
-        if (currentEditMailbox)
-        {
-            ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
-        }
-        
-        // Redirect if not allowed
-        if (currentViewMailbox == false || currentEditMailbox == false)
+        if (!UserPermissions.ViewMailbox || !UserPermissions.EditMailbox)
         {
             return View("Error");
         }
@@ -614,49 +445,7 @@ public class MailboxController : PortalController
     public async Task<IActionResult> Group()
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims);
-        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
-        ViewData["Permissions"] = mongoAccount.Permissions;
-        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
-        // Tab view permissions
-        bool currentAdmin = currentPermissions.Admin;
-        bool currentManagePermissions = currentPermissions.ManagePermissions;
-        bool currentViewPlayer = currentPermissions.ViewPlayer;
-        bool currentViewMailbox = currentPermissions.ViewMailbox;
-        bool currentViewToken = currentPermissions.ViewToken;
-        bool currentViewConfig = currentPermissions.ViewConfig;
-        bool currentEditMailbox = currentPermissions.EditMailbox;
-        if (currentAdmin)
-        {
-            ViewData["CurrentAdmin"] = currentPermissions.Admin;
-        }
-        if (currentManagePermissions)
-        {
-            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
-        }
-        if (currentViewPlayer)
-        {
-            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
-        }
-        if (currentViewMailbox)
-        {
-            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
-        }
-        if (currentViewToken)
-        {
-            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
-        }
-        if (currentViewConfig)
-        {
-            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
-        }
-        if (currentEditMailbox)
-        {
-            ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
-        }
-        
-        // Redirect if not allowed
-        if (currentViewMailbox == false)
+        if (!UserPermissions.ViewMailbox)
         {
             return View("Error");
         }
@@ -676,49 +465,7 @@ public class MailboxController : PortalController
         string visibleFrom, string expiration, string icon, string banner, string internalNote)
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims);
-        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
-        ViewData["Permissions"] = mongoAccount.Permissions;
-        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
-        // Tab view permissions
-        bool currentAdmin = currentPermissions.Admin;
-        bool currentManagePermissions = currentPermissions.ManagePermissions;
-        bool currentViewPlayer = currentPermissions.ViewPlayer;
-        bool currentViewMailbox = currentPermissions.ViewMailbox;
-        bool currentViewToken = currentPermissions.ViewToken;
-        bool currentViewConfig = currentPermissions.ViewConfig;
-        bool currentEditMailbox = currentPermissions.EditMailbox;
-        if (currentAdmin)
-        {
-            ViewData["CurrentAdmin"] = currentPermissions.Admin;
-        }
-        if (currentManagePermissions)
-        {
-            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
-        }
-        if (currentViewPlayer)
-        {
-            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
-        }
-        if (currentViewMailbox)
-        {
-            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
-        }
-        if (currentViewToken)
-        {
-            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
-        }
-        if (currentViewConfig)
-        {
-            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
-        }
-        if (currentEditMailbox)
-        {
-            ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
-        }
-        
-        // Redirect if not allowed
-        if (currentViewMailbox == false || currentEditMailbox == false)
+        if (!UserPermissions.ViewMailbox || !UserPermissions.EditMailbox)
         {
             return View("Error");
         }
@@ -787,49 +534,7 @@ public class MailboxController : PortalController
     public async Task<IActionResult> Inbox()
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims);
-        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
-        ViewData["Permissions"] = mongoAccount.Permissions;
-        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
-        // Tab view permissions
-        bool currentAdmin = currentPermissions.Admin;
-        bool currentManagePermissions = currentPermissions.ManagePermissions;
-        bool currentViewPlayer = currentPermissions.ViewPlayer;
-        bool currentViewMailbox = currentPermissions.ViewMailbox;
-        bool currentViewToken = currentPermissions.ViewToken;
-        bool currentViewConfig = currentPermissions.ViewConfig;
-        bool currentEditMailbox = currentPermissions.EditMailbox;
-        if (currentAdmin)
-        {
-            ViewData["CurrentAdmin"] = currentPermissions.Admin;
-        }
-        if (currentManagePermissions)
-        {
-            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
-        }
-        if (currentViewPlayer)
-        {
-            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
-        }
-        if (currentViewMailbox)
-        {
-            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
-        }
-        if (currentViewToken)
-        {
-            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
-        }
-        if (currentViewConfig)
-        {
-            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
-        }
-        if (currentEditMailbox)
-        {
-            ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
-        }
-        
-        // Redirect if not allowed
-        if (currentViewMailbox == false)
+        if (!UserPermissions.ViewMailbox)
         {
             return View("Error");
         }
@@ -843,49 +548,7 @@ public class MailboxController : PortalController
     public async Task<IActionResult> Inbox(string accountId)
     {
         // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims);
-        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
-        ViewData["Permissions"] = mongoAccount.Permissions;
-        Permissions currentPermissions = _accountService.CheckPermissions(mongoAccount);
-        // Tab view permissions
-        bool currentAdmin = currentPermissions.Admin;
-        bool currentManagePermissions = currentPermissions.ManagePermissions;
-        bool currentViewPlayer = currentPermissions.ViewPlayer;
-        bool currentViewMailbox = currentPermissions.ViewMailbox;
-        bool currentViewToken = currentPermissions.ViewToken;
-        bool currentViewConfig = currentPermissions.ViewConfig;
-        bool currentEditMailbox = currentPermissions.EditMailbox;
-        if (currentAdmin)
-        {
-            ViewData["CurrentAdmin"] = currentPermissions.Admin;
-        }
-        if (currentManagePermissions)
-        {
-            ViewData["CurrentManagePermissions"] = currentPermissions.ManagePermissions;
-        }
-        if (currentViewPlayer)
-        {
-            ViewData["CurrentViewPlayer"] = currentPermissions.ViewPlayer;
-        }
-        if (currentViewMailbox)
-        {
-            ViewData["CurrentViewMailbox"] = currentPermissions.ViewMailbox;
-        }
-        if (currentViewToken)
-        {
-            ViewData["CurrentViewToken"] = currentPermissions.ViewToken;
-        }
-        if (currentViewConfig)
-        {
-            ViewData["CurrentViewConfig"] = currentPermissions.ViewConfig;
-        }
-        if (currentEditMailbox)
-        {
-            ViewData["CurrentEditMailbox"] = currentPermissions.EditMailbox;
-        }
-        
-        // Redirect if not allowed
-        if (currentViewMailbox == false)
+        if (!UserPermissions.ViewMailbox)
         {
             return View("Error");
         }
