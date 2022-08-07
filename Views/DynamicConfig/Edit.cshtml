@@ -112,16 +112,16 @@
                                     @if (ViewData.GetPermissions().Config.Edit)
                                     {
                                         @Html.ActionLink(linkText: "X", actionName: "ShowDeleteOverlay", controllerName: "DynamicConfig", routeValues: new
-                                                                                                                                                       {
-                                                                                                                                                           name = @item.Name,
-                                                                                                                                                           key = @key,
-                                                                                                                                                           value = @item.Data[($"{key}")].Value
-                                                                                                                                                       }, htmlAttributes: new
-                                                                                                                                                                          {
-                                                                                                                                                                              name = @item.Name,
-                                                                                                                                                                              key = @key,
-                                                                                                                                                                              value = @item.Data[($"{key}")].Value
-                                                                                                                                                                          })
+                                        {
+                                            name = @item.Name,
+                                            key = @key,
+                                            value = @item.Data[($"{key}")].Value
+                                        }, htmlAttributes: new
+                                        {
+                                            name = @item.Name,
+                                            key = @key,
+                                            value = @item.Data[($"{key}")].Value
+                                        })
                                     }
                                     else
                                     {
@@ -135,12 +135,12 @@
                 @if (ViewData.GetPermissions().Config.Edit)
                 {
                     @Html.ActionLink(linkText: "New Variable", actionName: "ShowNewVariableOverlay", controllerName: "DynamicConfig", routeValues: new
-                                                                                                                                                   {
-                                                                                                                                                       name = @item.Name
-                                                                                                                                                   }, htmlAttributes: new
-                                                                                                                                                                      {
-                                                                                                                                                                          name = @item.Name
-                                                                                                                                                                      })
+                    {
+                        name = @item.Name
+                    }, htmlAttributes: new
+                    {
+                        name = @item.Name
+                    })
                 }
                 else
                 {
