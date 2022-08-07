@@ -7,13 +7,11 @@ using TowerPortal.Models;
 namespace TowerPortal.Services;
 public class AccountService : PlatformMongoService<Account>
 {
-    public AccountService() : base(collection: "accounts")
-    { }
+    public AccountService() : base(collection: "accounts") { }
 
-    public Account GetByEmail(string email)
-    {
-        return _collection.Find(filter: account => account.Email == email).FirstOrDefault();
-    }
+    public Account GetByEmail(string email) => _collection
+        .Find(filter: account => account.Email == email)
+        .FirstOrDefault();
     
     public Permissions CheckPermissions(Account account)
     {
@@ -22,10 +20,9 @@ public class AccountService : PlatformMongoService<Account>
         return acc.Permissions;
     }
 
-    public List<Account> GetAllAccounts()
-    {
-        return _collection.Find(account => true).ToList();
-    }
+    public List<Account> GetAllAccounts() => _collection
+        .Find(filter: account => true)
+        .ToList();
 
     // The following is removed in favor of permissions
     // public void UpdateRoles(Account acc, List<string> roles)

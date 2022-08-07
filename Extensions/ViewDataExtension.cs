@@ -14,7 +14,7 @@ public static class ViewDataExtension
   // ((Permissions)ViewData["Permissions"]).{NAME};
   // ViewData["Permissions"] = value;
   // This also has the benefit of letting you set more complicated keys without having to re-type them / remember them all the time.
-  public static Permissions GetPermissions(this ViewDataDictionary viewData) => (Permissions)viewData[PERMISSIONS];
+  public static Permissions GetPermissions(this ViewDataDictionary viewData) => (Permissions)viewData[PERMISSIONS] ?? new Permissions();
 
   public static void SetPermissions(this ViewDataDictionary viewData, Permissions permissions) => viewData[PERMISSIONS] = permissions;
 

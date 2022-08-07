@@ -14,10 +14,8 @@ namespace TowerPortal.Controllers;
 [Route("portal/config")]
 public class DynamicConfigController : PortalController
 {
-    private readonly ApiService           _apiService;
     private readonly AccountService       _accountService;
     private readonly DynamicConfigService _dynamicConfigService;
-    private readonly DC2Service           _dc2Service;
 
     [Route("edit")]
     public async Task<IActionResult> Edit()
