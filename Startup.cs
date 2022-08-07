@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -18,6 +19,7 @@ using Rumble.Platform.Common.Enums;
 using Rumble.Platform.Common.Extensions;
 using Rumble.Platform.Common.Filters;
 using Rumble.Platform.Common.Interfaces;
+using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Utilities.Serializers;
@@ -25,6 +27,7 @@ using Rumble.Platform.Common.Web;
 using Rumble.Platform.Common.Web.Routing;
 using TowerPortal.Filters;
 using TowerPortal.Models;
+using TowerPortal.Models.Permissions;
 using TowerPortal.Utilities;
 
 namespace TowerPortal;

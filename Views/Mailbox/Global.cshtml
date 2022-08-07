@@ -1,4 +1,4 @@
-@using TowerPortal.Extensions
+@inherits TowerPortal.Views.Shared.PortalView
 @{
     ViewData["Title"] = "Global Messages";
 }
@@ -73,7 +73,7 @@
                             <br/>
                             <label for="editInternalNote" class="internalNote">Internal Note</label>
                             <input id="editInternalNote" class="internalNote" type="text" name="internalNote" placeholder="Internal Note">
-                            <button class="edit-confirm" disabled="@(!ViewData.GetPermissions().Mail.Edit)" type="submit">Confirm</button>
+                            <button class="edit-confirm" disabled="@(!Permissions.Mail.Edit)" type="submit">Confirm</button>
                             @Html.ActionLink(linkText: "Cancel", actionName: "HideOverlay", controllerName: "Mailbox", routeValues: new {}, htmlAttributes: new {})
                         </form>
                     </div>
@@ -85,7 +85,7 @@
                         <p>Are you sure you would like to delete this message?</p>
                         <form class="delete-form" method="post" asp-controller="Mailbox" asp-action="Delete">
                             <input for="deleteId" class="invisible id" name="id" value="@TempData["DeleteId"]">
-                            <button class="delete-confirm" disabled="@(!ViewData.GetPermissions().Mail.Edit)" type="submit">Confirm</button>
+                            <button class="delete-confirm" disabled="@(!Permissions.Mail.Edit)" type="submit">Confirm</button>
                         </form>
                         @Html.ActionLink(linkText: "Cancel", actionName: "HideOverlay", controllerName: "Mailbox", routeValues: new {}, htmlAttributes: new {})
                     </div>
@@ -96,40 +96,40 @@
         <div class="send-global-container">
             <form class="message-info" method="post" asp-controller="Mailbox" asp-action="Global">
                 <label for="newSubject" class="subject">Subject*</label>
-                <input id="newSubject" class="subject" type="text" name="subject" placeholder="Subject" maxlength="29" disabled="@(!ViewData.GetPermissions().Mail.Edit)" required>
+                <input id="newSubject" class="subject" type="text" name="subject" placeholder="Subject" maxlength="29" disabled="@(!Permissions.Mail.Edit)" required>
                 <br/>
                 <label for="newBody" class="body">Body*</label>
-                <textarea id="newBody" class="body" type="text" name="body" placeholder="Body" rows="3" disabled="@(!ViewData.GetPermissions().Mail.Edit)" required></textarea>
+                <textarea id="newBody" class="body" type="text" name="body" placeholder="Body" rows="3" disabled="@(!Permissions.Mail.Edit)" required></textarea>
                 <br/>
                 <label for="newAttachments" class="attachments">Attachments (separated by "," or "|")</label>
-                <input id="newAttachments" class="attachments" type="text" name="attachments" disabled="@(!ViewData.GetPermissions().Mail.Edit)" placeholder="ex: currency soft_currency 1500 | hero warlord">
+                <input id="newAttachments" class="attachments" type="text" name="attachments" disabled="@(!Permissions.Mail.Edit)" placeholder="ex: currency soft_currency 1500 | hero warlord">
                 <br/>
                 <label for="newVisibleFrom" class="visibleFrom">Visible From (UTC)*</label>
-                <input id="newVisibleFrom" class="visibleFrom" name="visibleFrom" type="datetime-local" disabled="@(!ViewData.GetPermissions().Mail.Edit)" value="@ViewData["Today"]" required>
+                <input id="newVisibleFrom" class="visibleFrom" name="visibleFrom" type="datetime-local" disabled="@(!Permissions.Mail.Edit)" value="@ViewData["Today"]" required>
                 <br/>
                 <label for="newExpiration" class="expiration">Expiration (UTC)*</label>
-                <input id="newExpiration" class="expiration" name="expiration" type="datetime-local" disabled="@(!ViewData.GetPermissions().Mail.Edit)" value="@ViewData["Week"]" required>
+                <input id="newExpiration" class="expiration" name="expiration" type="datetime-local" disabled="@(!Permissions.Mail.Edit)" value="@ViewData["Week"]" required>
                 <br/>
                 <label for="newIcon" class="icon">Icon</label>
-                <select id="newIcon" class="icon" name="icon" disabled="@(!ViewData.GetPermissions().Mail.Edit)" placeholder="Icon">
+                <select id="newIcon" class="icon" name="icon" disabled="@(!Permissions.Mail.Edit)" placeholder="Icon">
                     <option value="">default (empty)</option>
                     <option value="atlas-icons[pvp]">atlas-icons[pvp]</option>
                 </select>
                 <br/>
                 <label for="newBanner" class="banner">Banner</label>
-                <select id="newBanner" class="banner" name="banner" disabled="@(!ViewData.GetPermissions().Mail.Edit)" placeholder="Banner">
+                <select id="newBanner" class="banner" name="banner" disabled="@(!Permissions.Mail.Edit)" placeholder="Banner">
                     <option value="">default (empty)</option>
                     <option value="atlas-events[gold_blitz]">atlas-events[gold_blitz]</option>
                     <option value="atlas-dialog_banners[star_rewards_dialog_banner]">atlas-dialog_banners[star_rewards_dialog_banner]</option>
                 </select>
                 <br/>
                 <label for="newForAccountsBefore" class="forAccountsBefore">For Accounts Before (UTC)</label>
-                <input id="newForAccountsBefore" class="forAccountsBefore" name="forAccountsBefore" type="datetime-local" disabled="@(!ViewData.GetPermissions().Mail.Edit)">
+                <input id="newForAccountsBefore" class="forAccountsBefore" name="forAccountsBefore" type="datetime-local" disabled="@(!Permissions.Mail.Edit)">
                 <br/>
                 <label for="newInternalNote" class="internalNote">Internal Note</label>
-                <input id="newInternalNote" class="internalNote" type="text" name="internalNote" disabled="@(!ViewData.GetPermissions().Mail.Edit)" placeholder="Internal Note">
+                <input id="newInternalNote" class="internalNote" type="text" name="internalNote" disabled="@(!Permissions.Mail.Edit)" placeholder="Internal Note">
                 <br/>
-                <button id="sendGlobalMessageButton" disabled="@(!ViewData.GetPermissions().Mail.Edit)" type="submit">Send</button>
+                <button id="sendGlobalMessageButton" disabled="@(!Permissions.Mail.Edit)" type="submit">Send</button>
             </form>
         </div>
     
@@ -176,7 +176,7 @@
                             <td></td>
                         }
                         <td>
-                            @if (ViewData.GetPermissions().Mail.Edit)
+                            @if (Permissions.Mail.Edit)
                             {
                                 @Html.ActionLink(linkText: "Edit", actionName: "ShowEditOverlay", controllerName: "Mailbox", routeValues: new
                                 {
@@ -206,7 +206,7 @@
                             }
                         </td>
                         <td>
-                            @if (ViewData.GetPermissions().Mail.Edit)
+                            @if (Permissions.Mail.Edit)
                             {
                                 @Html.ActionLink(linkText: "Delete", actionName: "ShowDeleteOverlay", controllerName: "Mailbox", routeValues: new
                                 {
@@ -269,7 +269,7 @@
                             <td></td>
                         }
                         <td>
-                            @if (ViewData.GetPermissions().Mail.Edit)
+                            @if (Permissions.Mail.Edit)
                             {
                                 @Html.ActionLink(linkText: "Edit", actionName: "ShowEditOverlay", controllerName: "Mailbox", routeValues: new
                                 {

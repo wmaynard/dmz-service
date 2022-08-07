@@ -5,6 +5,7 @@ using System.Reflection;
 using MongoDB.Bson.Serialization.Attributes;
 using RCL.Logging;
 using Rumble.Platform.Common.Exceptions;
+using Rumble.Platform.Common.Models;
 
 namespace TowerPortal.Models.Permissions;
 
@@ -70,7 +71,8 @@ public class Passport : List<PermissionGroup>
     public enum PassportType { Superuser, Readonly, Nonprivileged, Unauthorized }
 }
 
-public abstract class PermissionGroup
+[BsonDiscriminator(Required = true)]
+public abstract class PermissionGroup : PlatformDataModel
 {
     /// <summary>
     /// Used to display the group in an organized way when managing permissions.

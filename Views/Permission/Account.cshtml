@@ -1,4 +1,4 @@
-@using TowerPortal.Extensions
+@inherits TowerPortal.Views.Shared.PortalView
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "User Permissions";
@@ -25,12 +25,12 @@
             <td>Environment</td>
             <td>@ViewData["Environment"]</td>
         </tr>
-        @if (ViewData.GetPermissions().Portal.SuperUser || ViewData.GetPermissions().Portal.ManagePermissions)
+        @if (Permissions.Portal.SuperUser || Permissions.Portal.ManagePermissions)
         {
             <tr class="permissions-label">
                 <td>Manage Permissions</td>
                 <td>
-                    <input type="checkbox" checked="@(ViewData.GetPermissions().Portal.ManagePermissions)" disabled="@(ViewData.GetPermissions().Portal.SuperUser || ViewData.GetPermissions().Portal.ManagePermissions)" name="managePermissions"/>
+                    <input type="checkbox" checked="@(Permissions).Portal.ManagePermissions)" disabled="@(Permissions).Portal.SuperUser || Permissions).Portal.ManagePermissions)" name="managePermissions"/>
                 </td>
             </tr>
         }
@@ -40,13 +40,13 @@
         <tr>
             <td>View Player</td>
             <td>
-                <input type="checkbox" checked="@(ViewData.GetPermissions().Player.View_Page)" name="viewPlayer"/>
+                <input type="checkbox" checked="@(Permissions).Player.View_Page)" name="viewPlayer"/>
             </td>
         </tr>
         <tr>
             <td>Edit Player</td>
             <td>
-                <input type="checkbox" checked="@(ViewData.GetPermissions().Player.Edit)" name="editPlayer"/>
+                <input type="checkbox" checked="@(Permissions).Player.Edit)" name="editPlayer"/>
             </td>
         </tr>
         <tr class="mailbox-label">
@@ -55,13 +55,13 @@
         <tr>
             <td>View Mailbox</td>
             <td>
-                <input type="checkbox" checked="@(ViewData.GetPermissions().Mail.View_Page)" name="viewMailbox"/>
+                <input type="checkbox" checked="@(Permissions).Mail.View_Page)" name="viewMailbox"/>
             </td>
         </tr>
         <tr>
             <td>Edit Mailbox</td>
             <td>
-                <input type="checkbox" checked="@(ViewData.GetPermissions().Mail.Edit)" name="editMailbox"/>
+                <input type="checkbox" checked="@(Permissions).Mail.Edit)" name="editMailbox"/>
             </td>
         </tr>
         <tr class="token-label">
@@ -70,13 +70,13 @@
         <tr>
             <td>View Token</td>
             <td>
-                <input type="checkbox" checked="@(ViewData.GetPermissions().Token.View_Page)" name="viewToken"/>
+                <input type="checkbox" checked="@(Permissions).Token.View_Page)" name="viewToken"/>
             </td>
         </tr>
         <tr>
             <td>Edit Token</td>
             <td>
-                <input type="checkbox" checked="@(ViewData.GetPermissions().Token.Edit)" name="editToken"/>
+                <input type="checkbox" checked="@(Permissions).Token.Edit)" name="editToken"/>
             </td>
         </tr>
         <tr class="config-label">
@@ -85,13 +85,13 @@
         <tr>
             <td>View Config</td>
             <td>
-                <input type="checkbox" checked="@(ViewData.GetPermissions().Config.View_Page)" name="viewConfig"/>
+                <input type="checkbox" checked="@(Permissions).Config.View_Page)" name="viewConfig"/>
             </td>
         </tr>
         <tr>
             <td>Edit Config</td>
             <td>
-                <input type="checkbox" checked="@(ViewData.GetPermissions().Config.Edit)" name="editConfig"/>
+                <input type="checkbox" checked="@(Permissions).Config.Edit)" name="editConfig"/>
             </td>
         </tr>
     </table>

@@ -1,4 +1,6 @@
 ﻿@using TowerPortal.Extensions
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@inherits TowerPortal.Views.Shared.PortalView
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,35 +32,35 @@
                     @{
                         if (User?.Identity?.IsAuthenticated ?? false)
                         {
-                            if (ViewData.GetPermissions().Portal.SuperUser || ViewData.GetPermissions().Portal.ManagePermissions)
+                            if (Permissions.Portal.SuperUser || Permissions.Portal.ManagePermissions)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Permission" asp-action="List">Permissions</a>
                                 </li>
                             }
 
-                            if (ViewData.GetPermissions().Config.View_Navbar)
+                            if (Permissions.Config.View_Navbar)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="DynamicConfig" asp-action="Edit">Dynamic Config</a>
                                 </li>
                             }
 
-                            if (ViewData.GetPermissions().Config.View_Navbar)
+                            if (Permissions.Config.View_Navbar)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Player" asp-action="Search">Player</a>
                                 </li>
                             }
 
-                            if (ViewData.GetPermissions().Mail.View_Navbar)
+                            if (Permissions.Mail.View_Navbar)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Mailbox" asp-action="Global">Mailbox</a>
                                 </li>
                             }
 
-                            if (ViewData.GetPermissions().Token.View_Navbar)
+                            if (Permissions.Token.View_Navbar)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Token" asp-action="Ban">Token</a>

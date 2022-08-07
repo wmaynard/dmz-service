@@ -1,4 +1,4 @@
-@using TowerPortal.Extensions
+@inherits TowerPortal.Views.Shared.PortalView
 @{
     ViewData["Title"] = "Ban players";
 }
@@ -36,29 +36,29 @@
         <form class="ban-form" method="post" asp-controller="Token" asp-action="Ban">
             <div class="playerIds">
                 <label for="playerIds" class="playerIds">Player IDs* (separated by "," or "|")</label>
-                <input id="playerIds" class="playerIds" type="text" name="playerIds" disabled="@(!ViewData.GetPermissions().Token.Edit)" placeholder="ex: 6140bd998caf79f468e6f8a6, 60e7ea01907cf6e93a7578c2" required>
+                <input id="playerIds" class="playerIds" type="text" name="playerIds" disabled="@(!Permissions.Token.Edit)" placeholder="ex: 6140bd998caf79f468e6f8a6, 60e7ea01907cf6e93a7578c2" required>
             </div>
             <div class="actionBan">
-                <input id="actionBan" class="actionBan" type="radio" name="action" disabled="@(!ViewData.GetPermissions().Token.Edit)" value="ban" checked>
+                <input id="actionBan" class="actionBan" type="radio" name="action" disabled="@(!Permissions.Token.Edit)" value="ban" checked>
                 <label for="actionBan" class="actionBan">Ban</label>
             </div>
             <div class="unbanTime">
                 <label for="unbanTime" class="unbanTime">Unban Date (UTC) (leave blank if permanent)</label>
-                <input id="unbanTime" class="unbanTime" type="date" name="unbanTime" disabled="@(!ViewData.GetPermissions().Token.Edit)">
+                <input id="unbanTime" class="unbanTime" type="date" name="unbanTime" disabled="@(!Permissions.Token.Edit)">
             </div>
             <div class="actionUnban">
-                <input id="actionUnban" class="actionUnban" type="radio" name="action" disabled="@(!ViewData.GetPermissions().Token.Edit)" value="unban">
+                <input id="actionUnban" class="actionUnban" type="radio" name="action" disabled="@(!Permissions.Token.Edit)" value="unban">
                 <label for="actionUnban" class="actionUnban">Unban</label>
             </div>
             <div class="actionLogout">
-                <input id="actionLogout" class="actionLogout" type="radio" name="action" disabled="@(!ViewData.GetPermissions().Token.Edit)" value="logout">
+                <input id="actionLogout" class="actionLogout" type="radio" name="action" disabled="@(!Permissions.Token.Edit)" value="logout">
                 <label for="actionLogout" class="actionLogout">Logout</label>
             </div>
             <div class="note">
                 <label for="note" class="note">Internal Note</label>
-                <input id="note" class="note" type="text" name="note" disabled="@(!ViewData.GetPermissions().Token.Edit)" placeholder="Note">
+                <input id="note" class="note" type="text" name="note" disabled="@(!Permissions.Token.Edit)" placeholder="Note">
             </div>
-            <button id="banButton" class="banButton" disabled="@(!ViewData.GetPermissions().Token.Edit)" type="submit">Confirm</button>
+            <button id="banButton" class="banButton" disabled="@(!Permissions.Token.Edit)" type="submit">Confirm</button>
         </form>
     </div>
     
