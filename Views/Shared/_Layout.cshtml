@@ -30,35 +30,35 @@
                     @{
                         if (User?.Identity?.IsAuthenticated ?? false)
                         {
-                            if (ViewData.GetPermissions().Admin || ViewData.GetPermissions().ManagePermissions)
+                            if (ViewData.GetPermissions().Portal.SuperUser || ViewData.GetPermissions().Portal.ManagePermissions)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Permission" asp-action="List">Permissions</a>
                                 </li>
                             }
 
-                            if (ViewData.GetPermissions().ViewConfig)
+                            if (ViewData.GetPermissions().Config.View_Navbar)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="DynamicConfig" asp-action="Edit">Dynamic Config</a>
                                 </li>
                             }
 
-                            if (ViewData.GetPermissions().ViewPlayer)
+                            if (ViewData.GetPermissions().Config.View_Navbar)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Player" asp-action="Search">Player</a>
                                 </li>
                             }
 
-                            if (ViewData.GetPermissions().ViewMailbox)
+                            if (ViewData.GetPermissions().Mail.View_Navbar)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Mailbox" asp-action="Global">Mailbox</a>
                                 </li>
                             }
 
-                            if (ViewData.GetPermissions().ViewToken)
+                            if (ViewData.GetPermissions().Token.View_Navbar)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Token" asp-action="Ban">Token</a>

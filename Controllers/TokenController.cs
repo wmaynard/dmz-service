@@ -25,7 +25,7 @@ public class TokenController : PortalController
     public async Task<IActionResult> Ban()
     {
         // Checking access permissions
-        if (!UserPermissions.ViewToken)
+        if (!UserPermissions.Token.View_Page)
         {
             return View("Error");
         }
@@ -56,7 +56,7 @@ public class TokenController : PortalController
     public async Task<IActionResult> Ban(string playerIds, string action, string unbanTime, string note)
     {
         // Checking access permissions
-        if (!UserPermissions.ViewToken || !UserPermissions.EditToken)
+        if (!UserPermissions.Token.View_Page || !UserPermissions.Token.Edit)
         {
             return View("Error");
         }

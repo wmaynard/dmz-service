@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Web;
 using TowerPortal.Models;
+using TowerPortal.Models.Permissions;
 
 namespace TowerPortal.Services;
 public class AccountService : PlatformMongoService<Account>
@@ -13,7 +14,7 @@ public class AccountService : PlatformMongoService<Account>
         .Find(filter: account => account.Email == email)
         .FirstOrDefault();
     
-    public Permissions CheckPermissions(Account account)
+    public Passport CheckPermissions(Account account)
     {
         Account acc = GetByEmail(account.Email);
 

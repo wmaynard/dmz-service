@@ -7,6 +7,7 @@ using Rumble.Platform.Common.Utilities;
 using TowerPortal.Controllers;
 using TowerPortal.Extensions;
 using TowerPortal.Models;
+using TowerPortal.Models.Permissions;
 using TowerPortal.Services;
 
 namespace TowerPortal.Filters;
@@ -34,7 +35,7 @@ public class ViewDataFilter : PlatformFilter, IActionFilter
       Account mongoAccount = accountService.FindOne(filter: account => account.Email == googleAccount.Email);
 
       Log.Local(Owner.Will, "Setting the ViewData permissions object");
-      Permissions permissions = accountService.CheckPermissions(mongoAccount);
+      Passport permissions = accountService.CheckPermissions(mongoAccount);
       controller.ViewData.SetPermissions(permissions);
     
       // TODO: Update places 

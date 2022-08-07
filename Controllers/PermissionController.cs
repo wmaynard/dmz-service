@@ -26,7 +26,7 @@ public class PermissionController : PortalController
         TempData["Failure"] = null;
 
         // Checking access permissions
-        if (!UserPermissions.Admin && !UserPermissions.ManagePermissions)
+        if (!UserPermissions.Portal.ManagePermissions)
         {
             return View("Error");
         }
@@ -53,7 +53,7 @@ public class PermissionController : PortalController
     public async Task<IActionResult> Account(string id)
     {
         // Checking access permissions
-        if (!UserPermissions.Admin && !UserPermissions.ManagePermissions)
+        if (!UserPermissions.Portal.ManagePermissions)
         {
             return View("Error");
         }
@@ -71,12 +71,13 @@ public class PermissionController : PortalController
         return View();
     }
 
+    // TODO: This method should be accepting permission-related classes as parameters, not a ton of strings. 
     [HttpPost]
     [Route("account")]
     public async Task<IActionResult> Account(string id, string managePermissions, string viewPlayer, string editPlayer, string viewMailbox, string editMailbox, string viewToken, string editToken, string viewConfig, string editConfig)
     {
         // Checking access permissions
-        if (!UserPermissions.Admin && !UserPermissions.ManagePermissions)
+        if (!UserPermissions.Portal.ManagePermissions)
         {
             return View("Error");
         }
@@ -85,74 +86,15 @@ public class PermissionController : PortalController
 
         try
         {
-            if (managePermissions != null)
-            {
-                user.Permissions.ManagePermissions = true;
-            }
-            if (viewPlayer != null)
-            {
-                user.Permissions.ViewPlayer = true;
-            }
-            else
-            {
-                user.Permissions.ViewPlayer = false;
-            }
-            if (editPlayer != null)
-            {
-                user.Permissions.EditPlayer = true;
-            }
-            else
-            {
-                user.Permissions.EditPlayer = false;
-            }
-            if (viewMailbox != null)
-            {
-                user.Permissions.ViewMailbox = true;
-            }
-            else
-            {
-                user.Permissions.ViewMailbox = false;
-            }
-            if (editMailbox != null)
-            {
-                user.Permissions.EditMailbox = true;
-            }
-            else
-            {
-                user.Permissions.EditMailbox = false;
-            }
-            if (viewToken != null)
-            {
-                user.Permissions.ViewToken = true;
-            }
-            else
-            {
-                user.Permissions.ViewToken = false;
-            }
-            if (editToken != null)
-            {
-                user.Permissions.EditToken = true;
-            }
-            else
-            {
-                user.Permissions.EditToken = false;
-            }
-            if (viewConfig != null)
-            {
-                user.Permissions.ViewConfig = true;
-            }
-            else
-            {
-                user.Permissions.ViewConfig = false;
-            }
-            if (editConfig != null)
-            {
-                user.Permissions.EditConfig = true;
-            }
-            else
-            {
-                user.Permissions.EditConfig = false;
-            }
+            user.Permissions.Portal.ManagePermissions = managePermissions != null;
+            user.Permissions.Player.View_Page = viewPlayer != null;
+            user.Permissions.Player.Edit = editPlayer != null;
+            user.Permissions.Mail.View_Page = viewMailbox != null;
+            user.Permissions.Mail.Edit = editMailbox != null;
+            user.Permissions.Token.View_Page = viewToken != null;
+            user.Permissions.Token.Edit = editToken != null;
+            user.Permissions.Config.View_Page = viewConfig != null;
+            user.Permissions.Config.Edit = editConfig != null;
             
             _accountService.Update(user);
             

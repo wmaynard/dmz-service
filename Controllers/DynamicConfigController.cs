@@ -21,12 +21,12 @@ public class DynamicConfigController : PortalController
     public async Task<IActionResult> Edit()
     {
         // Checking access permissions
-        if (!UserPermissions.ViewConfig)
+        if (!UserPermissions.Config.View_Page)
         {
             return View("Error");
         }
 
-        Section[] sections = _dc2Service.GetAdminData();
+        Section[] sections = await _dc2Service.GetAdminDataAsync();
         ViewData["Data"] = sections;
         
         return View();
@@ -37,7 +37,7 @@ public class DynamicConfigController : PortalController
     public async Task<IActionResult> NewSection(IFormCollection collection)
     {
         // Checking access permissions
-        if (!UserPermissions.ViewConfig || !UserPermissions.EditConfig)
+        if (!UserPermissions.Config.View_Page || !UserPermissions.Config.Edit)
         {
             return View("Error");
         }
@@ -86,7 +86,7 @@ public class DynamicConfigController : PortalController
     public async Task<IActionResult> NewVariable(IFormCollection collection)
     {
         // Checking access permissions
-        if (!UserPermissions.ViewConfig || !UserPermissions.EditConfig)
+        if (!UserPermissions.Config.View_Page || !UserPermissions.Config.Edit)
         {
             return View("Error");
         }
@@ -139,7 +139,7 @@ public class DynamicConfigController : PortalController
     public async Task<IActionResult> Delete(IFormCollection collection)
     {
         // Checking access permissions
-        if (!UserPermissions.ViewConfig || !UserPermissions.EditConfig)
+        if (!UserPermissions.Config.View_Page || !UserPermissions.Config.Edit)
         {
             return View("Error");
         }
@@ -183,7 +183,7 @@ public class DynamicConfigController : PortalController
     public async Task<IActionResult> Edit(IFormCollection collection)
     {
         // Checking access permissions
-        if (!UserPermissions.ViewConfig || !UserPermissions.EditConfig)
+        if (!UserPermissions.Config.View_Page || !UserPermissions.Config.Edit)
         {
             return View("Error");
         }

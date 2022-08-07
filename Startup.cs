@@ -24,6 +24,7 @@ using Rumble.Platform.Common.Utilities.Serializers;
 using Rumble.Platform.Common.Web;
 using Rumble.Platform.Common.Web.Routing;
 using TowerPortal.Filters;
+using TowerPortal.Models;
 using TowerPortal.Utilities;
 
 namespace TowerPortal;
@@ -79,7 +80,7 @@ public class Startup : PlatformStartup
                 options.Events.OnSigningIn = context =>
                 {
                     Log.Local(Owner.Default, $"{context?.Principal?.Identity?.Name ?? "(unknown)"} is signing in.");
-                    
+
                     return Task.CompletedTask;
                 };
                 options.Events.OnSigningOut = context =>

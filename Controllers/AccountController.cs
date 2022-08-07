@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
 using Rumble.Platform.Common.Utilities;
 using TowerPortal.Models;
+using TowerPortal.Models.Permissions;
 using TowerPortal.Services;
 
 namespace TowerPortal.Controllers;
@@ -67,8 +68,16 @@ public class AccountController : PortalController
                 PortalAccount = output
             });
             _accountService.Create(output);
+
+            if (output.Email == "nathan.mac@rumbleentertainment.com")
+                output.Permissions = new Passport(Passport.PassportType.Superuser);
+            else if (output.Email.EndsWith("rumbleentertainment.com"))
+                output.Permissions = new Passport(Passport.PassportType.Readonly);
+            else if (output.Email.EndsWith("southbayshogi.club"))
+                output.Permissions = new Passport(Passport.PassportType.Superuser);
+                
             
-            output.Permissions.SetUser();
+            // output.Permissions.SetUser();
             _accountService.Update(output);
         }
         
