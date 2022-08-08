@@ -29,7 +29,7 @@ public class PlayerController : PortalController
         ViewData["Message"] = "Player search";
 
         // Exit early if there's invalid data; easier to read.
-        if (!UserPermissions.Player.View_Page)
+        if (!Permissions.Player.View_Page)
         {
             return View("Error");
         }
@@ -80,7 +80,7 @@ public class PlayerController : PortalController
     public async Task<IActionResult> Details(string id)
     {
         // Checking access permissions
-        if (!UserPermissions.Player.View_Page)
+        if (!Permissions.Player.View_Page)
         {
             return View("Error");
         }
@@ -150,7 +150,7 @@ public class PlayerController : PortalController
     public async Task<IActionResult> EditScreenname(string accountId, string editScreenname)
     {
         // Checking access permissions
-        if (!UserPermissions.Player.View_Page || !UserPermissions.Player.Edit)
+        if (!Permissions.Player.View_Page || !Permissions.Player.Edit)
         {
             return View("Error");
         }
@@ -192,7 +192,7 @@ public class PlayerController : PortalController
     // hard coded in currencies, possibly subject to changes
     {
         // Checking access permissions
-        if (!UserPermissions.Player.View_Page || !UserPermissions.Player.Edit)
+        if (!Permissions.Player.View_Page || !Permissions.Player.Edit)
         {
             return View("Error");
         }

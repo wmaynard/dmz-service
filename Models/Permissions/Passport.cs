@@ -7,6 +7,11 @@ using Rumble.Platform.Common.Exceptions;
 
 namespace TowerPortal.Models.Permissions;
 
+/// <summary>
+/// This class is representative of all the permissions a user can hold.  It contains helper properties to improve code readability.
+/// Whenever a new PermissionGroup is created, the Passport needs to be given a new property to match it.  Accessing permissions is easy
+/// via the Passport, e.g.: Passport.Mail.SendGlobalMessage.
+/// </summary>
 public class Passport : List<PermissionGroup>
 {
     public ConfigPermissions Config => Fetch<ConfigPermissions>();

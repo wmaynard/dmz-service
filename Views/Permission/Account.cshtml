@@ -1,5 +1,6 @@
 @inherits TowerPortal.Views.Shared.PortalView
 @using Microsoft.AspNetCore.Mvc.TagHelpers
+@using TowerPortal.Models.Permissions
 @{
     ViewData["Title"] = "User Permissions";
 }
@@ -18,82 +19,46 @@
     }
 </div>
 
-<form class="permission-info" method="post" asp-controller="Permission" asp-action="Account">
+<form class="permission-info" method="post" asp-controller="Permission" asp-action="UpdatePermissions" onsubmit="jsonPost(event, this)">
     <input class="invisible" value=@TempData["AccountId"] name="id"/>
     <table class="permissions-table">
         <tr class="env-label">
             <td>Environment</td>
             <td>@ViewData["Environment"]</td>
         </tr>
-        @if (Permissions.Portal.SuperUser || Permissions.Portal.ManagePermissions)
+        @foreach (PermissionGroup group in Permissions.OrderBy(group => group.Name))
         {
             <tr class="permissions-label">
-                <td>Manage Permissions</td>
-                <td>
-                    <input type="checkbox" checked="@(Permissions).Portal.ManagePermissions)" disabled="@(Permissions).Portal.SuperUser || Permissions).Portal.ManagePermissions)" name="managePermissions"/>
-                </td>
+                <td><h3>@(group.Name)</h3></td>
+                <td></td>
             </tr>
+            foreach (KeyValuePair<string, bool> pair in group.Values)
+            {
+                <tr class="permissions-label">
+                    <td>@pair.Key</td>
+                    <td>
+                        <input type="checkbox" checked="@(pair.Value)" disabled="@(!Permissions.Portal.SuperUser || !Permissions.Portal.ManagePermissions)" name="@($"{group.Name}.{pair.Key}")"/>
+                    </td>
+                </tr>
+            }
+            
         }
-        <tr class="player-label">
-            <td>Player Service</td>
-        </tr>
-        <tr>
-            <td>View Player</td>
-            <td>
-                <input type="checkbox" checked="@(Permissions).Player.View_Page)" name="viewPlayer"/>
-            </td>
-        </tr>
-        <tr>
-            <td>Edit Player</td>
-            <td>
-                <input type="checkbox" checked="@(Permissions).Player.Edit)" name="editPlayer"/>
-            </td>
-        </tr>
-        <tr class="mailbox-label">
-            <td>Mailbox Service</td>
-        </tr>
-        <tr>
-            <td>View Mailbox</td>
-            <td>
-                <input type="checkbox" checked="@(Permissions).Mail.View_Page)" name="viewMailbox"/>
-            </td>
-        </tr>
-        <tr>
-            <td>Edit Mailbox</td>
-            <td>
-                <input type="checkbox" checked="@(Permissions).Mail.Edit)" name="editMailbox"/>
-            </td>
-        </tr>
-        <tr class="token-label">
-            <td>Token Service</td>
-        </tr>
-        <tr>
-            <td>View Token</td>
-            <td>
-                <input type="checkbox" checked="@(Permissions).Token.View_Page)" name="viewToken"/>
-            </td>
-        </tr>
-        <tr>
-            <td>Edit Token</td>
-            <td>
-                <input type="checkbox" checked="@(Permissions).Token.Edit)" name="editToken"/>
-            </td>
-        </tr>
-        <tr class="config-label">
-            <td>Dynamic Config Service</td>
-        </tr>
-        <tr>
-            <td>View Config</td>
-            <td>
-                <input type="checkbox" checked="@(Permissions).Config.View_Page)" name="viewConfig"/>
-            </td>
-        </tr>
-        <tr>
-            <td>Edit Config</td>
-            <td>
-                <input type="checkbox" checked="@(Permissions).Config.Edit)" name="editConfig"/>
-            </td>
-        </tr>
     </table>
     <button type="submit">Save</button>
 </form>
+
+<script type="text/javascript">
+    function jsonPost(event, form) {
+        console.log(form)
+        event.preventDefault();
+        
+        let data = {};
+        Array.from(form.getElementsByTagName("input")).forEach(function (input) {
+            data[input.name] = input.type === "checkbox" 
+                ? input.checked 
+                : input.value;
+            });
+        console.log(data);
+        $.post("/portal/permission/account", data);
+    }
+</script>

@@ -21,7 +21,7 @@ public class DynamicConfigController : PortalController
     public async Task<IActionResult> Edit()
     {
         // Checking access permissions
-        if (!UserPermissions.Config.View_Page)
+        if (!Permissions.Config.View_Page)
         {
             return View("Error");
         }
@@ -37,7 +37,7 @@ public class DynamicConfigController : PortalController
     public async Task<IActionResult> NewSection(IFormCollection collection)
     {
         // Checking access permissions
-        if (!UserPermissions.Config.View_Page || !UserPermissions.Config.Edit)
+        if (!Permissions.Config.View_Page || !Permissions.Config.Edit)
         {
             return View("Error");
         }
@@ -86,7 +86,7 @@ public class DynamicConfigController : PortalController
     public async Task<IActionResult> NewVariable(IFormCollection collection)
     {
         // Checking access permissions
-        if (!UserPermissions.Config.View_Page || !UserPermissions.Config.Edit)
+        if (!Permissions.Config.View_Page || !Permissions.Config.Edit)
         {
             return View("Error");
         }
@@ -139,7 +139,7 @@ public class DynamicConfigController : PortalController
     public async Task<IActionResult> Delete(IFormCollection collection)
     {
         // Checking access permissions
-        if (!UserPermissions.Config.View_Page || !UserPermissions.Config.Edit)
+        if (!Permissions.Config.View_Page || !Permissions.Config.Edit)
         {
             return View("Error");
         }
@@ -183,7 +183,7 @@ public class DynamicConfigController : PortalController
     public async Task<IActionResult> Edit(IFormCollection collection)
     {
         // Checking access permissions
-        if (!UserPermissions.Config.View_Page || !UserPermissions.Config.Edit)
+        if (!Permissions.Config.View_Page || !Permissions.Config.Edit)
         {
             return View("Error");
         }

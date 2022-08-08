@@ -26,7 +26,7 @@ public class PermissionController : PortalController
         TempData["Failure"] = null;
 
         // Checking access permissions
-        if (!UserPermissions.Portal.ManagePermissions)
+        if (!Permissions.Portal.ManagePermissions)
         {
             return View("Error");
         }
@@ -53,7 +53,7 @@ public class PermissionController : PortalController
     public async Task<IActionResult> Account(string id)
     {
         // Checking access permissions
-        if (!UserPermissions.Portal.ManagePermissions)
+        if (!Permissions.Portal.ManagePermissions)
         {
             return View("Error");
         }
@@ -74,27 +74,27 @@ public class PermissionController : PortalController
     // TODO: This method should be accepting permission-related classes as parameters, not a ton of strings. 
     [HttpPost]
     [Route("account")]
-    public async Task<IActionResult> Account(string id, string managePermissions, string viewPlayer, string editPlayer, string viewMailbox, string editMailbox, string viewToken, string editToken, string viewConfig, string editConfig)
+    public async Task<IActionResult> UpdatePermissions(string id)
     {
         // Checking access permissions
-        if (!UserPermissions.Portal.ManagePermissions)
-        {
+        if (!Permissions.Portal.ManagePermissions)
             return View("Error");
-        }
+        
+        // TODO: Will to parse the Body into a passport
 
         Account user = _accountService.Get(id);
 
         try
         {
-            user.Permissions.Portal.ManagePermissions = managePermissions != null;
-            user.Permissions.Player.View_Page = viewPlayer != null;
-            user.Permissions.Player.Edit = editPlayer != null;
-            user.Permissions.Mail.View_Page = viewMailbox != null;
-            user.Permissions.Mail.Edit = editMailbox != null;
-            user.Permissions.Token.View_Page = viewToken != null;
-            user.Permissions.Token.Edit = editToken != null;
-            user.Permissions.Config.View_Page = viewConfig != null;
-            user.Permissions.Config.Edit = editConfig != null;
+            // user.Permissions.Portal.ManagePermissions = managePermissions != null;
+            // user.Permissions.Player.View_Page = viewPlayer != null;
+            // user.Permissions.Player.Edit = editPlayer != null;
+            // user.Permissions.Mail.View_Page = viewMailbox != null;
+            // user.Permissions.Mail.Edit = editMailbox != null;
+            // user.Permissions.Token.View_Page = viewToken != null;
+            // user.Permissions.Token.Edit = editToken != null;
+            // user.Permissions.Config.View_Page = viewConfig != null;
+            // user.Permissions.Config.Edit = editConfig != null;
             
             _accountService.Update(user);
             
