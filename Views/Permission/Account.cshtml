@@ -94,6 +94,21 @@
                 <input type="checkbox" checked="@(((Permissions) ViewData["UserPermissions"]).EditConfig)" name="editConfig"/>
             </td>
         </tr>
+        <tr class="chat-label">
+            <td>Chat Service</td>
+        </tr>
+        <tr>
+            <td>View Chat</td>
+            <td>
+                <input type="checkbox" checked="@(((Permissions) ViewData["UserPermissions"]).ViewChat)" name="viewChat"/>
+            </td>
+        </tr>
+        <tr>
+            <td>Edit Chat</td>
+            <td>
+                <input type="checkbox" checked="@(((Permissions) ViewData["UserPermissions"]).EditChat)" name="editChat"/>
+            </td>
+        </tr>
     </table>
     <button type="submit">Save</button>
 </form>

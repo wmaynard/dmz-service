@@ -10,16 +10,18 @@ public class Permissions : PlatformDataModel
   // TODO: Permissions should be renamed to be more English-readable
   // e.g. IsAdmin
   // This will make it easier to understand when used in conditional statements
-  public bool Admin { get; set; }
+  public bool Admin             { get; set; }
   public bool ManagePermissions { get; set; }
-  public bool ViewPlayer { get; set; }
-  public bool EditPlayer { get; set; }
-  public bool ViewMailbox { get; set; }
-  public bool EditMailbox { get; set; }
-  public bool ViewToken { get; set; }
-  public bool EditToken { get; set; }
-  public bool ViewConfig { get; set; }
-  public bool EditConfig { get; set; }
+  public bool ViewPlayer        { get; set; }
+  public bool EditPlayer        { get; set; }
+  public bool ViewMailbox       { get; set; }
+  public bool EditMailbox       { get; set; }
+  public bool ViewToken         { get; set; }
+  public bool EditToken         { get; set; }
+  public bool ViewConfig        { get; set; }
+  public bool EditConfig        { get; set; }
+  public bool ViewChat          { get; set; }
+  public bool EditChat          { get; set; }
 
   public void SetAdmin()
   {
@@ -33,5 +35,6 @@ public class Permissions : PlatformDataModel
     ViewMailbox = true;
     ViewToken = true;
     ViewConfig = true;
+    ViewChat = true;
   }
 }

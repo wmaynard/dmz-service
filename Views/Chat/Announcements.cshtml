@@ -1,0 +1,50 @@
+@{
+    ViewData["Title"] = "Chat announcements";
+}
+
+<div class="announcements-page-container">
+    <div class="player-chat-container">
+        @Html.ActionLink(linkText: "View player specific bans", actionName: "Player", controllerName: "Chat", routeValues: new {}, htmlAttributes: new {})
+    </div>
+    <div class="player-chat-container">
+        @Html.ActionLink(linkText: "View reports", actionName: "Reports", controllerName: "Chat", routeValues: new {}, htmlAttributes: new {})
+    </div>
+    
+    <h2>@ViewData["Title"]</h2>
+    
+    <div class="error-container">
+        @if (TempData["Failure"] != null)
+        {
+            <h4 style="color: red">@TempData["Success"]</h4>
+        }
+        else
+        {
+            <h4 style="color: darkgreen">@TempData["Success"]</h4>
+        }
+    </div>
+    
+    <div class="announcements-container">
+        <h3>Chat Announcements</h3>
+        <table id="chatAnnouncements" class="announcements">
+            <tr>
+                <td class="id">Id</td>
+                <td class="aid">Aid</td>
+                <td class="text">Text</td>
+                <td class="timestamp">Timestamp</td>
+                <td class="expiration">Expiration</td>
+                <td class="type">Type</td>
+            </tr>
+            @foreach (Announcement announcement in (List<Announcement>) ViewData["Announcements"])
+            {
+                <tr>
+                    <td>@announcement.Id</td>
+                    <td>@announcement.Aid</td>
+                    <td>@announcement.Text</td>
+                    <td>@DateTimeOffset.FromUnixTimeSeconds(@announcement.Timestamp)</td>
+                    <td>@DateTimeOffset.FromUnixTimeSeconds(@announcement.Expiration)</td>
+                    <td>@announcement.Type</td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>

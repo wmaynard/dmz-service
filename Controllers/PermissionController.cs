@@ -73,7 +73,12 @@ public class PermissionController : PortalController
 
     [HttpPost]
     [Route("account")]
-    public async Task<IActionResult> Account(string id, string managePermissions, string viewPlayer, string editPlayer, string viewMailbox, string editMailbox, string viewToken, string editToken, string viewConfig, string editConfig)
+    public async Task<IActionResult> Account(string id, string managePermissions,
+                                             string viewPlayer, string editPlayer,
+                                             string viewMailbox, string editMailbox,
+                                             string viewToken, string editToken,
+                                             string viewConfig, string editConfig,
+                                             string viewChat, string editChat)
     {
         // Checking access permissions
         if (!UserPermissions.Admin && !UserPermissions.ManagePermissions)
@@ -152,6 +157,22 @@ public class PermissionController : PortalController
             else
             {
                 user.Permissions.EditConfig = false;
+            }
+            if (viewChat != null)
+            {
+                user.Permissions.ViewChat = true;
+            }
+            else
+            {
+                user.Permissions.ViewChat = false;
+            }
+            if (editChat != null)
+            {
+                user.Permissions.EditChat = true;
+            }
+            else
+            {
+                user.Permissions.EditChat = false;
             }
             
             _accountService.Update(user);
