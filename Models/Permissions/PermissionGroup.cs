@@ -9,68 +9,6 @@ using Rumble.Platform.Common.Models;
 
 namespace TowerPortal.Models.Permissions;
 
-public class Passport : List<PermissionGroup>
-{
-    public ConfigServicePermissions Config => Fetch<ConfigServicePermissions>();
-    public MailServicePermissions Mail => Fetch<MailServicePermissions>();
-    public PlayerServicePermissions Player => Fetch<PlayerServicePermissions>();
-    public PlayerServicePermissions Token => Fetch<PlayerServicePermissions>();
-    public PortalPermissions Portal => Fetch<PortalPermissions>();
-
-    private T Fetch<T>() where T : PermissionGroup
-    {
-        T output = this.OfType<T>().FirstOrDefault();
-        if (output == null)
-            base.Add(output = Activator.CreateInstance<T>());
-        return output;
-    }
-    
-    [BsonConstructor]
-    public Passport(){}
-    
-    public Passport(PassportType userType = PassportType.Nonprivileged)
-    {
-        Type[] groups = Assembly
-            .GetExecutingAssembly()
-            .GetExportedTypes()
-            .Where(type => type.IsAssignableTo(typeof(PermissionGroup)))
-            .Where(type => !type.IsAbstract)
-            .ToArray();
-        foreach (Type type in groups)
-        {
-            PermissionGroup group = (PermissionGroup)Activator.CreateInstance(type);
-            switch (userType)
-            {
-                case PassportType.Superuser:
-                    group?.ConvertToAdmin();
-                    break;
-                case PassportType.Readonly:
-                    group?.ConvertToReadonly();
-                    break;
-                case PassportType.Nonprivileged:
-                    group?.ConvertToNonprivileged();
-                    break;
-                case PassportType.Unauthorized:
-                default:
-                    throw new PlatformException(message: "Unauthorized user permissions instantiated.");
-            }
-            base.Add(item: group);
-        }
-    }
-    
-    
-    
-    public new void Add(PermissionGroup toAdd)
-    {
-        PermissionGroup current = this.FirstOrDefault(group => group.GetType() == toAdd.GetType());
-        if (current == null)
-            base.Add(toAdd);
-        else
-            current.Merge(toAdd);
-    }
-    public enum PassportType { Superuser, Readonly, Nonprivileged, Unauthorized }
-}
-
 [BsonDiscriminator(Required = true)]
 public abstract class PermissionGroup : PlatformDataModel
 {
@@ -145,37 +83,4 @@ public abstract class PermissionGroup : PlatformDataModel
                 info.SetValue(this, (bool)(info.GetValue(this) ?? false) || permission);
         }
     }
-}
-
-public class PlayerServicePermissions : PermissionGroup
-{
-    public override string Name => "Player Service";
-    
-    // TODO: Add permissions
-}
-
-public class MailServicePermissions : PermissionGroup
-{
-    public override string Name => "Mail Service";
-
-    public bool SendDirectMessages { get; set; }
-    public bool SendGlobalMessages { get; set; }
-}
-
-public class TokenServicePermissions : PermissionGroup
-{
-    public override string Name => "Token Service";
-}
-
-public class ConfigServicePermissions : PermissionGroup
-{
-    public override string Name => "Config Service";
-}
-
-public class PortalPermissions : PermissionGroup
-{
-    public override string Name => "Portal";
-    
-    public bool SuperUser { get; set; }
-    public bool ManagePermissions { get; set; }
 }
