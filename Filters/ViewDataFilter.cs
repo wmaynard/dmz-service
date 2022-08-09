@@ -34,7 +34,6 @@ public class ViewDataFilter : PlatformFilter, IActionFilter
             Account googleAccount = Account.FromGoogleClaims(controller.User.Claims);
             Account mongoAccount = accountService.FindOne(filter: account => account.Email == googleAccount.Email);
 
-            Log.Local(Owner.Will, "Setting the ViewData permissions object");
             Passport permissions = accountService.CheckPermissions(mongoAccount);
             controller.SetPermissions(permissions);
         }

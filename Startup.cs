@@ -134,6 +134,7 @@ public class Startup : PlatformStartup
         .DisableFeatures(CommonFeature.ConsoleObjectPrinting)
         .DisableFilters(CommonFilter.Performance)
         .AddFilter<ViewDataFilter>()
+        .AddFilter<ExceptionFilter>()
         .EnableWebServer();
 
     // More debugging on cookie conflicts

@@ -80,7 +80,7 @@ public class PermissionController : PortalController
     [Route("account")]
     public ActionResult UpdatePermissions(string id, GenericData data)
     {
-        Require(Permissions.Portal.ManagePermissions, Permissions.Leaderboard.View_Page);
+        Require(Permissions.Portal.ManagePermissions);
 
         int sum = Permissions.Sum(group => group.UpdateFromValues(Body));
 
