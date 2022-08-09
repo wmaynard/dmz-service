@@ -10,6 +10,8 @@ public class AccountService : PlatformMongoService<Account>
 {
     public AccountService() : base(collection: "accounts") { }
 
+    public Account FindById(string id) => FindOne(filter: account => account.Id == id);
+
     public Account GetByEmail(string email) => _collection
         .Find(filter: account => account.Email == email)
         .FirstOrDefault();

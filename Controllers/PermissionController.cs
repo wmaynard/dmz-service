@@ -82,7 +82,9 @@ public class PermissionController : PortalController
     {
         Require(Permissions.Portal.ManagePermissions);
 
-        int sum = Permissions.Sum(group => group.UpdateFromValues(Body));
+        // Differentiate this from the regular Permissions property, which refers to the current user - not the one displayed on screen.
+        Passport displayedUserPermissions = _accountService.FindById(id).Permissions;
+        int sum = displayedUserPermissions.Sum(group => group.UpdateFromValues(Body));
 
         // Nothing was changed; no reason to do anything further.
         if (sum == 0)
@@ -94,7 +96,7 @@ public class PermissionController : PortalController
         try
         {
             Log.Local(Owner.Will, $"Updated {sum} values.");
-            if (_accountService.UpdatePassport(id, Permissions) != 1)
+            if (_accountService.UpdatePassport(id, displayedUserPermissions) != 1)
                 throw new PlatformException(message: "Unable to update permissions.");
             
             TempData["Success"] = "Successfully updated permissions for user.";

@@ -1,6 +1,9 @@
 @inherits TowerPortal.Views.Shared.PortalView
 @using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Rumble.Platform.Common.Services
 @using TowerPortal.Models.Permissions
+@using TowerPortal.Services
+@inject AccountService _AccountService;
 
 @{ Require(Permissions.Portal.ManagePermissions); }
 @{
@@ -29,7 +32,7 @@
             <td>@ViewData["Environment"]</td>
         </tr>
         <!-- Dynamically populate the permission groups, ordered in ascending order by their names. -->
-        @foreach (PermissionGroup group in Permissions.OrderBy(group => group.Name))
+        @foreach (PermissionGroup group in _AccountService.FindById((string)TempData["AccountId"]).Permissions.OrderBy(group => group.Name))
         {
             <tr class="permissions-label">
                 <td><h3>@(group.Name)</h3></td>
