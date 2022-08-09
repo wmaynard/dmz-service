@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using RCL.Logging;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
+using TowerPortal.Interfaces;
 using TowerPortal.Models;
 using TowerPortal.Services;
 
@@ -154,7 +155,7 @@ public class PlayerController : PortalController
         {
             return View("Error");
         }
-        
+
         TempData["Success"] = "";
         TempData["Failure"] = null;
         
