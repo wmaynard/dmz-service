@@ -25,7 +25,8 @@ public class Passport : List<PermissionGroup>
     {
         "nathan.mac@rumbleentertainment.com",
         "william.maynard@rumbleentertainment.com",
-        "mark.spenner@rumbleentertainment.com"
+        "mark.spenner@rumbleentertainment.com",
+        "david.bethune@rumbleentertainment.com"
     };
 
     private static readonly string[] READONLY_DOMAINS =

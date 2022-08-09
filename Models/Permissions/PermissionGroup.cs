@@ -77,8 +77,8 @@ public abstract class PermissionGroup : PlatformDataModel
     public void ConvertToAdmin()
     {
         foreach (PropertyInfo info in GetType()
-                     .GetProperties(bindingAttr: BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                     .Where(info => info.PropertyType.IsAssignableTo(typeof(bool))))
+            .GetProperties(bindingAttr: BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+            .Where(info => info.PropertyType.IsAssignableTo(typeof(bool))))
         {
             info.SetValue(obj: this, value: true);
         }
@@ -87,9 +87,9 @@ public abstract class PermissionGroup : PlatformDataModel
     public void ConvertToReadonly()
     {
         foreach (PropertyInfo info in GetType()
-                     .GetProperties(bindingAttr: BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                     .Where(info => info.PropertyType.IsAssignableTo(typeof(bool)))
-                     .Where(info => info.Name.Contains("View_")))
+            .GetProperties(bindingAttr: BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+            .Where(info => info.PropertyType.IsAssignableTo(typeof(bool)))
+            .Where(info => info.Name.Contains("View_")))
         {
             info.SetValue(obj: this, value: true);
         }
@@ -97,8 +97,8 @@ public abstract class PermissionGroup : PlatformDataModel
     public void ConvertToNonprivileged()
     {
         foreach (PropertyInfo info in GetType()
-                     .GetProperties(bindingAttr: BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                     .Where(info => info.PropertyType.IsAssignableTo(typeof(bool))))
+            .GetProperties(bindingAttr: BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+            .Where(info => info.PropertyType.IsAssignableTo(typeof(bool))))
         {
             info.SetValue(obj: this, value: false);
         }
@@ -109,8 +109,8 @@ public abstract class PermissionGroup : PlatformDataModel
     {
         Dictionary<string, bool> values = group.Values;
         foreach (PropertyInfo info in GetType()
-                     .GetProperties(bindingAttr: BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                     .Where(info => info.PropertyType.IsAssignableTo(typeof(bool))))
+            .GetProperties(bindingAttr: BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+            .Where(info => info.PropertyType.IsAssignableTo(typeof(bool))))
         {
             if (values.TryGetValue(info.Name, out bool permission))
                 info.SetValue(this, (bool)(info.GetValue(this) ?? false) || permission);

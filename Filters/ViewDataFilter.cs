@@ -31,11 +31,15 @@ public class ViewDataFilter : PlatformFilter, IActionFilter
 
         try
         {
-            Account googleAccount = Account.FromGoogleClaims(controller.User.Claims);
-            Account mongoAccount = accountService.FindOne(filter: account => account.Email == googleAccount.Email);
-
-            Passport permissions = accountService.CheckPermissions(mongoAccount);
+            Passport permissions = accountService
+                .FindOne(filter: account => account.Email == Account.FromGoogleClaims(controller.User.Claims).Email)
+                .Permissions;
             controller.SetPermissions(permissions);
+            // Account googleAccount = Account.FromGoogleClaims(controller.User.Claims);
+            // Account mongoAccount = accountService.FindOne(filter: account => account.Email == googleAccount.Email);
+            //
+            // Passport permissions = accountService.CheckPermissions(mongoAccount);
+            // controller.SetPermissions(permissions);
         }
         catch (Exception e)
         {
