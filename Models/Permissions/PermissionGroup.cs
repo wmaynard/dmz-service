@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using RCL.Logging;
 using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Models;
+using Rumble.Platform.Common.Utilities;
 
 namespace TowerPortal.Models.Permissions;
 
@@ -29,6 +31,11 @@ public abstract class PermissionGroup : PlatformDataModel
     
     [Obsolete("Anything relying on the Edit permission needs to be transitioned to more specific values.")]
     public bool Edit { get; set; }
+    
+    [BsonIgnore, JsonIgnore]
+    internal string Key => Name.Replace(oldChar: '.', newChar: '-').Replace(oldChar: ' ', newChar: '_');
+
+    internal string GetPermissionKey(string name) => $"{Key}.{name}";
 
     public Dictionary<string, bool> Values
     {
@@ -36,9 +43,35 @@ public abstract class PermissionGroup : PlatformDataModel
         {
             Dictionary<string, bool> output = new Dictionary<string, bool>();
             foreach (PropertyInfo info in GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(info => info.PropertyType.IsAssignableTo(typeof(bool))))
-                output[info.Name] = (bool)(info.GetValue(this) ?? false);
+                output[GetPermissionKey(info.Name)] = (bool)(info.GetValue(this) ?? false);
             return output;
         }
+    }
+
+    public int UpdateFromValues(GenericData json)
+    {
+        int valuesChanged = 0;
+        foreach (PropertyInfo info in GetType()
+            .GetProperties(bindingAttr: BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+            .Where(prop => prop.PropertyType == typeof(bool)))
+        {
+            string key = GetPermissionKey(info.Name);
+            bool? value = json.Optional<bool?>(key);
+            if (value != null)
+            {
+                if (info.GetValue(this)?.Equals(value) ?? false)
+                    continue;
+                info.SetValue(this, (bool)value);
+                valuesChanged++;
+            }
+                
+            else
+                Log.Warn(Owner.Will, "Unable to update permission from GenericData; key not found.", data: new
+                {
+                    PermissionKey = key
+                });
+        }
+        return valuesChanged;
     }
     
     public void ConvertToAdmin()

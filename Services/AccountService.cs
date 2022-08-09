@@ -29,4 +29,9 @@ public class AccountService : PlatformMongoService<Account>
     public List<Account> GetAllAccounts() => _collection
         .Find(filter: account => true)
         .ToList();
+
+    public long UpdatePassport(string accountId, Passport passport) => _collection.UpdateOne(
+        filter: account => account.Id == accountId,
+        update: Builders<Account>.Update.Set(field: account => account.Permissions, passport)
+    ).ModifiedCount;
 }

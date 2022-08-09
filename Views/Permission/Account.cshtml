@@ -26,18 +26,19 @@
             <td>Environment</td>
             <td>@ViewData["Environment"]</td>
         </tr>
+        <!-- Dynamically populate the permission groups, ordered in ascending order by their names. -->
         @foreach (PermissionGroup group in Permissions.OrderBy(group => group.Name))
         {
             <tr class="permissions-label">
                 <td><h3>@(group.Name)</h3></td>
                 <td></td>
             </tr>
-            foreach (KeyValuePair<string, bool> pair in group.Values)
+            foreach (KeyValuePair<string, bool> pair in group.Values.OrderBy(kvp => kvp.Key))
             {
                 <tr class="permissions-label">
                     <td>@pair.Key</td>
                     <td>
-                        <input type="checkbox" checked="@(pair.Value)" disabled="@(!Permissions.Portal.SuperUser || !Permissions.Portal.ManagePermissions)" name="@($"{group.Name}.{pair.Key}")"/>
+                        <input type="checkbox" checked="@(pair.Value)" disabled="@(!Permissions.Portal.SuperUser || !Permissions.Portal.ManagePermissions)" name="@(pair.Key)"/>
                     </td>
                 </tr>
             }
@@ -48,8 +49,13 @@
 </form>
 
 <script type="text/javascript">
+    // This function grabs every variable from the form and dumps them into a JSON object.  This object is then POSTed back to the controller.
+    // This differs from standard ASP form behavior in that we don't need parameters in the method to read the data, we can instead reference the Body
+    // property of the controller as we would in any other Platform service (or use Optional<T>() / Require<T>()).
+    // It's not quite ideal in the sense that this adds one more place where we have to track the URL, but given that this page will eventually be sending
+    // dozens if not hundreds of values, we need some way to compress the data.  Also, when it comes to parsing the data on the C# side, GenericData is a powerful
+    // tool.
     function jsonPost(event, form) {
-        console.log(form)
         event.preventDefault();
         
         let data = {};
@@ -58,7 +64,14 @@
                 ? input.checked 
                 : input.value;
             });
-        console.log(data);
-        $.post("/portal/permission/account", data);
+        $.post("/portal/permission/account", data)
+        .done(function(){
+            window.onbeforeunload = function() {
+                window.scrollTo(0, 0);
+            };
+            location.reload();
+        }).fail(function() {
+            console.error("crap!");
+        });
     }
 </script>

@@ -1,12 +1,16 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
+using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using TowerPortal.Models;
+using TowerPortal.Models.Permissions;
 using TowerPortal.Services;
 
 namespace TowerPortal.Controllers;
@@ -74,29 +78,24 @@ public class PermissionController : PortalController
     // TODO: This method should be accepting permission-related classes as parameters, not a ton of strings. 
     [HttpPost]
     [Route("account")]
-    public async Task<IActionResult> UpdatePermissions(string id)
+    public ActionResult UpdatePermissions(string id, GenericData data)
     {
-        // Checking access permissions
-        if (!Permissions.Portal.ManagePermissions)
-            return View("Error");
-        
-        // TODO: Will to parse the Body into a passport
+        Require(Permissions.Portal.ManagePermissions, Permissions.Leaderboard.View_Page);
 
-        Account user = _accountService.Get(id);
+        int sum = Permissions.Sum(group => group.UpdateFromValues(Body));
+
+        // Nothing was changed; no reason to do anything further.
+        if (sum == 0)
+        {
+            TempData["Success"] = "No changes made.";
+            return Ok();
+        }
 
         try
         {
-            // user.Permissions.Portal.ManagePermissions = managePermissions != null;
-            // user.Permissions.Player.View_Page = viewPlayer != null;
-            // user.Permissions.Player.Edit = editPlayer != null;
-            // user.Permissions.Mail.View_Page = viewMailbox != null;
-            // user.Permissions.Mail.Edit = editMailbox != null;
-            // user.Permissions.Token.View_Page = viewToken != null;
-            // user.Permissions.Token.Edit = editToken != null;
-            // user.Permissions.Config.View_Page = viewConfig != null;
-            // user.Permissions.Config.Edit = editConfig != null;
-            
-            _accountService.Update(user);
+            Log.Local(Owner.Will, $"Updated {sum} values.");
+            if (_accountService.UpdatePassport(id, Permissions) != 1)
+                throw new PlatformException(message: "Unable to update permissions.");
             
             TempData["Success"] = "Successfully updated permissions for user.";
             TempData["Failure"] = null;
@@ -107,10 +106,8 @@ public class PermissionController : PortalController
             TempData["Success"] = null;
             TempData["Failure"] = "Failed to update permissions for user.";
         }
-        
-        ViewData["Account"] = user.Email;
-        
-        return RedirectToAction("Account", new { id = id });
+
+        return Ok();
     }
 }
 
