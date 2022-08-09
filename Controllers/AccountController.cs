@@ -69,12 +69,7 @@ public class AccountController : PortalController
             });
             _accountService.Create(output);
 
-            if (output.Email == "nathan.mac@rumbleentertainment.com")
-                output.Permissions = new Passport(Passport.PassportType.Superuser);
-            else if (output.Email.EndsWith("rumbleentertainment.com"))
-                output.Permissions = new Passport(Passport.PassportType.Readonly);
-            else if (output.Email.EndsWith("southbayshogi.club"))
-                output.Permissions = new Passport(Passport.PassportType.Superuser);
+            output.Permissions = Passport.GetDefaultPermissions(output.Email);
                 
             
             // output.Permissions.SetUser();

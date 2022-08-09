@@ -25,9 +25,15 @@ public class PortalView : RazorPage<object>, IStatusMessageProvider
     protected Passport Permissions => (Passport)ViewData[KEY_PERMISSIONS] ?? new Passport();
     public override Task ExecuteAsync() => Task.CompletedTask;
 
-    public void Require(params bool[] permissions)
+    protected void Require(params bool[] permissions)
     {
         if (permissions.Any(boolean => !boolean))
+            throw new PermissionInvalidException();
+    }
+
+    protected void RequireOneOf(params bool[] permissions)
+    {
+        if (!permissions.Any(boolean => boolean))
             throw new PermissionInvalidException();
     }
 }

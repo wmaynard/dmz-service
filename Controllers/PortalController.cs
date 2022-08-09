@@ -34,4 +34,9 @@ public abstract class PortalController : PlatformController, IStatusMessageProvi
         
         throw new PermissionInvalidException();
     }
+    protected void RequireOneOf(params bool[] permissions)
+    {
+        if (!permissions.Any(boolean => boolean))
+            throw new PermissionInvalidException();
+    }
 }

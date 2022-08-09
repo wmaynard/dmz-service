@@ -1,6 +1,8 @@
 @inherits TowerPortal.Views.Shared.PortalView
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using TowerPortal.Models.Permissions
+
+@{ Require(Permissions.Portal.ManagePermissions); }
 @{
     ViewData["Title"] = "User Permissions";
 }

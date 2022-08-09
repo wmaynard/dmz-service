@@ -4,6 +4,9 @@ using System.Linq;
 using System.Reflection;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Exceptions;
+using Rumble.Platform.Common.Models;
+using Rumble.Platform.Common.Utilities;
+using TowerPortal.Exceptions;
 
 namespace TowerPortal.Models.Permissions;
 
@@ -14,6 +17,24 @@ namespace TowerPortal.Models.Permissions;
 /// </summary>
 public class Passport : List<PermissionGroup>
 {
+    private static readonly string[] PROD_SUPERUSERS =
+    {
+        "william.maynard@rumbleentertainment.com"
+    };
+    private static readonly string[] DEV_SUPERUSERS =
+    {
+        "nathan.mac@rumbleentertainment.com",
+        "william.maynard@rumbleentertainment.com",
+        "mark.spenner@rumbleentertainment.com"
+    };
+
+    private static readonly string[] READONLY_DOMAINS =
+    {
+        "rumbleentertainment.com",
+        "willmaynard.com"
+        // TODO: Testronic
+    };
+    
     public ConfigPermissions Config => Fetch<ConfigPermissions>();
     public LeaderboardsPermissions Leaderboard => Fetch<LeaderboardsPermissions>();
     public MailPermissions Mail => Fetch<MailPermissions>();
@@ -61,7 +82,7 @@ public class Passport : List<PermissionGroup>
                     break;
                 case PassportType.Unauthorized:
                 default:
-                    throw new PlatformException(message: "Unauthorized user permissions instantiated.");
+                    throw new PermissionInvalidException();
             }
             base.Add(item: group);
         }
@@ -76,4 +97,15 @@ public class Passport : List<PermissionGroup>
             current.Merge(toAdd);
     }
     public enum PassportType { Superuser, Readonly, Nonprivileged, Unauthorized }
+
+    public static Passport GetDefaultPermissions(string email)
+    {
+        if (PlatformEnvironment.IsProd && PROD_SUPERUSERS.Contains(email))
+            return new Passport(PassportType.Superuser);
+        if (!PlatformEnvironment.IsProd && DEV_SUPERUSERS.Contains(email))
+            return new Passport(PassportType.Superuser);
+        if (READONLY_DOMAINS.Any(email.EndsWith))
+            return new Passport(PassportType.Readonly);
+        return new Passport(PassportType.Unauthorized);
+    }
 }
