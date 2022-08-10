@@ -1,0 +1,91 @@
+@{
+    ViewData["Title"] = "Player Chat Details";
+}
+
+<div class="chat-page-container">
+    <div class="global-chat-container">
+        @Html.ActionLink(linkText: "Chat Announcements", actionName: "Announcements", controllerName: "Chat", routeValues: new {}, htmlAttributes: new {})
+    </div>
+    
+    <h2>@ViewData["Title"]</h2>
+    
+    <div class="error-container">
+        @if (TempData["Failure"] != null)
+        {
+            <h4 style="color: red">@TempData["Success"]</h4>
+        }
+        else
+        {
+            <h4 style="color: darkgreen">@TempData["Success"]</h4>
+        }
+    </div>
+    
+    <div class="chat-search-container">
+        <form class="chat-search-form" method="post" asp-controller="Chat" asp-action="Player">
+            <div class = "chat-search-form-container">
+                <label for="chat-search-input" class="chat-search">Account Id</label>
+                <input id="chat-search-input" class="chat-search" type="text" name="accountId" required>
+                <button id="chat-search-button" class="chat-search" type="submit">Search</button>
+            </div>
+        </form>
+    </div>
+    
+    @if (@ViewData["ChatBans"] != null)
+    {
+        <div class="chat-bans-container">
+            <h1>Bans</h1>
+            <table id="chatBans" class="chat-bans">
+                <tr>
+                    <td class="id">Id</td>
+                    <td class="aid">Account Id</td>
+                    <td class="issued">Issued</td>
+                    <td class="reason">Reason</td>
+                    <td class="snapshot">Snapshot</td>
+                    <td class="time-remaining">Time Remaining</td>
+                </tr>
+                @foreach (ChatBan data in (List<ChatBan>) ViewData["ChatBans"])
+                {
+                    <tr>
+                        <td>@data.Id</td>
+                        <td>@data.AccountId</td>
+                        <td>@DateTimeOffset.FromUnixTimeSeconds(@data.Issued)</td>
+                        <td>@data.Reason</td>
+                        <td>@data.Snapshot</td>
+                        <td>@data.TimeRemaining</td>
+                    </tr>
+                }
+            </table>
+        </div>
+    }
+    @if (@ViewData["ChatReports"] != null)
+    {
+        <div class="chat-reports-container">
+            <h1>Reports</h1>
+            <table id="chatReports" class="chat-reports">
+                <tr>
+                    <td class="id">Id</td>
+                    <td class="message-id">Message Id</td>
+                    <td class="log">Log</td>
+                    <td class="players">Players</td>
+                    <td class="reported">Reported</td>
+                    <td class="reporters">Reporters</td>
+                    <td class="status">Status</td>
+                    <td class="time">Time</td>
+                </tr>
+                @foreach (ChatReport data in (List<ChatReport>) ViewData["ChatReports"])
+                {
+                    <tr>
+                        <td>@data.Id</td>
+                        <td>@data.MessageId</td>
+                        <td>@data.Log</td>
+                        <td>@data.Players</td>
+                        <td>@data.Reported</td>
+                        <td>@data.Reporters</td>
+                        <td>@data.Status</td>
+                        <td>@DateTimeOffset.FromUnixTimeSeconds(@data.Time)</td>
+                    </tr>
+                }
+            </table>
+        </div>
+    }
+</div>
