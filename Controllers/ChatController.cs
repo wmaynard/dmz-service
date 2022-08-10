@@ -103,7 +103,7 @@ public class ChatController : PortalController
 
     try
     {
-      chatBansList = response.Require<List<ChatBan>>(key: "bans"); // TODO figure out why accountId is null
+      chatBansList = response.Require<List<ChatBan>>(key: "bans");
     }
     catch (Exception e)
     {
@@ -169,8 +169,8 @@ public class ChatController : PortalController
 
     try
     {
-      chatBansList = response.Require<List<ChatBan>>(key: "bans"); // TODO figure out why accountId is null
-      chatReportsList = response.Require<List<ChatReport>>(key: "reports"); // TODO figure out why messageId is null
+      chatBansList = response.Require<List<ChatBan>>(key: "bans");
+      chatReportsList = response.Require<List<ChatReport>>(key: "reports");
     }
     catch (Exception e)
     {
