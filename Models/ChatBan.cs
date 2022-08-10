@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
+using Rumble.Platform.Common.Utilities;
 
 namespace TowerPortal.Models;
 
 [BsonIgnoreExtraElements]
-public class ChatBan : PlatformCollectionDocument
+public class ChatBan : PlatformDataModel
 {
     internal const string DB_KEY_ID             = "id";
     internal const string DB_KEY_ACCOUNT_ID     = "aid";
@@ -17,7 +18,7 @@ public class ChatBan : PlatformCollectionDocument
     internal const string DB_KEY_TIME_REMAINING = "tmeRmn";
 
     public const string FRIENDLY_KEY_ID             = "id";
-    public const string FRIENDLY_KEY_ACCOUNT_ID     = "aid";
+    public const string FRIENDLY_KEY_ACCOUNT_ID     = "accountId";
     public const string FRIENDLY_KEY_ISSUED         = "issued";
     public const string FRIENDLY_KEY_REASON         = "reason";
     public const string FRIENDLY_KEY_SNAPSHOT       = "snapshot";
@@ -25,7 +26,7 @@ public class ChatBan : PlatformCollectionDocument
 
     [BsonElement(DB_KEY_ID)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_ID)]
-    public new string Id { get; private set; }
+    public string Id { get; private set; }
       
     [BsonElement(DB_KEY_ACCOUNT_ID)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_ACCOUNT_ID)]
@@ -41,13 +42,13 @@ public class ChatBan : PlatformCollectionDocument
       
     [BsonElement(DB_KEY_SNAPSHOT)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_SNAPSHOT)]
-    public List<Object> Snapshot { get; private set; }
+    public List<GenericData> Snapshot { get; private set; }
       
     [BsonElement(DB_KEY_TIME_REMAINING)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_TIME_REMAINING)]
     public string TimeRemaining { get; private set; }
       
-    public ChatBan(string id, string accountId, long issued, string reason, List<Object> snapshot, string timeRemaining)
+    public ChatBan(string id, string accountId, long issued, string reason, List<GenericData> snapshot, string timeRemaining)
     {
       Id = id;
       AccountId = accountId;

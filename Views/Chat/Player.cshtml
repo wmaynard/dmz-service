@@ -1,3 +1,5 @@
+@using TowerPortal.Extensions
+@using Rumble.Platform.Common.Utilities
 @{
     ViewData["Title"] = "Player Chat Details";
 }
@@ -30,6 +32,39 @@
         </form>
     </div>
     
+    @if (@ViewData["AccountId"] != null)
+    {
+        <div class="chat-ban-container">
+            <form class="chat-ban-form" method="post" asp-controller="Chat" asp-action="Ban">
+                <div class="accountId invisible">
+                    <label for="accountId" class="accountId">Player IDs* (separated by "," or "|")</label>
+                    <input id="accountId" class="accountId" type="text" name="accountId" value="@(ViewData["AccountId"])">
+                </div>
+                <div class="reason">
+                    <label for="reason" class="reason">Reason</label>
+                    <input id="reason" class="reason" type="text" name="reason" disabled="@(!ViewData.GetPermissions().EditChat)">
+                </div>
+                <div class="duration">
+                    <label for="duration" class="duration">Duration (seconds)</label>
+                    <input id="duration" class="duration" type="number" name="duration" disabled="@(!ViewData.GetPermissions().EditChat)">
+                </div>
+                <button id="banButton" class="banButton" disabled="@(!ViewData.GetPermissions().EditChat)" type="submit">Confirm</button>
+            </form>
+        </div>
+        @if (@ViewData["BanIds"] != null)
+        {
+            <div class="chat-unban-container">
+                <form class="chat-unban-form" method="post" asp-controller="Chat" asp-action="Unban">
+                    <div class="accountId invisible">
+                        <label for="accountId" class="accountId">Player IDs* (separated by "," or "|")</label>
+                        <input id="accountId" class="accountId" type="text" name="accountId" value="@(ViewData["AccountId"])">
+                    </div>
+                    <button id="unbanButton" class="unbanButton" disabled="@(!ViewData.GetPermissions().EditChat)" type="submit">Confirm</button>
+                </form>
+            </div>
+        }
+    }
+    
     @if (@ViewData["ChatBans"] != null)
     {
         <div class="chat-bans-container">
@@ -50,7 +85,12 @@
                         <td>@data.AccountId</td>
                         <td>@DateTimeOffset.FromUnixTimeSeconds(@data.Issued)</td>
                         <td>@data.Reason</td>
-                        <td>@data.Snapshot</td>
+                        <td>
+                            @foreach (GenericData snapshot in @data.Snapshot)
+                            {
+                                <p>@snapshot.JSON</p>
+                            }
+                        </td>
                         <td>@data.TimeRemaining</td>
                     </tr>
                 }
@@ -77,10 +117,25 @@
                     <tr>
                         <td>@data.Id</td>
                         <td>@data.MessageId</td>
-                        <td>@data.Log</td>
-                        <td>@data.Players</td>
-                        <td>@data.Reported</td>
-                        <td>@data.Reporters</td>
+                        <td>
+                            @foreach (GenericData log in @data.Log)
+                            {
+                                <p>@log.JSON</p>
+                            }
+                        </td>
+                        <td>
+                            @foreach (GenericData players in @data.Players)
+                            {
+                                <p>@players.JSON</p>
+                            }
+                        </td>
+                        <td>@data.Reported.JSON</td>
+                        <td>
+                            @foreach (GenericData reporters in @data.Reporters)
+                            {
+                                <p>@reporters.JSON</p>
+                            }
+                        </td>
                         <td>@data.Status</td>
                         <td>@DateTimeOffset.FromUnixTimeSeconds(@data.Time)</td>
                     </tr>

@@ -5,7 +5,7 @@ using Rumble.Platform.Common.Models;
 namespace TowerPortal.Models;
 
 [BsonIgnoreExtraElements]
-public class Announcement : PlatformCollectionDocument
+public class Announcement : PlatformDataModel
 {
     internal const string DB_KEY_ID = "id";
     internal const string DB_KEY_AID = "aid";
@@ -23,7 +23,7 @@ public class Announcement : PlatformCollectionDocument
 
     [BsonElement(DB_KEY_ID)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_ID)]
-    public new string Id { get; private set; }
+    public string Id { get; private set; }
     
     [BsonElement(DB_KEY_AID)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_AID)]

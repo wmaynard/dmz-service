@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
+using Rumble.Platform.Common.Utilities;
 
 namespace TowerPortal.Models;
 
 [BsonIgnoreExtraElements]
-public class ChatReport : PlatformCollectionDocument
+public class ChatReport : PlatformDataModel
 {
     internal const string DB_KEY_ID         = "id";
     internal const string DB_KEY_MESSAGE_ID = "msgid";
@@ -19,7 +20,7 @@ public class ChatReport : PlatformCollectionDocument
     internal const string DB_KEY_TIME       = "time";
 
     public const string FRIENDLY_KEY_ID         = "id";
-    public const string FRIENDLY_KEY_MESSAGE_ID = "msgid";
+    public const string FRIENDLY_KEY_MESSAGE_ID = "messageId";
     public const string FRIENDLY_KEY_LOG        = "log";
     public const string FRIENDLY_KEY_PLAYERS    = "players";
     public const string FRIENDLY_KEY_REPORTED   = "reported";
@@ -29,7 +30,7 @@ public class ChatReport : PlatformCollectionDocument
 
     [BsonElement(DB_KEY_ID)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_ID)]
-    public new string Id { get; private set; }
+    public string Id { get; private set; }
       
     [BsonElement(DB_KEY_MESSAGE_ID)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_MESSAGE_ID)]
@@ -37,19 +38,19 @@ public class ChatReport : PlatformCollectionDocument
       
     [BsonElement(DB_KEY_LOG)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_LOG)]
-    public List<Object> Log { get; private set; }
+    public List<GenericData> Log { get; private set; }
       
     [BsonElement(DB_KEY_PLAYERS)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_PLAYERS)]
-    public List<Object> Players { get; private set; }
+    public List<GenericData> Players { get; private set; }
       
     [BsonElement(DB_KEY_REPORTED)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_REPORTED)]
-    public List<Object> Reported { get; private set; }
+    public GenericData Reported { get; private set; }
     
     [BsonElement(DB_KEY_REPORTERS)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_REPORTERS)]
-    public List<Object> Reporters { get; private set; }
+    public List<GenericData> Reporters { get; private set; }
       
     [BsonElement(DB_KEY_STATUS)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_STATUS)]
@@ -59,7 +60,7 @@ public class ChatReport : PlatformCollectionDocument
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_TIME)]
     public long Time { get; private set; }
       
-    public ChatReport(string id, string messageId, List<Object> log, List<Object> players, List<Object> reported, List<Object> reporters, string status, long time)
+    public ChatReport(string id, string messageId, List<GenericData> log, List<GenericData> players, GenericData reported, List<GenericData> reporters, string status, long time)
     {
       Id = id;
       MessageId = messageId;

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
 using Rumble.Platform.Common.Services;
@@ -92,9 +93,9 @@ public class ChatController : PortalController
                    TempData["Success"] = "Failed to fetch chat bans.";
                    TempData["Failure"] = true;
                    Log.Error(owner: Owner.Nathan, message: "Request to chat-service failed.", data: new
-                                                                                                    {
-                                                                                                      Response = apiResponse
-                                                                                                    });
+                                                                                              {
+                                                                                                Response = apiResponse
+                                                                                              });
                  })
       .Get(out GenericData response, out int code);
 
@@ -122,7 +123,7 @@ public class ChatController : PortalController
     {
       return View("Error");
     }
-
+    
     return View();
   }
   
@@ -157,9 +158,9 @@ public class ChatController : PortalController
                    TempData["Success"] = "Failed to fetch chat player details.";
                    TempData["Failure"] = true;
                    Log.Error(owner: Owner.Nathan, message: "Request to chat-service failed.", data: new
-                                                                                                    {
-                                                                                                      Response = apiResponse
-                                                                                                    });
+                                                                                              {
+                                                                                                Response = apiResponse
+                                                                                              });
                  })
       .Post(out GenericData response, out int code);
 
@@ -168,13 +169,15 @@ public class ChatController : PortalController
 
     try
     {
-      chatBansList = response.Require<List<ChatBan>>(key: "bans"); // TODO figure out why this is not serialized
-      chatReportsList = response.Require<List<ChatReport>>(key: "reports"); // TODO figure out why this is not serialized
+      chatBansList = response.Require<List<ChatBan>>(key: "bans"); // TODO figure out why accountId is null
+      chatReportsList = response.Require<List<ChatReport>>(key: "reports"); // TODO figure out why messageId is null
     }
     catch (Exception e)
     {
       Log.Error(owner: Owner.Nathan, message: "Failed to parse response from chat-service.", data: e);
     }
+
+    ViewData["AccountId"] = accountId;
 
     ViewData["ChatBans"] = chatBansList;
     ViewData["ChatReports"] = chatReportsList;
@@ -335,9 +338,9 @@ public class ChatController : PortalController
                     TempData["Success"] = "Failed to delete report.";
                     TempData["Failure"] = true;
                     Log.Error(Owner.Nathan, "Request to chat-service failed.", data: new
-                                                                                             {
-                                                                                               Response = apiResponse
-                                                                                             });
+                                                                                       {
+                                                                                         Response = apiResponse
+                                                                                       });
                   }))
       .Post(out GenericData response, out int code);
   
