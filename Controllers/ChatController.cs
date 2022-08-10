@@ -70,12 +70,46 @@ public class ChatController : PortalController
   public async Task<IActionResult> Reports()
   {
     // Checking access permissions
-    if (!UserPermissions.ViewToken)
+    if (!UserPermissions.ViewChat)
     {
       return View("Error");
     }
     
+    TempData["Success"] = "";
+    TempData["Failure"] = null;
+  
+    _apiService
+      .Request(PlatformEnvironment.Url("/chat/admin/ban/list")) // TODO double check if reports or bans
+      .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("chatToken"))
+      .OnSuccess((sender, apiResponse) =>
+                 {
+                   TempData["Success"] = "Successfully fetched chat bans.";
+                   TempData["Failure"] = null;
+                   Log.Local(Owner.Nathan, "Request to chat-service succeeded.");
+                 })
+      .OnFailure((sender, apiResponse) =>
+                 {
+                   TempData["Success"] = "Failed to fetch chat bans.";
+                   TempData["Failure"] = true;
+                   Log.Error(owner: Owner.Nathan, message: "Request to chat-service failed.", data: new
+                                                                                                    {
+                                                                                                      Response = apiResponse
+                                                                                                    });
+                 })
+      .Get(out GenericData response, out int code);
+
+    List<ChatBan> chatBans = new List<ChatBan>();
+
+    try
+    {
+      chatBans = response.Require<List<ChatBan>>(key: "bans");
+    }
+    catch (Exception e)
+    {
+      Log.Error(owner: Owner.Nathan, message: "Failed to parse response from chat-service.", data: e);
+    }
     
+    ViewData["ChatBans"] = chatBans;
   
     return View();
   }
@@ -84,7 +118,7 @@ public class ChatController : PortalController
   public async Task<IActionResult> Player()
   {
     // Checking access permissions
-    if (!UserPermissions.ViewToken)
+    if (!UserPermissions.ViewChat)
     {
       return View("Error");
     }

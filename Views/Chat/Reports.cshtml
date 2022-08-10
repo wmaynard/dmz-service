@@ -1,0 +1,50 @@
+@{
+    ViewData["Title"] = "Chat Bans";
+}
+
+<div class="announcements-page-container">
+    <div class="player-chat-container">
+        @Html.ActionLink(linkText: "View player specific bans", actionName: "Player", controllerName: "Chat", routeValues: new {}, htmlAttributes: new {})
+    </div>
+    <div class="player-chat-container">
+        @Html.ActionLink(linkText: "View announcements", actionName: "Announcements", controllerName: "Chat", routeValues: new {}, htmlAttributes: new {})
+    </div>
+    
+    <h2>@ViewData["Title"]</h2>
+    
+    <div class="error-container">
+        @if (TempData["Failure"] != null)
+        {
+            <h4 style="color: red">@TempData["Success"]</h4>
+        }
+        else
+        {
+            <h4 style="color: darkgreen">@TempData["Success"]</h4>
+        }
+    </div>
+    
+    <div class="chat-bans-container">
+        <h3>Chat Bans</h3>
+        <table id="chatBans" class="chat-bans">
+            <tr>
+                <td class="id">Id</td>
+                <td class="aid">Account Id</td>
+                <td class="type">Issued</td>
+                <td class="reason">Reason</td>
+                <td class="snapshot">Snapshot</td>
+                <td class="timeRemaining">Time Remaining</td>
+            </tr>
+            @foreach (ChatBan chatBan in (List<ChatBan>) ViewData["ChatBans"])
+            {
+                <tr>
+                    <td>@chatBan.Id</td>
+                    <td>@chatBan.Aid</td>
+                    <td>@DateTimeOffset.FromUnixTimeSeconds(@chatBan.Issued)</td>
+                    <td>@chatBan.Reason</td>
+                    <td>@chatBan.Snapshot</td>
+                    <td>@chatBan.TimeRemaining</td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
