@@ -50,17 +50,14 @@
                 <button id="banButton" class="banButton" disabled="@(!Permissions.Chat.Edit)" type="submit">Ban</button>
             </form>
         </div>
-        @if (@ViewData["BanIds"] != null)
-        {
-            <div class="chat-unban-container">
-                <form class="chat-unban-form" method="post" asp-controller="Chat" asp-action="Unban">
-                    <div class="accountId invisible">
-                        <input id="accountId" class="accountId" type="text" name="accountId" value="@(ViewData["AccountId"])">
-                    </div>
-                    <button id="unbanButton" class="unbanButton" disabled="@(!Permissions.Chat.Edit)" type="submit">Confirm</button>
-                </form>
-            </div>
-        }
+        <div class="chat-unban-container">
+            <form class="chat-unban-form" method="post" asp-controller="Chat" asp-action="Unban">
+                <div class="accountId invisible">
+                    <input id="accountId" class="accountId" type="text" name="accountId" value="@(ViewData["AccountId"])">
+                </div>
+                <button id="unbanButton" class="unbanButton" disabled="@(!Permissions.Chat.Edit)" type="submit">Confirm</button>
+            </form>
+        </div>
         
         @if (@ViewData["ChatBans"] != null)
         {

@@ -25,30 +25,44 @@
     </div>
     
     <div class="chat-bans-container">
-        <h3>Chat Bans</h3>
+        <h3>Chat Reports</h3>
         <table id="chatBans" class="chat-bans">
             <tr>
                 <td class="id">Id</td>
-                <td class="aid">Account Id</td>
-                <td class="type">Issued</td>
-                <td class="reason">Reason</td>
-                <td class="snapshot">Snapshot</td>
-                <td class="timeRemaining">Time Remaining</td>
+                <td class="mid">Message Id</td>
+                <td class="logs">Logs</td>
+                <td class="players">Players</td>
+                <td class="reported">Reported</td>
+                <td class="reporters">Reporters</td>
+                <td class="status">Status</td>
+                <td class="time">Time</td>
             </tr>
-            @foreach (ChatBan chatBan in (List<ChatBan>) ViewData["ChatBans"])
+            @foreach (ChatReport data in (List<ChatReport>) ViewData["ChatReports"])
             {
                 <tr>
-                    <td>@chatBan.Id</td>
-                    <td>@chatBan.AccountId</td>
-                    <td>@DateTimeOffset.FromUnixTimeSeconds(@chatBan.Issued)</td>
-                    <td>@chatBan.Reason</td>
+                    <td>@data.Id</td>
+                    <td>@data.MessageId</td>
                     <td>
-                        @foreach (GenericData snapshot in @chatBan.Snapshot)
+                        @foreach (GenericData log in @data.Log)
                         {
-                            <p>@snapshot.JSON</p>
+                            <p>@log.JSON</p>
                         }
                     </td>
-                    <td>@chatBan.TimeRemaining</td>
+                    <td>
+                        @foreach (GenericData players in @data.Players)
+                        {
+                            <p>@players.JSON</p>
+                        }
+                    </td>
+                    <td>@data.Reported.JSON</td>
+                    <td>
+                        @foreach (GenericData reporters in @data.Reporters)
+                        {
+                            <p>@reporters.JSON</p>
+                        }
+                    </td>
+                    <td>@data.Status</td>
+                    <td>@DateTimeOffset.FromUnixTimeSeconds(@data.Time)</td>
                 </tr>
             }
         </table>

@@ -119,17 +119,17 @@ public class ChatController : PortalController
     TempData["Failure"] = null;
   
     _apiService
-      .Request(PlatformEnvironment.Url("/chat/admin/ban/list")) // TODO double check if reports or bans
+      .Request(PlatformEnvironment.Url("/chat/admin/reports/list")) // TODO change to reports
       .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("chatToken"))
       .OnSuccess((sender, apiResponse) =>
                  {
-                   TempData["Success"] = "Successfully fetched chat bans.";
+                   TempData["Success"] = "Successfully fetched chat reports.";
                    TempData["Failure"] = null;
                    Log.Local(Owner.Nathan, "Request to chat-service succeeded.");
                  })
       .OnFailure((sender, apiResponse) =>
                  {
-                   TempData["Success"] = "Failed to fetch chat bans.";
+                   TempData["Success"] = "Failed to fetch chat reports.";
                    TempData["Failure"] = true;
                    Log.Error(owner: Owner.Nathan, message: "Request to chat-service failed.", data: new
                                                                                               {
@@ -138,18 +138,18 @@ public class ChatController : PortalController
                  })
       .Get(out GenericData response, out int code);
 
-    List<ChatBan> chatBansList = new List<ChatBan>();
+    List<ChatReport> chatReportsList = new List<ChatReport>();
 
     try
     {
-      chatBansList = response.Require<List<ChatBan>>(key: "bans");
+      chatReportsList = response.Require<List<ChatReport>>(key: "reports"); // TODO double check with api
     }
     catch (Exception e)
     {
       Log.Error(owner: Owner.Nathan, message: "Failed to parse response from chat-service.", data: e);
     }
     
-    ViewData["ChatBans"] = chatBansList;
+    ViewData["ChatReports"] = chatReportsList;
   
     return View();
   }
@@ -268,7 +268,7 @@ public class ChatController : PortalController
   
   [HttpPost]
   [Route("unban")]
-  public async Task<IActionResult> Unban(string accountId, string banId)
+  public async Task<IActionResult> Unban(string accountId)
   {
     // Checking access permissions
     if (!Permissions.Chat.View_Page || !Permissions.Chat.Edit)
@@ -282,10 +282,6 @@ public class ChatController : PortalController
     _apiService
       .Request(PlatformEnvironment.Url("/chat/admin/ban/lift"))
       .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("chatToken"))
-      .SetPayload(new GenericData
-                  {
-                    {"banId", banId}
-                  })
       .OnSuccess(((sender, apiResponse) =>
                   {
                     TempData["Success"] = "Successfully unbanned player.";
