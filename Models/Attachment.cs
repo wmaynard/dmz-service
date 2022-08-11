@@ -1,3 +1,4 @@
+using System;
 using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
@@ -28,14 +29,10 @@ public class Attachment : PlatformDataModel
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_QUANTITY)]
     public int Quantity { get; private set; }
     
-    public Attachment(string type, string rewardId, int quantity = 1)
+    public Attachment(string type, string rewardId, int quantity = 1) : base()
     {
         Type = type;
         RewardId = rewardId;
-        Quantity = quantity;
-        if (quantity == 0)
-        {
-            Quantity = 1;
-        }
+        Quantity = Math.Max(quantity, 1);
     }
 }

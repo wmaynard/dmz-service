@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Web;
+using TowerPortal.Models.Permissions;
 
 namespace TowerPortal.Models;
 
@@ -40,17 +41,11 @@ public class Account : PlatformCollectionDocument
     
     [BsonElement(DB_KEY_PERMISSIONS)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_PERMISSIONS)]
-    public Permissions Permissions { get; private set; }
+    public Passport Permissions { get; set; } // TODO: private set
 
-    public Account()
-    {
-        Permissions = new Permissions();
-    }
+    public Account() => Permissions = new Passport();
 
-    public void UpdateRolesToPermissions()
-    {
-        Permissions ??= new Permissions();
-    }
+    public void UpdateRolesToPermissions() => Permissions ??= new Passport();
 
     public static Account FromGoogleClaims(IEnumerable<Claim> claims)
     {

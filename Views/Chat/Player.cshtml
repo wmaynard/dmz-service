@@ -1,4 +1,4 @@
-@using TowerPortal.Extensions
+@inherits TowerPortal.Views.Shared.PortalView
 @using Rumble.Platform.Common.Utilities
 @{
     ViewData["Title"] = "Player Chat Details";
@@ -42,13 +42,13 @@
                 </div>
                 <div class="reason">
                     <label for="reason" class="reason">Reason</label>
-                    <input id="reason" class="reason" type="text" name="reason" disabled="@(!ViewData.GetPermissions().EditChat)">
+                    <input id="reason" class="reason" type="text" name="reason" disabled="@(!Permissions.Chat.Edit)">
                 </div>
                 <div class="duration">
                     <label for="duration" class="duration">Duration (seconds)</label>
-                    <input id="duration" class="duration" type="number" name="duration" disabled="@(!ViewData.GetPermissions().EditChat)">
+                    <input id="duration" class="duration" type="number" name="duration" disabled="@(!Permissions.Chat.Edit)">
                 </div>
-                <button id="banButton" class="banButton" disabled="@(!ViewData.GetPermissions().EditChat)" type="submit">Confirm</button>
+                <button id="banButton" class="banButton" disabled="@(!Permissions.Chat.Edit)" type="submit">Confirm</button>
             </form>
         </div>
         @if (@ViewData["BanIds"] != null)
@@ -59,7 +59,7 @@
                         <label for="accountId" class="accountId">Player IDs* (separated by "," or "|")</label>
                         <input id="accountId" class="accountId" type="text" name="accountId" value="@(ViewData["AccountId"])">
                     </div>
-                    <button id="unbanButton" class="unbanButton" disabled="@(!ViewData.GetPermissions().EditChat)" type="submit">Confirm</button>
+                    <button id="unbanButton" class="unbanButton" disabled="@(!Permissions.Chat.Edit)" type="submit">Confirm</button>
                 </form>
             </div>
         }

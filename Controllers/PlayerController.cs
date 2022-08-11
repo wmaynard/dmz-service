@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using RCL.Logging;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
+using TowerPortal.Interfaces;
 using TowerPortal.Models;
 using TowerPortal.Services;
 
@@ -29,7 +30,7 @@ public class PlayerController : PortalController
         ViewData["Message"] = "Player search";
 
         // Exit early if there's invalid data; easier to read.
-        if (!UserPermissions.ViewPlayer)
+        if (!Permissions.Player.View_Page)
         {
             return View("Error");
         }
@@ -80,7 +81,7 @@ public class PlayerController : PortalController
     public async Task<IActionResult> Details(string id)
     {
         // Checking access permissions
-        if (!UserPermissions.ViewPlayer)
+        if (!Permissions.Player.View_Page)
         {
             return View("Error");
         }
@@ -150,11 +151,11 @@ public class PlayerController : PortalController
     public async Task<IActionResult> EditScreenname(string accountId, string editScreenname)
     {
         // Checking access permissions
-        if (!UserPermissions.ViewPlayer || !UserPermissions.EditPlayer)
+        if (!Permissions.Player.View_Page || !Permissions.Player.Edit)
         {
             return View("Error");
         }
-        
+
         TempData["Success"] = "";
         TempData["Failure"] = null;
         
@@ -192,7 +193,7 @@ public class PlayerController : PortalController
     // hard coded in currencies, possibly subject to changes
     {
         // Checking access permissions
-        if (!UserPermissions.ViewPlayer || !UserPermissions.EditPlayer)
+        if (!Permissions.Player.View_Page || !Permissions.Player.Edit)
         {
             return View("Error");
         }

@@ -14,21 +14,19 @@ namespace TowerPortal.Controllers;
 [Route("portal/config")]
 public class DynamicConfigController : PortalController
 {
-    private readonly ApiService           _apiService;
     private readonly AccountService       _accountService;
     private readonly DynamicConfigService _dynamicConfigService;
-    private readonly DC2Service           _dc2Service;
 
     [Route("edit")]
     public async Task<IActionResult> Edit()
     {
         // Checking access permissions
-        if (!UserPermissions.ViewConfig)
+        if (!Permissions.Config.View_Page)
         {
             return View("Error");
         }
 
-        Section[] sections = _dc2Service.GetAdminData();
+        Section[] sections = await _dc2Service.GetAdminDataAsync();
         ViewData["Data"] = sections;
         
         return View();
@@ -39,7 +37,7 @@ public class DynamicConfigController : PortalController
     public async Task<IActionResult> NewSection(IFormCollection collection)
     {
         // Checking access permissions
-        if (!UserPermissions.ViewConfig || !UserPermissions.EditConfig)
+        if (!Permissions.Config.View_Page || !Permissions.Config.Edit)
         {
             return View("Error");
         }
@@ -88,7 +86,7 @@ public class DynamicConfigController : PortalController
     public async Task<IActionResult> NewVariable(IFormCollection collection)
     {
         // Checking access permissions
-        if (!UserPermissions.ViewConfig || !UserPermissions.EditConfig)
+        if (!Permissions.Config.View_Page || !Permissions.Config.Edit)
         {
             return View("Error");
         }
@@ -141,7 +139,7 @@ public class DynamicConfigController : PortalController
     public async Task<IActionResult> Delete(IFormCollection collection)
     {
         // Checking access permissions
-        if (!UserPermissions.ViewConfig || !UserPermissions.EditConfig)
+        if (!Permissions.Config.View_Page || !Permissions.Config.Edit)
         {
             return View("Error");
         }
@@ -185,7 +183,7 @@ public class DynamicConfigController : PortalController
     public async Task<IActionResult> Edit(IFormCollection collection)
     {
         // Checking access permissions
-        if (!UserPermissions.ViewConfig || !UserPermissions.EditConfig)
+        if (!Permissions.Config.View_Page || !Permissions.Config.Edit)
         {
             return View("Error");
         }

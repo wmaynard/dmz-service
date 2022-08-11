@@ -28,7 +28,7 @@ public class MailboxController : PortalController
     public async Task<IActionResult> Global()
     {
         // Checking access permissions
-        if (!UserPermissions.ViewMailbox)
+        if (!Permissions.Mail.View_Page)
         {
             return View("Error");
         }
@@ -98,7 +98,7 @@ public class MailboxController : PortalController
         string icon, string banner, string internalNote, string forAccountsBefore)
     {
         // Checking access permissions
-        if (!UserPermissions.ViewMailbox || !UserPermissions.EditMailbox)
+        if (!Permissions.Mail.View_Page || !Permissions.Mail.Edit)
         {
             return View("Error");
         }
@@ -216,7 +216,7 @@ public class MailboxController : PortalController
         string icon, string banner, string status, string internalNote, string forAccountsBefore)
     {
         // Checking access permissions
-        if (!UserPermissions.ViewMailbox || !UserPermissions.EditMailbox)
+        if (!Permissions.Mail.View_Page || !Permissions.Mail.Edit)
         {
             return View("Error");
         }
@@ -334,7 +334,7 @@ public class MailboxController : PortalController
     public async Task<IActionResult> Delete(string id)
     {
         // Checking access permissions
-        if (!UserPermissions.ViewMailbox || !UserPermissions.EditMailbox)
+        if (!Permissions.Mail.View_Page || !Permissions.Mail.Edit)
         {
             return View("Error");
         }
@@ -445,7 +445,7 @@ public class MailboxController : PortalController
     public async Task<IActionResult> Group()
     {
         // Checking access permissions
-        if (!UserPermissions.ViewMailbox)
+        if (!Permissions.Mail.View_Page)
         {
             return View("Error");
         }
@@ -465,7 +465,7 @@ public class MailboxController : PortalController
         string visibleFrom, string expiration, string icon, string banner, string internalNote)
     {
         // Checking access permissions
-        if (!UserPermissions.ViewMailbox || !UserPermissions.EditMailbox)
+        if (!Permissions.Mail.View_Page || !Permissions.Mail.Edit)
         {
             return View("Error");
         }
@@ -534,7 +534,7 @@ public class MailboxController : PortalController
     public async Task<IActionResult> Inbox()
     {
         // Checking access permissions
-        if (!UserPermissions.ViewMailbox)
+        if (!Permissions.Mail.View_Page)
         {
             return View("Error");
         }
@@ -548,7 +548,7 @@ public class MailboxController : PortalController
     public async Task<IActionResult> Inbox(string accountId)
     {
         // Checking access permissions
-        if (!UserPermissions.ViewMailbox)
+        if (!Permissions.Mail.View_Page)
         {
             return View("Error");
         }

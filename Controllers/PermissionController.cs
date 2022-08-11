@@ -1,12 +1,16 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
+using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using TowerPortal.Models;
+using TowerPortal.Models.Permissions;
 using TowerPortal.Services;
 
 namespace TowerPortal.Controllers;
@@ -26,7 +30,7 @@ public class PermissionController : PortalController
         TempData["Failure"] = null;
 
         // Checking access permissions
-        if (!UserPermissions.Admin && !UserPermissions.ManagePermissions)
+        if (!Permissions.Portal.ManagePermissions)
         {
             return View("Error");
         }
@@ -53,7 +57,7 @@ public class PermissionController : PortalController
     public async Task<IActionResult> Account(string id)
     {
         // Checking access permissions
-        if (!UserPermissions.Admin && !UserPermissions.ManagePermissions)
+        if (!Permissions.Portal.ManagePermissions)
         {
             return View("Error");
         }
@@ -71,111 +75,29 @@ public class PermissionController : PortalController
         return View();
     }
 
+    // TODO: This method should be accepting permission-related classes as parameters, not a ton of strings. 
     [HttpPost]
     [Route("account")]
-    public async Task<IActionResult> Account(string id, string managePermissions,
-                                             string viewPlayer, string editPlayer,
-                                             string viewMailbox, string editMailbox,
-                                             string viewToken, string editToken,
-                                             string viewConfig, string editConfig,
-                                             string viewChat, string editChat)
+    public ActionResult UpdatePermissions(string id, GenericData data)
     {
-        // Checking access permissions
-        if (!UserPermissions.Admin && !UserPermissions.ManagePermissions)
-        {
-            return View("Error");
-        }
+        Require(Permissions.Portal.ManagePermissions);
 
-        Account user = _accountService.Get(id);
+        // Differentiate this from the regular Permissions property, which refers to the current user - not the one displayed on screen.
+        Passport displayedUserPermissions = _accountService.FindById(id).Permissions;
+        int sum = displayedUserPermissions.Sum(group => group.UpdateFromValues(Body));
+
+        // Nothing was changed; no reason to do anything further.
+        if (sum == 0)
+        {
+            TempData["Success"] = "No changes made.";
+            return Ok();
+        }
 
         try
         {
-            if (managePermissions != null)
-            {
-                user.Permissions.ManagePermissions = true;
-            }
-            if (viewPlayer != null)
-            {
-                user.Permissions.ViewPlayer = true;
-            }
-            else
-            {
-                user.Permissions.ViewPlayer = false;
-            }
-            if (editPlayer != null)
-            {
-                user.Permissions.EditPlayer = true;
-            }
-            else
-            {
-                user.Permissions.EditPlayer = false;
-            }
-            if (viewMailbox != null)
-            {
-                user.Permissions.ViewMailbox = true;
-            }
-            else
-            {
-                user.Permissions.ViewMailbox = false;
-            }
-            if (editMailbox != null)
-            {
-                user.Permissions.EditMailbox = true;
-            }
-            else
-            {
-                user.Permissions.EditMailbox = false;
-            }
-            if (viewToken != null)
-            {
-                user.Permissions.ViewToken = true;
-            }
-            else
-            {
-                user.Permissions.ViewToken = false;
-            }
-            if (editToken != null)
-            {
-                user.Permissions.EditToken = true;
-            }
-            else
-            {
-                user.Permissions.EditToken = false;
-            }
-            if (viewConfig != null)
-            {
-                user.Permissions.ViewConfig = true;
-            }
-            else
-            {
-                user.Permissions.ViewConfig = false;
-            }
-            if (editConfig != null)
-            {
-                user.Permissions.EditConfig = true;
-            }
-            else
-            {
-                user.Permissions.EditConfig = false;
-            }
-            if (viewChat != null)
-            {
-                user.Permissions.ViewChat = true;
-            }
-            else
-            {
-                user.Permissions.ViewChat = false;
-            }
-            if (editChat != null)
-            {
-                user.Permissions.EditChat = true;
-            }
-            else
-            {
-                user.Permissions.EditChat = false;
-            }
-            
-            _accountService.Update(user);
+            Log.Local(Owner.Will, $"Updated {sum} values.");
+            if (_accountService.UpdatePassport(id, displayedUserPermissions) != 1)
+                throw new PlatformException(message: "Unable to update permissions.");
             
             TempData["Success"] = "Successfully updated permissions for user.";
             TempData["Failure"] = null;
@@ -186,10 +108,8 @@ public class PermissionController : PortalController
             TempData["Success"] = null;
             TempData["Failure"] = "Failed to update permissions for user.";
         }
-        
-        ViewData["Account"] = user.Email;
-        
-        return RedirectToAction("Account", new { id = id });
+
+        return Ok();
     }
 }
 

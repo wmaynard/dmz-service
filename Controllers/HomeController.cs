@@ -34,7 +34,7 @@ public class HomeController : PortalController
         // Hard coded admin upon login
         if (mongoAccount.Email == "nathan.mac@rumbleentertainment.com")
         {
-            mongoAccount.Permissions.SetAdmin();
+            // mongoAccount.Permissions.SetAdmin();
             _accountService.Update(mongoAccount);
         }
 

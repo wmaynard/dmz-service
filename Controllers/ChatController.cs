@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
 using Rumble.Platform.Common.Services;
@@ -23,7 +22,7 @@ public class ChatController : PortalController
   public async Task<IActionResult> Announcements()
   {
     // Checking access permissions
-    if (!UserPermissions.ViewChat)
+    if (!Permissions.Chat.View_Page)
     {
       return View("Error");
     }
@@ -71,7 +70,7 @@ public class ChatController : PortalController
   public async Task<IActionResult> Reports()
   {
     // Checking access permissions
-    if (!UserPermissions.ViewChat)
+    if (!Permissions.Chat.View_Page)
     {
       return View("Error");
     }
@@ -119,7 +118,7 @@ public class ChatController : PortalController
   public async Task<IActionResult> Player()
   {
     // Checking access permissions
-    if (!UserPermissions.ViewChat)
+    if (!Permissions.Chat.View_Page)
     {
       return View("Error");
     }
@@ -132,7 +131,7 @@ public class ChatController : PortalController
   public async Task<IActionResult> Player(string accountId)
   {
     // Checking access permissions
-    if (!UserPermissions.ViewChat)
+    if (!Permissions.Chat.View_Page)
     {
       return View("Error");
     }
@@ -190,7 +189,7 @@ public class ChatController : PortalController
   public async Task<IActionResult> Ban(string accountId, string reason, long? duration)
   {
     // Checking access permissions
-    if (!UserPermissions.ViewChat || !UserPermissions.EditChat)
+    if (!Permissions.Chat.View_Page || !Permissions.Chat.Edit)
     {
       return View("Error");
     }
@@ -232,7 +231,7 @@ public class ChatController : PortalController
   public async Task<IActionResult> Unban(string accountId, string banId)
   {
     // Checking access permissions
-    if (!UserPermissions.ViewChat || !UserPermissions.EditChat)
+    if (!Permissions.Chat.View_Page || !Permissions.Chat.Edit)
     {
       return View("Error");
     }
@@ -272,7 +271,7 @@ public class ChatController : PortalController
   public async Task<IActionResult> Ignore(string accountId, string reportId)
   {
     // Checking access permissions
-    if (!UserPermissions.ViewChat || !UserPermissions.EditChat)
+    if (!Permissions.Chat.View_Page || !Permissions.Chat.Edit)
     {
       return View("Error");
     }
@@ -312,7 +311,7 @@ public class ChatController : PortalController
   public async Task<IActionResult> Delete(string accountId, string reportId)
   {
     // Checking access permissions
-    if (!UserPermissions.ViewChat || !UserPermissions.EditChat)
+    if (!Permissions.Chat.View_Page || !Permissions.Chat.Edit)
     {
       return View("Error");
     }

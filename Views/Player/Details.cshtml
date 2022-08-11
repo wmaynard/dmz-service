@@ -1,4 +1,4 @@
-@using TowerPortal.Extensions
+@inherits TowerPortal.Views.Shared.PortalView
 @{
     ViewData["Title"] = "Player Details";
 }
@@ -25,8 +25,8 @@
         <p>Screenname: @ViewData["Screenname"]</p>
         <form class="edit-player-form" method="post" asp-controller="Player" asp-action="EditScreenname">
             <input class="edit-player-input invisible" type="text" name="accountId" value="@(ViewData["Id"])"/>
-            <input class="edit-player-input" type="text" name="editScreenname" disabled="@(!ViewData.GetPermissions().EditPlayer)"/>
-            <button class="button" disabled="@(!ViewData.GetPermissions().EditPlayer)" type="submit">Change</button>
+            <input class="edit-player-input" type="text" name="editScreenname" disabled="@(!Permissions.Player.Edit)"/>
+            <button class="button" disabled="@(!Permissions.Player.Edit)" type="submit">Change</button>
         </form>
     </div>
     <div class="player-data-item">
@@ -71,10 +71,10 @@
             {
                 <div class="wallet-currency-item">
                     <label class="wallet-currency-item">@currency.CurrencyId</label>
-                    <input class="wallet-currency-item" type="number" name="@(currency.CurrencyId)" value="@(currency.Amount)" min="0" step="1" disabled="@(!ViewData.GetPermissions().EditPlayer)" required/>
+                    <input class="wallet-currency-item" type="number" name="@(currency.CurrencyId)" value="@(currency.Amount)" min="0" step="1" disabled="@(!Permissions.Player.Edit)" required/>
                 </div>
             }
-            <button class="button" disabled="@(!ViewData.GetPermissions().EditPlayer)" type="submit">Change</button>
+            <button class="button" disabled="@(!Permissions.Player.Edit)" type="submit">Change</button>
         </form>
     </div>
 </div>

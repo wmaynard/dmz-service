@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -18,12 +19,15 @@ using Rumble.Platform.Common.Enums;
 using Rumble.Platform.Common.Extensions;
 using Rumble.Platform.Common.Filters;
 using Rumble.Platform.Common.Interfaces;
+using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Utilities.Serializers;
 using Rumble.Platform.Common.Web;
 using Rumble.Platform.Common.Web.Routing;
 using TowerPortal.Filters;
+using TowerPortal.Models;
+using TowerPortal.Models.Permissions;
 using TowerPortal.Utilities;
 
 namespace TowerPortal;
@@ -34,69 +38,61 @@ public class Startup : PlatformStartup
     public override void ConfigureServices(IServiceCollection services)
     {
         base.ConfigureServices(services);
-        
-        
+
         string baseRoute = this.HasAttribute(out BaseRoute att)
             ? $"/{att.Route}"
             : "";
         
-        services.ConfigureApplicationCookie(options => options.LoginPath = $"{baseRoute}/portal/account/google-login");
+        services
+            .ConfigureApplicationCookie(options => options.LoginPath = $"{baseRoute}/portal/account/google-login")
+            .Configure<CookiePolicyOptions>(options =>
+            {
+                options.MinimumSameSitePolicy = SameSiteMode.Unspecified;
+                options.Secure = CookieSecurePolicy.Always;
+                options.OnAppendCookie = cookieContext =>
+                {
+                    CookieOptions cookieOptions = cookieContext.CookieOptions;
+                    HttpContext context = cookieContext.Context;
 
-        services.Configure<CookiePolicyOptions>(options =>
-        {
-            options.MinimumSameSitePolicy = SameSiteMode.Unspecified;
-            options.Secure = CookieSecurePolicy.Always;
-            options.OnAppendCookie = (cookieContext) =>
-            {
-                CookieOptions cookieOptions = cookieContext.CookieOptions;
-                HttpContext context = cookieContext.Context;
-                
-                if (cookieOptions.SameSite == SameSiteMode.None) 
-                { 
-                    var userAgent = context.Request.Headers["User-Agent"].ToString(); 
-                    if ( DisallowsSameSiteNone(userAgent)) 
-                    { 
-                        cookieOptions.SameSite = SameSiteMode.Unspecified; 
-                    } 
-                } 
-            };
-        });
-        
-        services.AddAuthentication(configureOptions: options =>
-            {
-                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    if (cookieOptions.SameSite != SameSiteMode.None)
+                        return;
+                    string userAgent = context.Request.Headers["User-Agent"].ToString(); 
+                    if (DisallowsSameSiteNone(userAgent))
+                        cookieOptions.SameSite = SameSiteMode.Unspecified;
+                };
             })
+            .AddAuthentication(configureOptions: options => options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options =>
             {
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                 options.LoginPath = $"{baseRoute}/portal/account/google-login";
                 options.LogoutPath = $"{baseRoute}/portal/account/google-logout";
                 options.Cookie.SameSite = SameSiteMode.Lax; // Suggestion from SO to resolve Correlation failed Exception
-                options.Events.OnSignedIn = (context) =>
+                options.Events.OnSignedIn = context =>
                 {
-                    Log.Local(Owner.Default, $"{context.Principal.Identity.Name} signed in.");
+                    Log.Local(Owner.Default, $"{context?.Principal?.Identity?.Name} signed in.");
                     
                     return Task.CompletedTask;
                 };
-                options.Events.OnRedirectToLogin = (context) =>
+                options.Events.OnRedirectToLogin = context =>
                 {
                     Log.Local(Owner.Default, $"Redirect login to '{context.RedirectUri}'.");
                     
                     return Task.CompletedTask;
                 };
-                options.Events.OnSigningIn = (context) =>
+                options.Events.OnSigningIn = context =>
                 {
                     Log.Local(Owner.Default, $"{context?.Principal?.Identity?.Name ?? "(unknown)"} is signing in.");
-                    
+
                     return Task.CompletedTask;
                 };
-                options.Events.OnSigningOut = (context) =>
+                options.Events.OnSigningOut = context =>
                 {
                     Log.Local(Owner.Default, $"User is signing out.");
 
                     return Task.CompletedTask;
                 };
-                options.Events.OnRedirectToReturnUrl = (context) =>
+                options.Events.OnRedirectToReturnUrl = context =>
                 {
                     Log.Local(Owner.Default, $"Redirecting to {context.RedirectUri}");
 
@@ -125,6 +121,7 @@ public class Startup : PlatformStartup
                 configurePolicy: policy => policy
                     .RequireClaim(ClaimTypes.Email)
                     .AddRequirements(new DomainRequirement("rumbleentertainment.com"))
+                    // .AddRequirements(new DomainRequirement("southbayshogi.club"))
             );
         });
 
@@ -137,6 +134,7 @@ public class Startup : PlatformStartup
         .DisableFeatures(CommonFeature.ConsoleObjectPrinting)
         .DisableFilters(CommonFilter.Performance)
         .AddFilter<ViewDataFilter>()
+        .AddFilter<ExceptionFilter>()
         .EnableWebServer();
 
     // More debugging on cookie conflicts
@@ -145,7 +143,7 @@ public class Startup : PlatformStartup
     {
         // Check if a null or empty string has been passed in, since this
         // will cause further interrogation of the useragent to fail.
-        if (String.IsNullOrWhiteSpace(userAgent))
+        if (string.IsNullOrWhiteSpace(userAgent))
             return false;
 
         // Cover all iOS based browsers here. This includes:

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
 using Rumble.Platform.Common.Utilities;
 using TowerPortal.Models;
+using TowerPortal.Models.Permissions;
 using TowerPortal.Services;
 
 namespace TowerPortal.Controllers;
@@ -67,8 +68,11 @@ public class AccountController : PortalController
                 PortalAccount = output
             });
             _accountService.Create(output);
+
+            output.Permissions = Passport.GetDefaultPermissions(output.Email);
+                
             
-            output.Permissions.SetUser();
+            // output.Permissions.SetUser();
             _accountService.Update(output);
         }
         
