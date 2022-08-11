@@ -165,9 +165,8 @@ public class ChatController : PortalController
     
     return View();
   }
-  
-  [HttpPost]
-  [Route("player")]
+
+  [Route("player/{accountId}")]
   public async Task<IActionResult> Player(string accountId)
   {
     // Checking access permissions
@@ -175,10 +174,10 @@ public class ChatController : PortalController
     {
       return View("Error");
     }
-    
+
     TempData["Success"] = "";
     TempData["Failure"] = null;
-  
+
     _apiService
       .Request(PlatformEnvironment.Url("/chat/admin/playerDetails"))
       .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("chatToken"))
@@ -197,9 +196,10 @@ public class ChatController : PortalController
                    TempData["Success"] = "Failed to fetch chat player details.";
                    TempData["Failure"] = true;
                    Log.Error(owner: Owner.Nathan, message: "Request to chat-service failed.", data: new
-                                                                                              {
-                                                                                                Response = apiResponse
-                                                                                              });
+                                                                                                    {
+                                                                                                      Response =
+                                                                                                        apiResponse
+                                                                                                    });
                  })
       .Post(out GenericData response, out int code);
 
@@ -225,6 +225,19 @@ public class ChatController : PortalController
   }
 
   [HttpPost]
+  [Route("playerSearch")]
+  public async Task<IActionResult> PlayerSearch(string accountId)
+  {
+    // Checking access permissions
+    if (!Permissions.Chat.View_Page)
+    {
+      return View("Error");
+    }
+
+    return RedirectToAction("Player", new { accountId = accountId });
+  }
+
+  [HttpPost]
   [Route("ban")]
   public async Task<IActionResult> Ban(string accountId, string reason, long? duration)
   {
@@ -244,7 +257,7 @@ public class ChatController : PortalController
                   {
                     {"aid", accountId},
                     {"reason", reason},
-                    {"duration", duration}
+                    {"durationInSeconds", duration}
                   })
       .OnSuccess(((sender, apiResponse) =>
                   {
@@ -282,6 +295,10 @@ public class ChatController : PortalController
     _apiService
       .Request(PlatformEnvironment.Url("/chat/admin/ban/lift"))
       .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("chatToken"))
+      .SetPayload(new GenericData
+                  {
+                    {"accountId", accountId}
+                  })
       .OnSuccess(((sender, apiResponse) =>
                   {
                     TempData["Success"] = "Successfully unbanned player.";

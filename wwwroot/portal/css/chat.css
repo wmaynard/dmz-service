@@ -1,3 +1,18 @@
 div.chat-search-container {
     margin-bottom: 10px;
 }
+
+table.chat-bans,
+table.chat-reports,
+table.chat-announcements {
+    border: 1px black solid;
+}
+
+div.chat-ban-container,
+div.chat-unban-container {
+    margin: 5px;
+}
+
+div.chat-search-container {
+    margin-bottom: 10px;
+}

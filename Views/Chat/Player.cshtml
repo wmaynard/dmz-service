@@ -23,7 +23,7 @@
     </div>
     
     <div class="chat-search-container">
-        <form class="chat-search-form" method="post" asp-controller="Chat" asp-action="Player">
+        <form class="chat-search-form" method="post" asp-controller="Chat" asp-action="PlayerSearch">
             <div class = "chat-search-form-container">
                 <label for="chat-search-input" class="chat-search">Account Id</label>
                 <input id="chat-search-input" class="chat-search" type="text" name="accountId" required>
@@ -34,6 +34,8 @@
     
     @if (@ViewData["AccountId"] != null)
     {
+        <h4>Player ID: @ViewData["AccountId"]</h4>
+        
         <div class="chat-ban-container">
             <form class="chat-ban-form" method="post" asp-controller="Chat" asp-action="Ban">
                 <div class="accountId invisible">
@@ -55,7 +57,7 @@
                 <div class="accountId invisible">
                     <input id="accountId" class="accountId" type="text" name="accountId" value="@(ViewData["AccountId"])">
                 </div>
-                <button id="unbanButton" class="unbanButton" disabled="@(!Permissions.Chat.Edit)" type="submit">Confirm</button>
+                <button id="unbanButton" class="unbanButton" disabled="@(!Permissions.Chat.Edit)" type="submit">Unban</button>
             </form>
         </div>
         
