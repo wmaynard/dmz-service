@@ -1,3 +1,4 @@
+@using Rumble.Platform.Common.Utilities
 @{
     ViewData["Title"] = "Chat Bans";
 }
@@ -41,7 +42,12 @@
                     <td>@chatBan.AccountId</td>
                     <td>@DateTimeOffset.FromUnixTimeSeconds(@chatBan.Issued)</td>
                     <td>@chatBan.Reason</td>
-                    <td>@chatBan.Snapshot</td>
+                    <td>
+                        @foreach (GenericData snapshot in @chatBan.Snapshot)
+                        {
+                            <p>@snapshot.JSON</p>
+                        }
+                    </td>
                     <td>@chatBan.TimeRemaining</td>
                 </tr>
             }

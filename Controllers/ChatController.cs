@@ -65,6 +65,46 @@ public class ChatController : PortalController
     
     return View();
   }
+
+  [HttpPost]
+  [Route("announcements")]
+  public async Task<IActionResult> Announcements(string messageId)
+  {
+    // Checking access permissions
+    if (!Permissions.Chat.View_Page || !Permissions.Chat.Edit)
+    {
+      return View("Error");
+    }
+    
+    TempData["Success"] = "";
+    TempData["Failure"] = null;
+  
+    _apiService
+      .Request(PlatformEnvironment.Url("/chat/admin/messages/unsticky"))
+      .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("chatToken"))
+      .SetPayload(new GenericData
+                  {
+                    {"messageId", messageId}
+                  })
+      .OnSuccess((sender, apiResponse) =>
+                 {
+                   TempData["Success"] = "Successfully expired chat announcement.";
+                   TempData["Failure"] = null;
+                   Log.Local(Owner.Nathan, "Request to chat-service succeeded.");
+                 })
+      .OnFailure((sender, apiResponse) =>
+                 {
+                   TempData["Success"] = "Failed to expire chat announcement.";
+                   TempData["Failure"] = true;
+                   Log.Error(owner: Owner.Nathan, message: "Request to chat-service failed.", data: new
+                                                                                                    {
+                                                                                                      Response = apiResponse
+                                                                                                    });
+                 })
+      .Post(out GenericData response, out int code);
+
+    return RedirectToAction("Announcements");
+  }
   
   [Route("reports")]
   public async Task<IActionResult> Reports()

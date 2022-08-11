@@ -1,3 +1,4 @@
+@inherits TowerPortal.Views.Shared.PortalView
 @{
     ViewData["Title"] = "Chat Announcements";
 }
@@ -33,6 +34,7 @@
                 <td class="timestamp">Timestamp</td>
                 <td class="expiration">Expiration</td>
                 <td class="type">Type</td>
+                <td class="announcement-expire">Expire</td>
             </tr>
             @foreach (Announcement announcement in (List<Announcement>) ViewData["Announcements"])
             {
@@ -43,6 +45,14 @@
                     <td>@DateTimeOffset.FromUnixTimeSeconds(@announcement.Timestamp)</td>
                     <td>@DateTimeOffset.FromUnixTimeSeconds(@announcement.Expiration)</td>
                     <td>@announcement.Type</td>
+                    <td>
+                        <form class="chat-announcement-form" method="post" asp-controller="Chat" asp-action="Announcements">
+                            <div class="messageId invisible">
+                                <input id="messageId" class="messageId" type="text" name="messageId" value="@announcement.Id)">
+                            </div>
+                            <button id="expireButton" class="expireButton" disabled="@(!Permissions.Chat.Edit)" type="submit">Expire</button>
+                        </form>
+                    </td>
                 </tr>
             }
         </table>

@@ -37,7 +37,6 @@
         <div class="chat-ban-container">
             <form class="chat-ban-form" method="post" asp-controller="Chat" asp-action="Ban">
                 <div class="accountId invisible">
-                    <label for="accountId" class="accountId">Player IDs* (separated by "," or "|")</label>
                     <input id="accountId" class="accountId" type="text" name="accountId" value="@(ViewData["AccountId"])">
                 </div>
                 <div class="reason">
@@ -48,7 +47,7 @@
                     <label for="duration" class="duration">Duration (seconds)</label>
                     <input id="duration" class="duration" type="number" name="duration" disabled="@(!Permissions.Chat.Edit)">
                 </div>
-                <button id="banButton" class="banButton" disabled="@(!Permissions.Chat.Edit)" type="submit">Confirm</button>
+                <button id="banButton" class="banButton" disabled="@(!Permissions.Chat.Edit)" type="submit">Ban</button>
             </form>
         </div>
         @if (@ViewData["BanIds"] != null)
@@ -56,91 +55,114 @@
             <div class="chat-unban-container">
                 <form class="chat-unban-form" method="post" asp-controller="Chat" asp-action="Unban">
                     <div class="accountId invisible">
-                        <label for="accountId" class="accountId">Player IDs* (separated by "," or "|")</label>
                         <input id="accountId" class="accountId" type="text" name="accountId" value="@(ViewData["AccountId"])">
                     </div>
                     <button id="unbanButton" class="unbanButton" disabled="@(!Permissions.Chat.Edit)" type="submit">Confirm</button>
                 </form>
             </div>
         }
-    }
-    
-    @if (@ViewData["ChatBans"] != null)
-    {
-        <div class="chat-bans-container">
-            <h1>Bans</h1>
-            <table id="chatBans" class="chat-bans">
-                <tr>
-                    <td class="id">Id</td>
-                    <td class="aid">Account Id</td>
-                    <td class="issued">Issued</td>
-                    <td class="reason">Reason</td>
-                    <td class="snapshot">Snapshot</td>
-                    <td class="time-remaining">Time Remaining</td>
-                </tr>
-                @foreach (ChatBan data in (List<ChatBan>) ViewData["ChatBans"])
-                {
+        
+        @if (@ViewData["ChatBans"] != null)
+        {
+            <div class="chat-bans-container">
+                <h3>Bans</h3>
+                <table id="chatBans" class="chat-bans">
                     <tr>
-                        <td>@data.Id</td>
-                        <td>@data.AccountId</td>
-                        <td>@DateTimeOffset.FromUnixTimeSeconds(@data.Issued)</td>
-                        <td>@data.Reason</td>
-                        <td>
-                            @foreach (GenericData snapshot in @data.Snapshot)
-                            {
-                                <p>@snapshot.JSON</p>
-                            }
-                        </td>
-                        <td>@data.TimeRemaining</td>
+                        <td class="id">Id</td>
+                        <td class="aid">Account Id</td>
+                        <td class="issued">Issued</td>
+                        <td class="reason">Reason</td>
+                        <td class="snapshot">Snapshot</td>
+                        <td class="time-remaining">Time Remaining</td>
                     </tr>
-                }
-            </table>
-        </div>
-    }
-    @if (@ViewData["ChatReports"] != null)
-    {
-        <div class="chat-reports-container">
-            <h1>Reports</h1>
-            <table id="chatReports" class="chat-reports">
-                <tr>
-                    <td class="id">Id</td>
-                    <td class="message-id">Message Id</td>
-                    <td class="log">Log</td>
-                    <td class="players">Players</td>
-                    <td class="reported">Reported</td>
-                    <td class="reporters">Reporters</td>
-                    <td class="status">Status</td>
-                    <td class="time">Time</td>
-                </tr>
-                @foreach (ChatReport data in (List<ChatReport>) ViewData["ChatReports"])
-                {
+                    @foreach (ChatBan data in (List<ChatBan>) ViewData["ChatBans"])
+                    {
+                        <tr>
+                            <td>@data.Id</td>
+                            <td>@data.AccountId</td>
+                            <td>@DateTimeOffset.FromUnixTimeSeconds(@data.Issued)</td>
+                            <td>@data.Reason</td>
+                            <td>
+                                @foreach (GenericData snapshot in @data.Snapshot)
+                                {
+                                    <p>@snapshot.JSON</p>
+                                }
+                            </td>
+                            <td>@data.TimeRemaining</td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        }
+        @if (@ViewData["ChatReports"] != null)
+        {
+            <div class="chat-reports-container">
+                <h3>Reports</h3>
+                <table id="chatReports" class="chat-reports">
                     <tr>
-                        <td>@data.Id</td>
-                        <td>@data.MessageId</td>
-                        <td>
-                            @foreach (GenericData log in @data.Log)
-                            {
-                                <p>@log.JSON</p>
-                            }
-                        </td>
-                        <td>
-                            @foreach (GenericData players in @data.Players)
-                            {
-                                <p>@players.JSON</p>
-                            }
-                        </td>
-                        <td>@data.Reported.JSON</td>
-                        <td>
-                            @foreach (GenericData reporters in @data.Reporters)
-                            {
-                                <p>@reporters.JSON</p>
-                            }
-                        </td>
-                        <td>@data.Status</td>
-                        <td>@DateTimeOffset.FromUnixTimeSeconds(@data.Time)</td>
+                        <td class="id">Id</td>
+                        <td class="message-id">Message Id</td>
+                        <td class="log">Log</td>
+                        <td class="players">Players</td>
+                        <td class="reported">Reported</td>
+                        <td class="reporters">Reporters</td>
+                        <td class="status">Status</td>
+                        <td class="time">Time</td>
+                        <td class="report-ignore">Ignore</td>
+                        <td class="report-delete">Delete</td>
                     </tr>
-                }
-            </table>
-        </div>
+                    @foreach (ChatReport data in (List<ChatReport>) ViewData["ChatReports"])
+                    {
+                        <tr>
+                            <td>@data.Id</td>
+                            <td>@data.MessageId</td>
+                            <td>
+                                @foreach (GenericData log in @data.Log)
+                                {
+                                    <p>@log.JSON</p>
+                                }
+                            </td>
+                            <td>
+                                @foreach (GenericData players in @data.Players)
+                                {
+                                    <p>@players.JSON</p>
+                                }
+                            </td>
+                            <td>@data.Reported.JSON</td>
+                            <td>
+                                @foreach (GenericData reporters in @data.Reporters)
+                                {
+                                    <p>@reporters.JSON</p>
+                                }
+                            </td>
+                            <td>@data.Status</td>
+                            <td>@DateTimeOffset.FromUnixTimeSeconds(@data.Time)</td>
+                            <td>
+                                <form class="chat-report-form" method="post" asp-controller="Chat" asp-action="Ignore">
+                                    <div class="accountId invisible">
+                                        <input id="accountId" class="accountId" type="text" name="accountId" value="@(ViewData["AccountId"])">
+                                    </div>
+                                    <div class="reportId invisible">
+                                        <input id="reportId" class="reportId" type="text" name="reportId" value="@data.Id">
+                                    </div>
+                                    <button id="ignoreButton" class="ignoreButton" disabled="@(!Permissions.Chat.Edit)" type="submit">Ignore</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form class="chat-report-form" method="post" asp-controller="Chat" asp-action="Delete">
+                                    <div class="accountId invisible">
+                                        <input id="accountId" class="accountId" type="text" name="accountId" value="@(ViewData["AccountId"])">
+                                    </div>
+                                    <div class="reportId invisible">
+                                        <input id="reportId" class="reportId" type="text" name="reportId" value="@data.Id">
+                                    </div>
+                                    <button id="deleteButton" class="deleteButton" disabled="@(!Permissions.Chat.Edit)" type="submit">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        }
     }
 </div>
