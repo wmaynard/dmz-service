@@ -119,7 +119,7 @@ public class ChatController : PortalController
     TempData["Failure"] = null;
   
     _apiService
-      .Request(PlatformEnvironment.Url("/chat/admin/reports/list")) // TODO change to reports
+      .Request(PlatformEnvironment.Url("/chat/admin/reports/list"))
       .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("chatToken"))
       .OnSuccess((sender, apiResponse) =>
                  {
@@ -142,7 +142,7 @@ public class ChatController : PortalController
 
     try
     {
-      chatReportsList = response.Require<List<ChatReport>>(key: "reports"); // TODO double check with api
+      chatReportsList = response.Require<List<ChatReport>>(key: "reports");
     }
     catch (Exception e)
     {
