@@ -62,7 +62,7 @@
         </form>
     </div>
     
-    @if (ViewData["CurrentAdmin"] != null)
+    @if (Permissions.Portal.SuperUser)
     {
         <div class="log-container">
             @if (ViewData["TokenLogs"] != null)

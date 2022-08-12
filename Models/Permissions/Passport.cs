@@ -35,18 +35,19 @@ public class Passport : List<PermissionGroup>
         "willmaynard.com"
         // TODO: Testronic
     };
-    
-    public ConfigPermissions Config => Fetch<ConfigPermissions>();
+
+    public ChatPermissions         Chat        => Fetch<ChatPermissions>();
+    public ConfigPermissions       Config      => Fetch<ConfigPermissions>();
     public LeaderboardsPermissions Leaderboard => Fetch<LeaderboardsPermissions>();
-    public MailPermissions Mail => Fetch<MailPermissions>();
-    public MatchmakingPermissions Matchmaking => Fetch<MatchmakingPermissions>();
-    public MultiplayerPermissions Multiplayer => Fetch<MultiplayerPermissions>();
-    public NftPermissions Nft => Fetch<NftPermissions>();
-    public ReceiptPermissions Receipt => Fetch<ReceiptPermissions>();
-    public PlayerPermissions Player => Fetch<PlayerPermissions>();
-    public PortalPermissions Portal => Fetch<PortalPermissions>();
-    public PvpPermissions Pvp => Fetch<PvpPermissions>();
-    public TokenPermissions Token => Fetch<TokenPermissions>();
+    public MailPermissions         Mail        => Fetch<MailPermissions>();
+    public MatchmakingPermissions  Matchmaking => Fetch<MatchmakingPermissions>();
+    public MultiplayerPermissions  Multiplayer => Fetch<MultiplayerPermissions>();
+    public NftPermissions          Nft         => Fetch<NftPermissions>();
+    public ReceiptPermissions      Receipt     => Fetch<ReceiptPermissions>();
+    public PlayerPermissions       Player      => Fetch<PlayerPermissions>();
+    public PortalPermissions       Portal      => Fetch<PortalPermissions>();
+    public PvpPermissions          Pvp         => Fetch<PvpPermissions>();
+    public TokenPermissions        Token       => Fetch<TokenPermissions>();
 
     private T Fetch<T>() where T : PermissionGroup
     {
