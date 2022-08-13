@@ -11,17 +11,10 @@
         @Html.ActionLink(linkText: "Global Messages", actionName: "Global", controllerName: "Mailbox", routeValues: new {}, htmlAttributes: new {})
     </div>
 
-    <h2>@TempData["Title"]</h2>
+    <h2>@ViewData["Title"]</h2>
     
     <div class="error-container">
-        @if (TempData["Failure"] != null)
-        {
-            <h4 style="color: red">@TempData["Success"]</h4>
-        }
-        else
-        {
-            <h4 style="color: darkgreen">@TempData["Success"]</h4>
-        }
+        <h4 style="color: @(WasSuccessful ? "red" : "darkgreen")">@(StatusMessage)</h4>
     </div>
 
     <div class="group-container">

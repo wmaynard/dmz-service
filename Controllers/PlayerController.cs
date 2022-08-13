@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using RCL.Logging;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
+using TowerPortal.Enums;
 using TowerPortal.Interfaces;
 using TowerPortal.Models;
 using TowerPortal.Services;
@@ -156,8 +157,7 @@ public class PlayerController : PortalController
             return View("Error");
         }
 
-        TempData["Success"] = "";
-        TempData["Failure"] = null;
+        ClearStatus();
         
         _apiService
             .Request(PlatformEnvironment.Url("/player/v2/admin/screenname"))
@@ -169,14 +169,12 @@ public class PlayerController : PortalController
             })
             .OnSuccess(((sender, apiResponse) =>
             {
-                TempData["Success"] = "Successfully edited player screenname.";
-                TempData["Failure"] = null;
+                SetStatus("Successfully edited player screenname.", RequestStatus.Success);
                 Log.Local(Owner.Nathan, "Request to player-service-v2 screenname succeeded.");
             }))
             .OnFailure(((sender, apiResponse) =>
             {
-                TempData["Success"] = "Failed to edit player screenname.";
-                TempData["Failure"] = true;
+                SetStatus("Failed to edit player screenname.", RequestStatus.Error);
                 Log.Error(Owner.Nathan, "Request to player-service-v2 screenname failed.", data: new
                 {
                     Response = apiResponse
@@ -228,14 +226,14 @@ public class PlayerController : PortalController
         }
         catch (Exception e)
         {
+            SetStatus("Failed to update player wallet.", RequestStatus.Error);
             Log.Error(owner: Owner.Nathan, message: "Failed to parse response from player-service.", data: e);
         }
 
         if (component == null)
         {
+            SetStatus("Failed to update player wallet.", RequestStatus.Error);
             Log.Error(owner: Owner.Nathan, message: "Error occurred when attempting to update player components.", data:"TempData components was null when passed from player details to player wallets.");
-            TempData["Success"] = "Failed to update player wallet.";
-            TempData["Failure"] = true;
             return RedirectToAction("Details", new { id = aid});
         }
 
@@ -252,8 +250,7 @@ public class PlayerController : PortalController
         component.Wallet.Data.Currencies = newWalletCurrencies;
         component.Wallet.Version += 1;
 
-        TempData["Success"] = "";
-        TempData["Failure"] = null;
+        ClearStatus();
         
         _apiService
             .Request(PlatformEnvironment.Url("/player/v2/admin/component"))
@@ -264,14 +261,12 @@ public class PlayerController : PortalController
             })
             .OnSuccess(((sender, apiResponse) =>
             {
-                TempData["Success"] = "Successfully edited player wallet.";
-                TempData["Failure"] = null;
+                SetStatus("Successfully edited player wallet.", RequestStatus.Success);
                 Log.Local(Owner.Nathan, "Request to player-service-v2 update succeeded.");
             }))
             .OnFailure(((sender, apiResponse) =>
             {
-                TempData["Success"] = "Failed to update player wallet.";
-                TempData["Failure"] = true;
+                SetStatus("Failed to update player wallet.", RequestStatus.Error);
                 Log.Error(Owner.Nathan, "Request to player-service-v2 update failed.", data: new
                 {
                     Response = apiResponse

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
+using TowerPortal.Enums;
 using TowerPortal.Models;
 using TowerPortal.Services;
 using TowerPortal.Utilities;
@@ -33,8 +34,7 @@ public class MailboxController : PortalController
             return View("Error");
         }
 
-        TempData["Success"] = "";
-        TempData["Failure"] = null;
+        ClearStatus();
 
         ViewData["Today"] = DefaultDateTime.UtcDateTimeString();
         ViewData["Week"] = DefaultDateTime.UtcDateTimeString(days: 7);
@@ -44,14 +44,12 @@ public class MailboxController : PortalController
             .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("mailToken"))
             .OnSuccess((sender, apiResponse) =>
             {
-                TempData["Success"] = "Successfully fetched global messages.";
-                TempData["Failure"] = null;
+                SetStatus("Successfully fetched global messages.", RequestStatus.Success);
                 Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
             })
             .OnFailure((sender, apiResponse) =>
             {
-                TempData["Success"] = "Failed to fetch global messages.";
-                TempData["Failure"] = true;
+                SetStatus("Failed to fetch chat announcements.", RequestStatus.Error);
                 Log.Error(owner: Owner.Nathan, message: "Request to mailbox-service failed.", data: new
                 {
                     Response = apiResponse
@@ -104,8 +102,7 @@ public class MailboxController : PortalController
         }
         
         
-        TempData["Success"] = "";
-        TempData["Failure"] = null;
+        ClearStatus();
         
         try
         {
@@ -138,14 +135,12 @@ public class MailboxController : PortalController
                 })
                 .OnSuccess(((sender, apiResponse) =>
                 {
-                    TempData["Success"] = "Successfully sent message.";
-                    TempData["Failure"] = null;
+                    SetStatus("Successfully sent message.", RequestStatus.Success);
                     Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
                 }))
                 .OnFailure(((sender, apiResponse) =>
                 {
-                    TempData["Success"] = "Failed to send message.";
-                    TempData["Failure"] = true;
+                    SetStatus("Failed to send message.", RequestStatus.Error);
                     Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
                     {
                         Response = apiResponse
@@ -155,8 +150,7 @@ public class MailboxController : PortalController
         }
         catch (Exception e)
         {
-            TempData["Success"] = "Failed to send message. Some fields may be malformed.";
-            TempData["Failure"] = true;
+            SetStatus("Failed to send message. Some fields may be malformed.", RequestStatus.Error);
             Log.Error(owner: Owner.Nathan, message: "Error occurred when sending global message.", data: e.Message);
         }
         
@@ -221,8 +215,7 @@ public class MailboxController : PortalController
             return View("Error");
         }
 
-        TempData["Success"] = "";
-        TempData["Failure"] = null;
+        ClearStatus();
 
         try
         {
@@ -304,14 +297,12 @@ public class MailboxController : PortalController
                 })
                 .OnSuccess(((sender, apiResponse) =>
                 {
-                    TempData["Success"] = "Successfully edited message.";
-                    TempData["Failure"] = null;
+                    SetStatus("Successfully edited message.", RequestStatus.Success);
                     Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
                 }))
                 .OnFailure(((sender, apiResponse) =>
                 {
-                    TempData["Success"] = "Failed to edit message.";
-                    TempData["Failure"] = true;
+                    SetStatus("Failed to edit message.", RequestStatus.Error);
                     Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
                     {
                         Response = apiResponse
@@ -321,8 +312,7 @@ public class MailboxController : PortalController
         }
         catch (Exception e)
         {
-            TempData["Success"] = "Failed to edit message. Some fields may be malformed.";
-            TempData["Failure"] = true;
+            SetStatus("Failed to edit message. Some fields may be malformed.", RequestStatus.Error);
             Log.Error(owner: Owner.Nathan, message: "Error occurred when editing global message.", data: e.Message);
         }
 
@@ -339,8 +329,7 @@ public class MailboxController : PortalController
             return View("Error");
         }
 
-        TempData["Success"] = "";
-        TempData["Failure"] = null;
+        ClearStatus();
         
         try
         {
@@ -353,14 +342,12 @@ public class MailboxController : PortalController
                 })
                 .OnSuccess(((sender, apiResponse) =>
                 {
-                    TempData["Success"] = "Successfully deleted message.";
-                    TempData["Failure"] = null;
+                    SetStatus("Successfully deleted message.", RequestStatus.Success);
                     Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
                 }))
                 .OnFailure(((sender, apiResponse) =>
                 {
-                    TempData["Success"] = "Failed to delete message.";
-                    TempData["Failure"] = true;
+                    SetStatus("Failed to delete message.", RequestStatus.Error);
                     Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
                     {
                         Response = apiResponse
@@ -370,8 +357,7 @@ public class MailboxController : PortalController
         }
         catch (Exception e)
         {
-            TempData["Success"] = "Failed to delete message.";
-            TempData["Failure"] = true;
+            SetStatus("Failed to delete message.", RequestStatus.Error);
             Log.Error(owner: Owner.Nathan, message: "Error occurred when deleting global message.", data: e.Message);
         }
 
@@ -450,8 +436,7 @@ public class MailboxController : PortalController
             return View("Error");
         }
         
-        TempData["Success"] = "";
-        TempData["Failure"] = null;
+        ClearStatus();
         
         ViewData["Today"] = DefaultDateTime.UtcDateTimeString();
         ViewData["Week"] = DefaultDateTime.UtcDateTimeString(days: 7);
@@ -497,14 +482,12 @@ public class MailboxController : PortalController
                 })
                 .OnSuccess((sender, apiResponse) =>
                 {
-                    TempData["Success"] = "Successfully sent message.";
-                    TempData["Failure"] = null;
+                    SetStatus("Successfully sent message.", RequestStatus.Success);
                     Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
                 })
                 .OnFailure((sender, apiResponse) =>
                 {
-                    TempData["Success"] = "Failed to send message.";
-                    TempData["Failure"] = true;
+                    SetStatus("Failed to send message.", RequestStatus.Error);
                     Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
                     {
                         Response = apiResponse
@@ -514,8 +497,7 @@ public class MailboxController : PortalController
         }
         catch (Exception e)
         {
-            TempData["Success"] = "Failed to send message. Some fields may be malformed.";
-            TempData["Failure"] = true;
+            SetStatus("Failed to send message. Some fields may be malformed.", RequestStatus.Error);
             Log.Error(owner: Owner.Nathan, message: "Error occurred when sending group message.", data: e.Message);
         }
         
@@ -553,8 +535,7 @@ public class MailboxController : PortalController
             return View("Error");
         }
 
-        TempData["Success"] = "";
-        TempData["Failure"] = null;
+        ClearStatus();
 
         _apiService
             .Request(PlatformEnvironment.Url("/mail/admin/inbox"))
@@ -565,14 +546,12 @@ public class MailboxController : PortalController
             })
             .OnSuccess((sender, apiResponse) =>
             {
-                TempData["Success"] = "Successfully fetched inbox messages.";
-                TempData["Failure"] = null;
+                SetStatus("Successfully fetched inbox messages.", RequestStatus.Success);
                 Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
             })
             .OnFailure((sender, apiResponse) =>
             {
-                TempData["Success"] = "Failed to fetch inbox messages.";
-                TempData["Failure"] = true;
+                SetStatus("Failed to fetch inbox messages.", RequestStatus.Error);
                 Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
                 {
                     Response = apiResponse
@@ -582,8 +561,7 @@ public class MailboxController : PortalController
 
         if (response == null)
         {
-            TempData["Success"] = "Service response was null.";
-            TempData["Failure"] = true;
+            SetStatus("Service response was null.", RequestStatus.Error);
 
             return View();
         }
