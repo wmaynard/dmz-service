@@ -9,6 +9,7 @@ using RCL.Logging;
 using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
+using TowerPortal.Enums;
 using TowerPortal.Models;
 using TowerPortal.Models.Permissions;
 using TowerPortal.Services;
@@ -26,8 +27,8 @@ public class PermissionController : PortalController
     public async Task<IActionResult> List()
     {
         ViewData["Message"] = "User list";
-        TempData["Success"] = null;
-        TempData["Failure"] = null;
+
+        ClearStatus();
 
         // Checking access permissions
         if (!Permissions.Portal.ManagePermissions)
@@ -89,7 +90,7 @@ public class PermissionController : PortalController
         // Nothing was changed; no reason to do anything further.
         if (sum == 0)
         {
-            TempData["Success"] = "No changes made.";
+            SetStatus("No changes made.", RequestStatus.Success);
             return Ok();
         }
 
@@ -99,14 +100,12 @@ public class PermissionController : PortalController
             if (_accountService.UpdatePassport(id, displayedUserPermissions) != 1)
                 throw new PlatformException(message: "Unable to update permissions.");
             
-            TempData["Success"] = "Successfully updated permissions for user.";
-            TempData["Failure"] = null;
+            SetStatus("Successfully updated permissions for user.", RequestStatus.Success);
         }
         catch (Exception e)
         {
             Log.Error(owner: Owner.Nathan, message: "Failed to update permissions for portal user.", data: e.Message);
-            TempData["Success"] = null;
-            TempData["Failure"] = "Failed to update permissions for user.";
+            SetStatus("Failed to update permissions for user.", RequestStatus.Error);
         }
 
         return Ok();

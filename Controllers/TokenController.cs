@@ -7,6 +7,7 @@ using RCL.Logging;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
+using TowerPortal.Enums;
 using TowerPortal.Models;
 using TowerPortal.Services;
 using TowerPortal.Utilities;
@@ -35,15 +36,13 @@ public class TokenController : PortalController
             List<TokenLog> tokenLogs = _tokenLogService.GetLogs();
             ViewData["TokenLogs"] = tokenLogs;
             
-            TempData["Success"] = "";
-            TempData["Failure"] = null;
+            ClearStatus();
         }
         catch (Exception e)
         {
             Log.Error(owner: Owner.Nathan, message: "Failed to fetch token logs.", data: e.Message);
 
-            TempData["Success"] = "Failed to fetch logs.";
-            TempData["Failure"] = true;
+            SetStatus("Failed to fetch logs.", RequestStatus.Error);
         }
         
         return View();
@@ -81,8 +80,7 @@ public class TokenController : PortalController
                             })
                             .OnSuccess((sender, apiResponse) =>
                             {
-                                TempData["Success"] = "Successfully banned player(s).";
-                                TempData["Failure"] = null;
+                                SetStatus("Successfully banned players(s).", RequestStatus.Success);
                                 Log.Local(owner: Owner.Nathan, message: "Request to token-service succeeded.");
                                 
                                 TokenLog log = null; // TODO move logs to separate page, only admins
@@ -92,8 +90,7 @@ public class TokenController : PortalController
                             })
                             .OnFailure((sender, apiResponse) =>
                             {
-                                TempData["Success"] = "Failed to ban player(s).";
-                                TempData["Failure"] = true;
+                                SetStatus("Failed to ban player(s).", RequestStatus.Error);
                                 Log.Error(owner: Owner.Nathan, message: "Request to token-service failed.", data: new
                                 {
                                     Response = apiResponse
@@ -104,8 +101,7 @@ public class TokenController : PortalController
                 }
                 catch (Exception e)
                 {
-                    TempData["Success"] = "Failed to ban player(s). Some fields may be malformed.";
-                    TempData["Failure"] = true;
+                    SetStatus("Failed to ban player(s). Some fields may be malformed.", RequestStatus.Error);
                     Log.Error(owner: Owner.Nathan, message: "Error occurred when banning player(s).", data: e.Message);
                 }
             }
@@ -130,8 +126,7 @@ public class TokenController : PortalController
                             })
                             .OnSuccess((sender, apiResponse) =>
                             {
-                                TempData["Success"] = "Successfully banned player(s).";
-                                TempData["Failure"] = null;
+                                SetStatus("Successfully banned player(s).", RequestStatus.Success);
                                 Log.Local(owner: Owner.Nathan, message: "Request to token-service succeeded.");
                                 
                                 TokenLog log = null; // TODO move logs to separate page, only admins
@@ -141,8 +136,7 @@ public class TokenController : PortalController
                             })
                             .OnFailure((sender, apiResponse) =>
                             {
-                                TempData["Success"] = "Failed to ban player(s).";
-                                TempData["Failure"] = true;
+                                SetStatus("Failed to ban player(s).", RequestStatus.Error);
                                 Log.Error(owner: Owner.Nathan, message: "Request to token-service failed.", data: new
                                 {
                                     Response = apiResponse
@@ -153,8 +147,7 @@ public class TokenController : PortalController
                 }
                 catch (Exception e)
                 {
-                    TempData["Success"] = "Failed to ban player(s). Some fields may be malformed.";
-                    TempData["Failure"] = true;
+                    SetStatus("Failed to ban player(s). Some fields may be malformed.", RequestStatus.Error);
                     Log.Error(owner: Owner.Nathan, message: "Error occurred when banning player(s).", data: e.Message);
                 }
             }
@@ -178,8 +171,7 @@ public class TokenController : PortalController
                         })
                         .OnSuccess((sender, apiResponse) =>
                         {
-                            TempData["Success"] = "Successfully unbanned player(s).";
-                            TempData["Failure"] = null;
+                            SetStatus("Successfully unbanned player(s).", RequestStatus.Success);
                             Log.Local(owner: Owner.Nathan, message: "Request to token-service succeeded.");
                             
                             TokenLog log = new TokenLog(actor: actor, action: "unban", unbanTime: null, target: playerId,
@@ -188,8 +180,7 @@ public class TokenController : PortalController
                         })
                         .OnFailure((sender, apiResponse) =>
                         {
-                            TempData["Success"] = "Failed to unban player(s).";
-                            TempData["Failure"] = true;
+                            SetStatus("Failed to unban player(s).", RequestStatus.Error);
                             Log.Error(owner: Owner.Nathan, message: "Request to token-service failed.", data: new
                             {
                                 Response = apiResponse
@@ -200,8 +191,7 @@ public class TokenController : PortalController
             }
             catch (Exception e)
             {
-                TempData["Success"] = "Failed to unban player(s). Some fields may be malformed.";
-                TempData["Failure"] = true;
+                SetStatus("Failed to unban player(s). Some fields may be malformed.", RequestStatus.Error);
                 Log.Error(owner: Owner.Nathan, message: "Error occurred when unbanning player(s).", data: e.Message);
             }
         }
@@ -224,8 +214,7 @@ public class TokenController : PortalController
                         })
                         .OnSuccess((sender, apiResponse) =>
                         {
-                            TempData["Success"] = "Successfully invalidated token for player(s).";
-                            TempData["Failure"] = null;
+                            SetStatus("Successfully invalidated token for player(s).", RequestStatus.Success);
                             Log.Local(owner: Owner.Nathan, message: "Request to token-service succeeded.");
                             
                             TokenLog log = new TokenLog(actor: actor, action: "invalidate", unbanTime: null, target: playerId,
@@ -234,8 +223,7 @@ public class TokenController : PortalController
                         })
                         .OnFailure((sender, apiResponse) =>
                         {
-                            TempData["Success"] = "Failed to invalidate token for player(s).";
-                            TempData["Failure"] = true;
+                            SetStatus("Failed to invalidate token for player(s).", RequestStatus.Error);
                             Log.Error(owner: Owner.Nathan, message: "Request to token-service failed.", data: new
                             {
                                 Response = apiResponse
@@ -246,8 +234,7 @@ public class TokenController : PortalController
             }
             catch (Exception e)
             {
-                TempData["Success"] = "Failed to invalidate token for player(s). Some fields may be malformed.";
-                TempData["Failure"] = true;
+                SetStatus("Failed to invalidate token for player(s). Some fields may be malformed.", RequestStatus.Error);
                 Log.Error(owner: Owner.Nathan, message: "Error occurred when invalidating token for player(s).", data: e.Message);
             }
         }

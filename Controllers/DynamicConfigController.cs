@@ -6,6 +6,7 @@ using RCL.Logging;
 using Rumble.Platform.Common.Models.Config;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
+using TowerPortal.Enums;
 using TowerPortal.Services;
 
 namespace TowerPortal.Controllers;
@@ -48,8 +49,7 @@ public class DynamicConfigController : PortalController
         string token = _dynamicConfigService.GameConfig.Require<string>("portalToken");
         string requestUrl = PlatformEnvironment.Url("/config/settings/new");
         
-        TempData["Success"] = "";
-        TempData["Failure"] = null;
+        ClearStatus();
         
         _apiService
             .Request(requestUrl)
@@ -63,14 +63,12 @@ public class DynamicConfigController : PortalController
             })
             .OnSuccess(((sender, apiResponse) =>
             {
-                TempData["Success"] = "Successfully created dynamic config settings.";
-                TempData["Failure"] = null;
+                SetStatus("Successfully created dynamic config settings.", RequestStatus.Success);
                 Log.Local(Owner.Nathan, "Request to dynamic-config-service update succeeded.");
             }))
             .OnFailure(((sender, apiResponse) =>
             {
-                TempData["Success"] = "Failed to create new dynamic config settings.";
-                TempData["Failure"] = true;
+                SetStatus("Failed to create new dynamic config settings.", RequestStatus.Error);
                 Log.Error(Owner.Nathan, "Request to dynamic-config-service update failed.", data: new
                 {
                     Response = apiResponse
@@ -98,8 +96,7 @@ public class DynamicConfigController : PortalController
         string token = _dynamicConfigService.GameConfig.Require<string>("portalToken");
         string requestUrl = PlatformEnvironment.Url("/config/settings/update");
         
-        TempData["Success"] = "";
-        TempData["Failure"] = null;
+        ClearStatus();
         
         _apiService
             //.Request(requestUrl + "?game=" + PlatformEnvironment.GameSecret + "&secret=" + PlatformEnvironment.RumbleSecret)
@@ -116,14 +113,12 @@ public class DynamicConfigController : PortalController
             })
             .OnSuccess(((sender, apiResponse) =>
             {
-                TempData["Success"] = "Successfully updated dynamic config settings.";
-                TempData["Failure"] = null;
+                SetStatus("Successfully updated dynamic config settings.", RequestStatus.Success);
                 Log.Local(Owner.Nathan, "Request to dynamic-config-service update succeeded.");
             }))
             .OnFailure(((sender, apiResponse) =>
             {
-                TempData["Success"] = "Failed to update dynamic config settings.";
-                TempData["Failure"] = true;
+                SetStatus("Failed to update dynamic config settings.", RequestStatus.Error);
                 Log.Error(Owner.Nathan, "Request to dynamic-config-service update failed.", data: new
                 {
                     Response = apiResponse
@@ -150,8 +145,7 @@ public class DynamicConfigController : PortalController
         string token = _dynamicConfigService.GameConfig.Require<string>("portalToken");
         string requestUrl = PlatformEnvironment.Url("/config/settings/value");
         
-        TempData["Success"] = "";
-        TempData["Failure"] = null;
+        ClearStatus();
         
         _apiService
             .Request(requestUrl)
@@ -160,14 +154,12 @@ public class DynamicConfigController : PortalController
             .AddAuthorization(token)
             .OnSuccess(((sender, apiResponse) =>
             {
-                TempData["Success"] = "Successfully updated dynamic config settings.";
-                TempData["Failure"] = null;
+                SetStatus("Successfully updated dynamic config settings.", RequestStatus.Success);
                 Log.Local(Owner.Nathan, "Request to dynamic-config-service update succeeded.");
             }))
             .OnFailure(((sender, apiResponse) =>
             {
-                TempData["Success"] = "Failed to update dynamic config settings.";
-                TempData["Failure"] = true;
+                SetStatus("Failed to update dynamic config settings.", RequestStatus.Error);
                 Log.Error(Owner.Nathan, "Request to dynamic-config-service update failed.", data: new
                 {
                     Response = apiResponse
@@ -195,8 +187,7 @@ public class DynamicConfigController : PortalController
         string token = _dynamicConfigService.GameConfig.Require<string>("portalToken");
         string requestUrl = PlatformEnvironment.Url("/config/settings/update");
         
-        TempData["Success"] = "";
-        TempData["Failure"] = null;
+        ClearStatus();
         
         _apiService
             .Request(requestUrl)
@@ -210,14 +201,12 @@ public class DynamicConfigController : PortalController
             })
             .OnSuccess(((sender, apiResponse) =>
             {
-                TempData["Success"] = "Successfully updated dynamic config settings.";
-                TempData["Failure"] = null;
+                SetStatus("Successfully updated dynamic config settings.", RequestStatus.Success);
                 Log.Local(Owner.Nathan, "Request to dynamic-config-service update succeeded.");
             }))
             .OnFailure(((sender, apiResponse) =>
             {
-                TempData["Success"] = "Failed to update dynamic config settings.";
-                TempData["Failure"] = true;
+                SetStatus("Failed to update dynamic config settings.", RequestStatus.Error);
                 Log.Error(Owner.Nathan, "Request to dynamic-config-service update failed.", data: new
                 {
                     Response = apiResponse

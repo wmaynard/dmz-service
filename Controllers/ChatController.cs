@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
+using TowerPortal.Enums;
 using TowerPortal.Models;
 using TowerPortal.Services;
 
@@ -27,22 +28,19 @@ public class ChatController : PortalController
       return View("Error");
     }
     
-    TempData["Success"] = "";
-    TempData["Failure"] = null;
+    ClearStatus();
   
     _apiService
         .Request(PlatformEnvironment.Url("/chat/admin/messages/sticky"))
         .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("chatToken"))
         .OnSuccess((sender, apiResponse) =>
         {
-            TempData["Success"] = "Successfully fetched chat announcements.";
-            TempData["Failure"] = null;
+            SetStatus("Successfully fetched chat announcements.", RequestStatus.Success);
             Log.Local(Owner.Nathan, "Request to chat-service succeeded.");
         })
         .OnFailure((sender, apiResponse) =>
         {
-            TempData["Success"] = "Failed to fetch chat announcements.";
-            TempData["Failure"] = true;
+            SetStatus("Failed to fetch chat announcements.", RequestStatus.Error);
             Log.Error(owner: Owner.Nathan, message: "Request to chat-service failed.", data: new
             {
                 Response = apiResponse
@@ -76,8 +74,7 @@ public class ChatController : PortalController
       return View("Error");
     }
     
-    TempData["Success"] = "";
-    TempData["Failure"] = null;
+    ClearStatus();
   
     _apiService
       .Request(PlatformEnvironment.Url("/chat/admin/messages/unsticky"))
@@ -88,14 +85,12 @@ public class ChatController : PortalController
                   })
       .OnSuccess((sender, apiResponse) =>
                  {
-                   TempData["Success"] = "Successfully expired chat announcement.";
-                   TempData["Failure"] = null;
+                   SetStatus("Successfully expired chat announcements.", RequestStatus.Success);
                    Log.Local(Owner.Nathan, "Request to chat-service succeeded.");
                  })
       .OnFailure((sender, apiResponse) =>
                  {
-                   TempData["Success"] = "Failed to expire chat announcement.";
-                   TempData["Failure"] = true;
+                   SetStatus("Failed to expire chat announcement.", RequestStatus.Error);
                    Log.Error(owner: Owner.Nathan, message: "Request to chat-service failed.", data: new
                                                                                                     {
                                                                                                       Response = apiResponse
@@ -115,22 +110,19 @@ public class ChatController : PortalController
       return View("Error");
     }
     
-    TempData["Success"] = "";
-    TempData["Failure"] = null;
+    ClearStatus();
   
     _apiService
       .Request(PlatformEnvironment.Url("/chat/admin/reports/list"))
       .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("chatToken"))
       .OnSuccess((sender, apiResponse) =>
                  {
-                   TempData["Success"] = "Successfully fetched chat reports.";
-                   TempData["Failure"] = null;
+                   SetStatus("Successfully fetched chat reports.", RequestStatus.Success);
                    Log.Local(Owner.Nathan, "Request to chat-service succeeded.");
                  })
       .OnFailure((sender, apiResponse) =>
                  {
-                   TempData["Success"] = "Failed to fetch chat reports.";
-                   TempData["Failure"] = true;
+                   SetStatus("Failed to fetch chat reports.", RequestStatus.Error);
                    Log.Error(owner: Owner.Nathan, message: "Request to chat-service failed.", data: new
                                                                                               {
                                                                                                 Response = apiResponse
@@ -175,8 +167,7 @@ public class ChatController : PortalController
       return View("Error");
     }
 
-    TempData["Success"] = "";
-    TempData["Failure"] = null;
+    ClearStatus();
 
     _apiService
       .Request(PlatformEnvironment.Url("/chat/admin/playerDetails"))
@@ -187,14 +178,12 @@ public class ChatController : PortalController
                   })
       .OnSuccess((sender, apiResponse) =>
                  {
-                   TempData["Success"] = "Successfully fetched chat player details.";
-                   TempData["Failure"] = null;
+                   SetStatus("Successfully fetched chat player details.", RequestStatus.Success);
                    Log.Local(Owner.Nathan, "Request to chat-service succeeded.");
                  })
       .OnFailure((sender, apiResponse) =>
                  {
-                   TempData["Success"] = "Failed to fetch chat player details.";
-                   TempData["Failure"] = true;
+                   SetStatus("Failed to fetch chat player details.", RequestStatus.Error);
                    Log.Error(owner: Owner.Nathan, message: "Request to chat-service failed.", data: new
                                                                                                     {
                                                                                                       Response =
@@ -247,8 +236,7 @@ public class ChatController : PortalController
       return View("Error");
     }
     
-    TempData["Success"] = "";
-    TempData["Failure"] = null;
+    ClearStatus();
         
     _apiService
       .Request(PlatformEnvironment.Url("/chat/admin/ban/player"))
@@ -261,14 +249,12 @@ public class ChatController : PortalController
                   })
       .OnSuccess(((sender, apiResponse) =>
                   {
-                    TempData["Success"] = "Successfully banned player.";
-                    TempData["Failure"] = null;
+                    SetStatus("Successfully banned player.", RequestStatus.Success);
                     Log.Local(Owner.Nathan, "Request to chat-service succeeded.");
                   }))
       .OnFailure(((sender, apiResponse) =>
                   {
-                    TempData["Success"] = "Failed to ban player.";
-                    TempData["Failure"] = true;
+                    SetStatus("Failed to ban player.", RequestStatus.Error);
                     Log.Error(Owner.Nathan, "Request to chat-service failed.", data: new
                                                                                      {
                                                                                        Response = apiResponse
@@ -289,8 +275,7 @@ public class ChatController : PortalController
       return View("Error");
     }
     
-    TempData["Success"] = "";
-    TempData["Failure"] = null;
+    ClearStatus();
         
     _apiService
       .Request(PlatformEnvironment.Url("/chat/admin/ban/lift"))
@@ -301,14 +286,12 @@ public class ChatController : PortalController
                   })
       .OnSuccess(((sender, apiResponse) =>
                   {
-                    TempData["Success"] = "Successfully unbanned player.";
-                    TempData["Failure"] = null;
+                    SetStatus("Successfully unbanned player.", RequestStatus.Success);
                     Log.Local(Owner.Nathan, "Request to chat-service succeeded.");
                   }))
       .OnFailure(((sender, apiResponse) =>
                   {
-                    TempData["Success"] = "Failed to unban player.";
-                    TempData["Failure"] = true;
+                    SetStatus("Failed to unban player.", RequestStatus.Error);
                     Log.Error(Owner.Nathan, "Request to chat-service failed.", data: new
                                                                                      {
                                                                                        Response = apiResponse
@@ -329,8 +312,7 @@ public class ChatController : PortalController
       return View("Error");
     }
     
-    TempData["Success"] = "";
-    TempData["Failure"] = null;
+    ClearStatus();
         
     _apiService
       .Request(PlatformEnvironment.Url("/chat/admin/reports/ignore"))
@@ -341,14 +323,12 @@ public class ChatController : PortalController
                   })
       .OnSuccess(((sender, apiResponse) =>
                   {
-                    TempData["Success"] = "Successfully ignored report.";
-                    TempData["Failure"] = null;
+                    SetStatus("Successfully ignored report.", RequestStatus.Success);
                     Log.Local(Owner.Nathan, "Request to chat-service succeeded.");
                   }))
       .OnFailure(((sender, apiResponse) =>
                   {
-                    TempData["Success"] = "Failed to ignore report.";
-                    TempData["Failure"] = true;
+                    SetStatus("Failed to ignore report.", RequestStatus.Error);
                     Log.Error(Owner.Nathan, "Request to chat-service failed.", data: new
                                                                                      {
                                                                                        Response = apiResponse
@@ -369,8 +349,7 @@ public class ChatController : PortalController
       return View("Error");
     }
     
-    TempData["Success"] = "";
-    TempData["Failure"] = null;
+    ClearStatus();
         
     _apiService
       .Request(PlatformEnvironment.Url("/chat/admin/reports/delete"))
@@ -381,14 +360,12 @@ public class ChatController : PortalController
                   })
       .OnSuccess(((sender, apiResponse) =>
                   {
-                    TempData["Success"] = "Successfully deleted report.";
-                    TempData["Failure"] = null;
+                    SetStatus("Successfully deleted report.", RequestStatus.Success);
                     Log.Local(Owner.Nathan, "Request to chat-service succeeded.");
                   }))
       .OnFailure(((sender, apiResponse) =>
                   {
-                    TempData["Success"] = "Failed to delete report.";
-                    TempData["Failure"] = true;
+                    SetStatus("Failed to delete report.", RequestStatus.Error);
                     Log.Error(Owner.Nathan, "Request to chat-service failed.", data: new
                                                                                        {
                                                                                          Response = apiResponse

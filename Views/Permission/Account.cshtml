@@ -14,14 +14,7 @@
 <h4>Account: @ViewData["Account"]</h4>
 
 <div class="error-container">
-    @if (TempData["Failure"] != null)
-    {
-        <h4 style="color: red">@TempData["Success"]</h4>
-    }
-    else
-    {
-        <h4 style="color: darkgreen">@TempData["Success"]</h4>
-    }
+    <h4 style="color: @(WasSuccessful ? "darkgreen" : "red")">@(StatusMessage)</h4>
 </div>
 
 <form class="permission-info" method="post" asp-controller="Permission" asp-action="UpdatePermissions" onsubmit="jsonPost(event, this)">
