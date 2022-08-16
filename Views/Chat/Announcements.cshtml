@@ -1,4 +1,3 @@
-@using TowerPortal.Utilities
 @inherits TowerPortal.Views.Shared.PortalView
 @{
     ViewData["Title"] = "Chat Announcements";
@@ -21,16 +20,16 @@
     <div class=send-announcements-container>
         <form class="announcement-info" method="post" asp-controller="Chat" asp-action="Announcements">
             <label for="newText" class="text">Text*</label>
-            <textarea id="newText" type="text" name="text" placeholder="Announcement text" disabled="@(!Permissions.Chat.Edit)" required></textarea>
+            <textarea id="newText" class="text" type="text" name="text" placeholder="Announcement text" rows="1" disabled="@(!Permissions.Chat.Edit)" required></textarea>
             <label for="newDuration" class="duration">Duration In Seconds (overrides expiration)</label>
-            <input id="newDuration" type="number" name="duration" placeholder="3600" disabled="@(!Permissions.Chat.Edit)"/>
+            <input id="newDuration" class="duration" type="number" name="duration" placeholder="3600" disabled="@(!Permissions.Chat.Edit)"/>
             <label for="newExpiration" class="expiration">Expiration (UTC)</label>
-            <input id="newExpiration" type="datetime-local" name="expiration" disabled="@(!Permissions.Chat.Edit)"/>
+            <input id="newExpiration" class="expiration" type="datetime-local" name="expiration" disabled="@(!Permissions.Chat.Edit)"/>
             <label for="newVisibleFrom" class="visibleFrom">Visible From (UTC)</label>
-            <input id="newVisibleFrom" type="datetime-local" name="visibleFrom" disabled="@(!Permissions.Chat.Edit)"/>
+            <input id="newVisibleFrom" class="visibleFrom" type="datetime-local" name="visibleFrom" disabled="@(!Permissions.Chat.Edit)"/>
             <label for="newLanguage" class="language">Language</label>
-            <input id="newLanguage" type="number" name="language" placeholder="en-US" disabled value="en-US"/>
-            <button id="sendAnnouncementButton" disabled="@(!Permissions.Chat.Edit)" type="submit">Send</button>
+            <input id="newLanguage" class="language" type="number" name="language" placeholder="en-US" disabled value="en-US"/>
+            <button id="sendAnnouncementButton" class="sendAnnouncementButton" disabled="@(!Permissions.Chat.Edit)" type="submit">Send</button>
         </form>
     </div>
     

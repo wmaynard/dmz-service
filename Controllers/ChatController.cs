@@ -80,8 +80,6 @@ public class ChatController : PortalController
     long? expirationUnix = ParseMessageData.ParseDateTime(expiration);
     long? visibleFromUnix = ParseMessageData.ParseDateTime(visibleFrom);
     
-
-    // StickyMessage stickyMessage = new StickyMessage(text: text, durationInSeconds: durationInSeconds, expiration: expirationUnix, visibleFrom: visibleFromUnix, language: language);
     Dictionary<string, dynamic> stickyMessageDict = new Dictionary<string, dynamic>();
     stickyMessageDict.Add("text", text);
     if (durationInSeconds != null)
