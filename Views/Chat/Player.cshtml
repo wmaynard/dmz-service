@@ -34,15 +34,11 @@
                 <div class="accountId invisible">
                     <input id="accountId" class="accountId" type="text" name="accountId" value="@(ViewData["AccountId"])">
                 </div>
-                <div class="reason">
-                    <label for="reason" class="reason">Reason</label>
-                    <input id="reason" class="reason" type="text" name="reason" disabled="@(!Permissions.Chat.Edit)">
-                </div>
-                <div class="duration">
-                    <label for="duration" class="duration">Duration (seconds)</label>
-                    <input id="duration" class="duration" type="number" name="duration" disabled="@(!Permissions.Chat.Edit)">
-                </div>
-                <button id="banButton" class="banButton" disabled="@(!Permissions.Chat.Edit)" type="submit">Ban</button>
+                <label for="reason" class="reason">Reason</label>
+                <input id="reason" class="reason" type="text" name="reason" disabled="@(!Permissions.Chat.Edit)">
+                <label for="duration" class="duration">Duration (seconds)</label>
+                <input id="duration" class="duration" type="number" name="duration" disabled="@(!Permissions.Chat.Edit)">
+                <button id="chatBanButton" class="chatBanButton" disabled="@(!Permissions.Chat.Edit)" type="submit">Ban</button>
             </form>
         </div>
         <div class="chat-unban-container">

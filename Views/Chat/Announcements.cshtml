@@ -17,6 +17,22 @@
         <h4 style="color: @(WasSuccessful ? "darkgreen" : "red")">@(StatusMessage)</h4>
     </div>
     
+    <div class=send-announcements-container>
+        <form class="announcement-info" method="post" asp-controller="Chat" asp-action="Announcements">
+            <label for="newText" class="text">Text*</label>
+            <textarea id="newText" class="text" type="text" name="text" placeholder="Announcement text" rows="1" disabled="@(!Permissions.Chat.Edit)" required></textarea>
+            <label for="newDuration" class="duration">Duration In Seconds (overrides expiration)</label>
+            <input id="newDuration" class="duration" type="number" name="duration" placeholder="3600" disabled="@(!Permissions.Chat.Edit)"/>
+            <label for="newExpiration" class="expiration">Expiration (UTC)</label>
+            <input id="newExpiration" class="expiration" type="datetime-local" name="expiration" disabled="@(!Permissions.Chat.Edit)"/>
+            <label for="newVisibleFrom" class="visibleFrom">Visible From (UTC)</label>
+            <input id="newVisibleFrom" class="visibleFrom" type="datetime-local" name="visibleFrom" disabled="@(!Permissions.Chat.Edit)"/>
+            <label for="newLanguage" class="language">Language</label>
+            <input id="newLanguage" class="language" type="number" name="language" placeholder="en-US" disabled value="en-US"/>
+            <button id="sendAnnouncementButton" class="sendAnnouncementButton" disabled="@(!Permissions.Chat.Edit)" type="submit">Send</button>
+        </form>
+    </div>
+    
     <div class="announcements-container">
         <h3>Chat Announcements</h3>
         <table id="chatAnnouncements" class="chat-announcements">
@@ -39,7 +55,7 @@
                     <td>@DateTimeOffset.FromUnixTimeSeconds(@announcement.Expiration)</td>
                     <td>@announcement.Type</td>
                     <td>
-                        <form class="chat-announcement-form" method="post" asp-controller="Chat" asp-action="Announcements">
+                        <form class="chat-announcement-form" method="post" asp-controller="Chat" asp-action="AnnouncementsExpire">
                             <div class="messageId invisible">
                                 <input id="messageId" class="messageId" type="text" name="messageId" value="@announcement.Id)">
                             </div>
