@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
 using Rumble.Platform.Common.Services;
@@ -10,6 +9,7 @@ using Rumble.Platform.Common.Utilities;
 using TowerPortal.Enums;
 using TowerPortal.Models;
 using TowerPortal.Services;
+using TowerPortal.Utilities;
 
 namespace TowerPortal.Controllers;
 
@@ -67,7 +67,7 @@ public class ChatController : PortalController
 
   [HttpPost]
   [Route("announcements")]
-  public async Task<IActionResult> Announcements(string text, long? durationInSeconds, long? expiration, long? visibleFrom, string language)
+  public async Task<IActionResult> Announcements(string text, long? durationInSeconds, string expiration, string visibleFrom, string language)
   {
     // Checking access permissions
     if (!Permissions.Chat.View_Page || !Permissions.Chat.Edit)
@@ -77,7 +77,34 @@ public class ChatController : PortalController
     
     ClearStatus();
 
-    StickyMessage stickyMessage = new StickyMessage(text: text, durationInSeconds: durationInSeconds, expiration: expiration, visibleFrom: visibleFrom, language: language);
+    long? expirationUnix = ParseMessageData.ParseDateTime(expiration);
+    long? visibleFromUnix = ParseMessageData.ParseDateTime(visibleFrom);
+    
+
+    // StickyMessage stickyMessage = new StickyMessage(text: text, durationInSeconds: durationInSeconds, expiration: expirationUnix, visibleFrom: visibleFromUnix, language: language);
+    Dictionary<string, dynamic> stickyMessageDict = new Dictionary<string, dynamic>();
+    stickyMessageDict.Add("text", text);
+    if (durationInSeconds != null)
+    {
+      stickyMessageDict.Add("duration", durationInSeconds);
+    }
+
+    if (expirationUnix != 0)
+    {
+      stickyMessageDict.Add("expiration", expirationUnix);
+    }
+
+    if (visibleFromUnix != 0)
+    {
+      stickyMessageDict.Add("visibleFrom", visibleFromUnix);
+    }
+
+    if (language != null)
+    {
+      stickyMessageDict.Add("language", language);
+    }
+    
+    GenericData stickyMessage = GenericData.FromDictionary(stickyMessageDict);
   
     _apiService
       .Request(PlatformEnvironment.Url("/chat/admin/messages/sticky"))

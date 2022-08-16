@@ -42,9 +42,20 @@ public class StickyMessage : PlatformDataModel
   public StickyMessage(string text, long? durationInSeconds, long? expiration, long? visibleFrom, string language = "en-US")
   {
     Text = text;
-    DurationInSeconds = durationInSeconds;
-    Expiration = expiration;
-    VisibleFrom = visibleFrom;
+    if (durationInSeconds != null)
+    {
+      DurationInSeconds = durationInSeconds;
+    }
+
+    if (expiration != null)
+    {
+      Expiration = expiration;
+    }
+
+    if (visibleFrom != null)
+    {
+      VisibleFrom = visibleFrom;
+    }
     Language = language;
   }
 }
