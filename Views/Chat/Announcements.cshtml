@@ -39,7 +39,7 @@
                     <td>@DateTimeOffset.FromUnixTimeSeconds(@announcement.Expiration)</td>
                     <td>@announcement.Type</td>
                     <td>
-                        <form class="chat-announcement-form" method="post" asp-controller="Chat" asp-action="Announcements">
+                        <form class="chat-announcement-form" method="post" asp-controller="Chat" asp-action="AnnouncementsExpire">
                             <div class="messageId invisible">
                                 <input id="messageId" class="messageId" type="text" name="messageId" value="@announcement.Id)">
                             </div>

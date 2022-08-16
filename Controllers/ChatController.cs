@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
 using Rumble.Platform.Common.Services;
@@ -66,7 +67,46 @@ public class ChatController : PortalController
 
   [HttpPost]
   [Route("announcements")]
-  public async Task<IActionResult> Announcements(string messageId)
+  public async Task<IActionResult> Announcements(string text, long? durationInSeconds, long? expiration, long? visibleFrom, string language)
+  {
+    // Checking access permissions
+    if (!Permissions.Chat.View_Page || !Permissions.Chat.Edit)
+    {
+      return View("Error");
+    }
+    
+    ClearStatus();
+
+    StickyMessage stickyMessage = new StickyMessage(text: text, durationInSeconds: durationInSeconds, expiration: expiration, visibleFrom: visibleFrom, language: language);
+  
+    _apiService
+      .Request(PlatformEnvironment.Url("/chat/admin/messages/sticky"))
+      .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("chatToken"))
+      .SetPayload(new GenericData
+                  {
+                    {"message", stickyMessage}
+                  })
+      .OnSuccess((sender, apiResponse) =>
+                 {
+                   SetStatus("Successfully created chat announcement.", RequestStatus.Success);
+                   Log.Local(Owner.Nathan, "Request to chat-service succeeded.");
+                 })
+      .OnFailure((sender, apiResponse) =>
+                 {
+                   SetStatus("Failed to create chat announcement.", RequestStatus.Error);
+                   Log.Error(owner: Owner.Nathan, message: "Request to chat-service failed.", data: new
+                                                                                                    {
+                                                                                                      Response = apiResponse
+                                                                                                    });
+                 })
+      .Post(out GenericData response, out int code);
+
+    return RedirectToAction("Announcements");
+  }
+  
+  [HttpPost]
+  [Route("announcements/expire")]
+  public async Task<IActionResult> AnnouncementsExpire(string messageId)
   {
     // Checking access permissions
     if (!Permissions.Chat.View_Page || !Permissions.Chat.Edit)
@@ -85,7 +125,7 @@ public class ChatController : PortalController
                   })
       .OnSuccess((sender, apiResponse) =>
                  {
-                   SetStatus("Successfully expired chat announcements.", RequestStatus.Success);
+                   SetStatus("Successfully expired chat announcement.", RequestStatus.Success);
                    Log.Local(Owner.Nathan, "Request to chat-service succeeded.");
                  })
       .OnFailure((sender, apiResponse) =>
