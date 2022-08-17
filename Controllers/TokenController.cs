@@ -6,9 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
-using Rumble.Platform.Common.Web;
 using TowerPortal.Enums;
 using TowerPortal.Models;
+using TowerPortal.Models.Portal;
+using TowerPortal.Models.Token;
 using TowerPortal.Services;
 using TowerPortal.Utilities;
 

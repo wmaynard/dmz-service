@@ -1,11 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Utilities;
 
-namespace TowerPortal.Models;
+namespace TowerPortal.Models.Chat;
 
 [BsonIgnoreExtraElements]
 public class ChatReport : PlatformDataModel

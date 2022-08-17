@@ -10,8 +10,7 @@ using RCL.Logging;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using TowerPortal.Enums;
-using TowerPortal.Interfaces;
-using TowerPortal.Models;
+using TowerPortal.Models.Player;
 using TowerPortal.Services;
 
 namespace TowerPortal.Controllers;

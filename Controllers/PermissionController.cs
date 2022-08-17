@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,8 +9,8 @@ using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using TowerPortal.Enums;
-using TowerPortal.Models;
 using TowerPortal.Models.Permissions;
+using TowerPortal.Models.Portal;
 using TowerPortal.Services;
 
 namespace TowerPortal.Controllers;

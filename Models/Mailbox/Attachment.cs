@@ -2,9 +2,8 @@ using System;
 using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
-using Rumble.Platform.Common.Web;
 
-namespace TowerPortal.Models;
+namespace TowerPortal.Models.Mailbox;
 
 [BsonIgnoreExtraElements]
 public class Attachment : PlatformDataModel

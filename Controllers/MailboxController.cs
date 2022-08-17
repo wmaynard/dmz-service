@@ -7,7 +7,8 @@ using RCL.Logging;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using TowerPortal.Enums;
-using TowerPortal.Models;
+using TowerPortal.Extensions;
+using TowerPortal.Models.Mailbox;
 using TowerPortal.Services;
 using TowerPortal.Utilities;
 

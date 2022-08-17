@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Newtonsoft.Json;
 using TowerPortal.Enums;
 
-namespace TowerPortal.Utilities;
+namespace TowerPortal.Extensions;
 
 public static class TempDataExtensions
 {

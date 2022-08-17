@@ -9,8 +9,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
 using Rumble.Platform.Common.Utilities;
-using TowerPortal.Models;
 using TowerPortal.Models.Permissions;
+using TowerPortal.Models.Portal;
 using TowerPortal.Services;
 
 namespace TowerPortal.Controllers;

@@ -1,6 +1,4 @@
-using System;
-
-namespace TowerPortal.Models;
+namespace TowerPortal.Models.Portal;
 
 public class ErrorViewModel
 {

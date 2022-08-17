@@ -1,4 +1,4 @@
-namespace TowerPortal.Models;
+namespace TowerPortal.Models.Player;
 
 public class DetailsItems
 {
