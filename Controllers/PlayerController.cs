@@ -11,7 +11,6 @@ using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using TowerPortal.Enums;
 using TowerPortal.Models.Player;
-using TowerPortal.Services;
 
 namespace TowerPortal.Controllers;
 

@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
 using Rumble.Platform.Common.Exceptions;
-using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using TowerPortal.Enums;
 using TowerPortal.Models.Permissions;

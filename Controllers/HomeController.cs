@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Rumble.Platform.Common.Services;
-using TowerPortal.Models;
 using TowerPortal.Models.Portal;
 using TowerPortal.Services;
 
