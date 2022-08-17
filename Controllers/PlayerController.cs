@@ -21,7 +21,6 @@ public class PlayerController : PortalController
 {
 #pragma warning disable CS0649
     private readonly DynamicConfigService _dynamicConfigService;
-    private readonly AccountService _accountService;
 #pragma warning restore CS0649
     
     [Route("search")]

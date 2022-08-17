@@ -18,10 +18,9 @@ namespace TowerPortal.Controllers;
 [Route("portal/mailbox")]
 public class MailboxController : PortalController
 {
-#pragma warning disable
+#pragma warning disable CS0649
     private readonly DynamicConfigService _dynamicConfigService;
-    private readonly AccountService _accountService;
-#pragma warning restore
+#pragma warning restore CS0649
 
     // Global message routes
     

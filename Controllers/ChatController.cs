@@ -17,8 +17,9 @@ namespace TowerPortal.Controllers;
 [Route("/portal/chat")]
 public class ChatController : PortalController
 {
+#pragma warning disable CS0649
   private readonly DynamicConfigService _dynamicConfigService;
-  private readonly AccountService       _accountService;
+#pragma warning restore CS0649
 
   [Route("announcements")]
   public async Task<IActionResult> Announcements()

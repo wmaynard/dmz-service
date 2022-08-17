@@ -19,9 +19,10 @@ namespace TowerPortal.Controllers;
 [Route("portal/token")]
 public class TokenController : PortalController
 {
+#pragma warning disable CS0649
     private readonly DynamicConfigService _dynamicConfigService;
-    private readonly AccountService _accountService;
     private readonly TokenLogService _tokenLogService;
+#pragma warning restore CS0649
 
     [Route("ban")]
     public async Task<IActionResult> Ban()

@@ -19,8 +19,9 @@ namespace TowerPortal.Controllers;
 [Route("portal/permission")]
 public class PermissionController : PortalController
 {
-    private readonly DynamicConfigService _dynamicConfigService;
+#pragma warning disable CS0649
     private readonly AccountService _accountService;
+#pragma warning restore CS0649
 
     [Route("list")]
     public async Task<IActionResult> List()
