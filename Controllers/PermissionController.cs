@@ -22,6 +22,7 @@ public class PermissionController : PortalController
     private readonly AccountService _accountService;
 #pragma warning restore CS0649
 
+    // Lists all users
     [Route("list")]
     public async Task<IActionResult> List()
     {
@@ -53,6 +54,7 @@ public class PermissionController : PortalController
         return View();
     }
 
+    // Displays user permissions
     [Route("account")]
     public async Task<IActionResult> Account(string id)
     {
@@ -75,6 +77,7 @@ public class PermissionController : PortalController
         return View();
     }
 
+    // Modifies user permissions
     // TODO: This method should be accepting permission-related classes as parameters, not a ton of strings. 
     [HttpPost]
     [Route("account")]

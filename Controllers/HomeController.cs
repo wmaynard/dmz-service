@@ -14,28 +14,12 @@ public class HomeController : PortalController
     private readonly AccountService _accountService;
 #pragma warning restore CS0649
 
+    // Loads home page
     [AllowAnonymous]
     [Route("")]
     [Route("index")]
     public IActionResult Index()
     {
-        // Checking access permissions
-        Account account = Account.FromGoogleClaims(User.Claims);
-        Account mongoAccount = _accountService.FindOne(mongo => mongo.Email == account.Email);
-        if (mongoAccount == null)
-        {
-            return View();
-        }
-
-        mongoAccount.UpdateRolesToPermissions(); // Temporary to update existing accounts from roles to permissions
-        
-        // Hard coded admin upon login
-        if (mongoAccount.Email == "nathan.mac@rumbleentertainment.com")
-        {
-            // mongoAccount.Permissions.SetAdmin();
-            _accountService.Update(mongoAccount);
-        }
-
         return View();
     }
 

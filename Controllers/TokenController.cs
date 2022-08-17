@@ -23,6 +23,7 @@ public class TokenController : PortalController
     private readonly TokenLogService _tokenLogService;
 #pragma warning restore CS0649
 
+    // Loads page
     [Route("ban")]
     public async Task<IActionResult> Ban()
     {
@@ -49,8 +50,7 @@ public class TokenController : PortalController
         return View();
     }
     
-    // post for main
-
+    // Request to ban/unban/logout player(s)
     [HttpPost]
     [Route("ban")]
     public async Task<IActionResult> Ban(string playerIds, string action, string unbanTime, string note)

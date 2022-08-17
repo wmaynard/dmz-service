@@ -9,7 +9,6 @@ using Rumble.Platform.Common.Utilities;
 using TowerPortal.Enums;
 using TowerPortal.Extensions;
 using TowerPortal.Models.Mailbox;
-using TowerPortal.Services;
 using TowerPortal.Utilities;
 
 namespace TowerPortal.Controllers;
@@ -22,7 +21,7 @@ public class MailboxController : PortalController
     private readonly DynamicConfigService _dynamicConfigService;
 #pragma warning restore CS0649
 
-    // Global message routes
+    #region Global message routes
     
     // Fetch all global messages
     [Route("global")]
@@ -101,7 +100,6 @@ public class MailboxController : PortalController
             return View("Error");
         }
         
-        
         ClearStatus();
         
         try
@@ -154,54 +152,7 @@ public class MailboxController : PortalController
             Log.Error(owner: Owner.Nathan, message: "Error occurred when sending global message.", data: e.Message);
         }
         
-        _apiService
-            .Request(PlatformEnvironment.Url("/mail/admin/global/messages"))
-            .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("mailToken"))
-            .OnSuccess(((sender, apiResponse) =>
-            {
-                Log.Local(Owner.Nathan, "Request to mailbox-service succeeded.");
-            }))
-            .OnFailure(((sender, apiResponse) =>
-            {
-                Log.Error(Owner.Nathan, "Request to mailbox-service failed.", data: new
-                {
-                    Response = apiResponse
-                });
-            }))
-            .Get(out GenericData response, out int code);
-        
-        List<GlobalMessage> globalMessages = new List<GlobalMessage>();
-
-        try
-        {
-            globalMessages = response.Require<List<GlobalMessage>>(key: "globalMessages");
-        }
-        catch (Exception e)
-        {
-            Log.Error(owner: Owner.Nathan, message: "Failed to parse response from mailbox-service.", data: e);
-        }
-
-        List<GlobalMessage> activeGlobalMessagesList = new List<GlobalMessage>();
-        List<GlobalMessage> expiredGlobalMessagesList = new List<GlobalMessage>();
-
-        foreach (GlobalMessage globalMessage in globalMessages)
-        {
-            if (!globalMessage.IsExpired)
-            {
-                activeGlobalMessagesList.Add(globalMessage);
-            } else if (globalMessage.IsExpired)
-            {
-                expiredGlobalMessagesList.Add(globalMessage);
-            }
-        }
-        
-        ViewData["Today"] = DefaultDateTime.UtcDateTimeString();
-        ViewData["Week"] = DefaultDateTime.UtcDateTimeString(days: 7);
-
-        ViewData["ActiveGlobalMessages"] = activeGlobalMessagesList;
-        ViewData["ExpiredGlobalMessages"] = expiredGlobalMessagesList;
-        
-        return View();
+        return RedirectToAction("Global");
     }
 
     // Edit global messages
@@ -371,7 +322,6 @@ public class MailboxController : PortalController
         TempData["EditId"] = id;
         TempData["EditSubject"] = subject;
         TempData["EditBody"] = body;
-        //TempData["EditAttachments"] = attachments;
         TempData.Put("EditAttachments", attachments);
         TempData["EditVisibleFrom"] = visibleFrom;
         TempData["EditExpiration"] = expiration;
@@ -422,9 +372,10 @@ public class MailboxController : PortalController
         return RedirectToAction("Global");
     }
     
+    #endregion
     
     
-    // Group / Direct message routes
+    #region Group / Direct message routes
     
     // View form to send direct messages
     [Route("group")]
@@ -585,4 +536,6 @@ public class MailboxController : PortalController
         
         return View();
     }
+    
+    #endregion
 }

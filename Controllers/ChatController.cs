@@ -8,7 +8,6 @@ using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using TowerPortal.Enums;
 using TowerPortal.Models.Chat;
-using TowerPortal.Services;
 using TowerPortal.Utilities;
 
 namespace TowerPortal.Controllers;
@@ -21,6 +20,9 @@ public class ChatController : PortalController
   private readonly DynamicConfigService _dynamicConfigService;
 #pragma warning restore CS0649
 
+  #region Announcements
+  
+  // Fetches existing announcements
   [Route("announcements")]
   public async Task<IActionResult> Announcements()
   {
@@ -66,6 +68,7 @@ public class ChatController : PortalController
     return View();
   }
 
+  // Creating a new announcement
   [HttpPost]
   [Route("announcements")]
   public async Task<IActionResult> Announcements(string text, long? durationInSeconds, string expiration, string visibleFrom, string language)
@@ -130,6 +133,7 @@ public class ChatController : PortalController
     return RedirectToAction("Announcements");
   }
   
+  // Expiring an announcement; no functionality to delete
   [HttpPost]
   [Route("announcements/expire")]
   public async Task<IActionResult> AnnouncementsExpire(string messageId)
@@ -167,6 +171,11 @@ public class ChatController : PortalController
     return RedirectToAction("Announcements");
   }
   
+  #endregion
+  
+  #region Reports
+  
+  // Fetches all reports
   [Route("reports")]
   public async Task<IActionResult> Reports()
   {
@@ -211,7 +220,26 @@ public class ChatController : PortalController
   
     return View();
   }
+  
+  #endregion
 
+  #region Player specific
+  
+  // Searching for a player
+  [HttpPost]
+  [Route("playerSearch")]
+  public async Task<IActionResult> PlayerSearch(string accountId)
+  {
+    // Checking access permissions
+    if (!Permissions.Chat.View_Page)
+    {
+      return View("Error");
+    }
+
+    return RedirectToAction("Player", new { accountId = accountId });
+  }
+  
+  // Loads player page for chat reports/bans
   [Route("player")]
   public async Task<IActionResult> Player()
   {
@@ -224,6 +252,7 @@ public class ChatController : PortalController
     return View();
   }
 
+  // Specific player chat reports/bans
   [Route("player/{accountId}")]
   public async Task<IActionResult> Player(string accountId)
   {
@@ -279,19 +308,7 @@ public class ChatController : PortalController
     return View();
   }
 
-  [HttpPost]
-  [Route("playerSearch")]
-  public async Task<IActionResult> PlayerSearch(string accountId)
-  {
-    // Checking access permissions
-    if (!Permissions.Chat.View_Page)
-    {
-      return View("Error");
-    }
-
-    return RedirectToAction("Player", new { accountId = accountId });
-  }
-
+  // Chat banning a player
   [HttpPost]
   [Route("ban")]
   public async Task<IActionResult> Ban(string accountId, string reason, long? duration)
@@ -331,6 +348,7 @@ public class ChatController : PortalController
     return RedirectToAction("Player", new { accountId = accountId });
   }
   
+  // Chat unbanning a player
   [HttpPost]
   [Route("unban")]
   public async Task<IActionResult> Unban(string accountId)
@@ -368,6 +386,7 @@ public class ChatController : PortalController
     return RedirectToAction("Player", new { accountId = accountId });
   }
   
+  // Ignore report for a player
   [HttpPost]
   [Route("ignore")]
   public async Task<IActionResult> Ignore(string accountId, string reportId)
@@ -405,6 +424,7 @@ public class ChatController : PortalController
     return RedirectToAction("Player", new { accountId = accountId });
   }
   
+  // Delete report for a player
   [HttpPost]
   [Route("delete")]
   public async Task<IActionResult> Delete(string accountId, string reportId)
@@ -441,4 +461,6 @@ public class ChatController : PortalController
   
     return RedirectToAction("Player", new { accountId = accountId });
   }
+  
+  #endregion
 }

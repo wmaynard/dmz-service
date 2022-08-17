@@ -22,6 +22,9 @@ public class PlayerController : PortalController
     private readonly DynamicConfigService _dynamicConfigService;
 #pragma warning restore CS0649
     
+    #region Player search
+    
+    // Search for player
     [Route("search")]
     public async Task<IActionResult> Search(string query)
     {
@@ -75,6 +78,11 @@ public class PlayerController : PortalController
         return View();
     }
     
+    #endregion
+    
+    #region Player details
+    
+    // Displays player details
     [Route("details")]
     public async Task<IActionResult> Details(string id)
     {
@@ -144,6 +152,7 @@ public class PlayerController : PortalController
         return View();
     }
 
+    // Sends request to edit player screenname
     [HttpPost]
     [Route("editScreenname")]
     public async Task<IActionResult> EditScreenname(string accountId, string editScreenname)
@@ -182,10 +191,10 @@ public class PlayerController : PortalController
         return RedirectToAction("Details", new { id = accountId });
     }
     
+    // Sends request to modify player wallet quantities
     [HttpPost]
     [Route("EditWallet")]
     public async Task<IActionResult> EditWallet(IFormCollection collection)
-    // hard coded in currencies, possibly subject to changes
     {
         // Checking access permissions
         if (!Permissions.Player.View_Page || !Permissions.Player.Edit)
@@ -273,4 +282,6 @@ public class PlayerController : PortalController
 
         return RedirectToAction("Details", new { id = aid });
     }
+    
+    #endregion
 }
