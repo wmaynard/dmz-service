@@ -219,6 +219,8 @@ public class MailboxController : PortalController
 
             internalNote ??= oldInternalNote;
 
+            List<Message> previousVersions = new List<Message>();
+
             long? forAccountsBeforeUnix = null;
             if (forAccountsBefore == null)
             {
@@ -228,23 +230,29 @@ public class MailboxController : PortalController
             {
                 forAccountsBeforeUnix = ParseMessageData.ParseDateTime(forAccountsBefore);
             }
+
+            GenericData message = new GenericData
+            {
+              {"id", messageId},
+              {"subject", subject},
+              {"body", body},
+              {"attachments", attachmentsList},
+              {"expiration", expirationUnix},
+              {"visibleFrom", visibleFromUnix},
+              {"icon", icon},
+              {"banner", banner},
+              {"status", status},
+              {"internalNote", internalNote},
+              {"previousVersions", previousVersions},
+              {"forAccountsBefore", forAccountsBeforeUnix}
+            };
             
             _apiService
                 .Request(PlatformEnvironment.Url("/mail/admin/global/messages/edit"))
                 .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("mailToken"))
                 .SetPayload(new GenericData
                 {
-                    {"messageId", messageId},
-                    {"subject", subject},
-                    {"body", body},
-                    {"attachments", attachmentsList},
-                    {"expiration", expirationUnix},
-                    {"visibleFrom", visibleFromUnix},
-                    {"icon", icon},
-                    {"banner", banner},
-                    {"status", status},
-                    {"internalNote", internalNote},
-                    {"forAccountsBefore", forAccountsBeforeUnix}
+                    {"globalMessage", message}
                 })
                 .OnSuccess(((sender, apiResponse) =>
                 {

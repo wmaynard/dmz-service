@@ -31,7 +31,7 @@ public class PermissionController : PortalController
         ClearStatus();
 
         // Checking access permissions
-        if (!Permissions.Portal.ManagePermissions)
+        if (!Permissions.Portal.SuperUser && !Permissions.Portal.ManagePermissions)
         {
             return View("Error");
         }
@@ -59,7 +59,7 @@ public class PermissionController : PortalController
     public async Task<IActionResult> Account(string id)
     {
         // Checking access permissions
-        if (!Permissions.Portal.ManagePermissions)
+        if (!Permissions.Portal.SuperUser && !Permissions.Portal.ManagePermissions)
         {
             return View("Error");
         }

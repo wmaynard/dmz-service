@@ -10,10 +10,6 @@ namespace TowerPortal.Controllers;
 [Route("portal")]
 public class HomeController : PortalController
 {
-#pragma warning disable CS0649
-    private readonly AccountService _accountService;
-#pragma warning restore CS0649
-
     // Loads home page
     [AllowAnonymous]
     [Route("")]
