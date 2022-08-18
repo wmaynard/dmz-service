@@ -10,32 +10,19 @@ namespace TowerPortal.Controllers;
 [Route("portal/player"), RequireAuth(AuthType.ADMIN_TOKEN)]
 public class PlayerController : PortalController
 {
-    
     [HttpGet, Route("search")]
-    public ActionResult Search(string query)
+    public ActionResult Search()
     {
         Require(Permissions.Player.Search);
 
         return Forward("/player/v2/admin/search");
     }
     
-    [Route("details")]
-    public async Task<IActionResult> Details(string id)
+    [HttpGet, Route("details")]
+    public ActionResult Details()
     {
-        throw new NotImplementedException();
-    }
+        Require(Permissions.Player.View_Page);
 
-    [HttpPost]
-    [Route("editScreenname")]
-    public async Task<IActionResult> EditScreenname(string accountId, string editScreenname)
-    {
-        throw new NotImplementedException();
-    }
-    
-    [HttpPost]
-    [Route("EditWallet")]
-    public async Task<IActionResult> EditWallet(IFormCollection collection)
-    {
-        throw new NotImplementedException();
+        return Forward("/player/v2/admin/details");
     }
 }
