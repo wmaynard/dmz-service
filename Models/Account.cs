@@ -1,9 +1,7 @@
-using System.Collections.Generic;
-using System.Security.Claims;
+using System.Linq;
 using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
-using Rumble.Platform.Common.Web;
 using TowerPortal.Models.Permissions;
 
 namespace TowerPortal.Models;
@@ -25,15 +23,41 @@ public class Account : PlatformCollectionDocument
 
     [BsonElement(DB_KEY_NAME)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_NAME)]
-    public string Name => $"{FirstName} {FamilyName}";
-    
-    [BsonElement(DB_KEY_FIRST_NAME)]
+    public string Name { get; set; }
+
+    [BsonIgnore]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_GIVEN_NAME), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public string FirstName { get; private set; }
+    public string FirstName
+    {
+        get
+        {
+            try
+            {
+                return Name.Split(separator: ' ').First();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+    }
     
-    [BsonElement(DB_KEY_LAST_NAME)]
+    [BsonIgnore]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_FAMILY_NAME), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public string FamilyName { get; private set; }
+    public string FamilyName
+    {
+        get
+        {
+            try
+            {
+                return Name.Split(separator: ' ').Last();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+    }
 
     [BsonElement(DB_KEY_EMAIL)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_EMAIL)]
@@ -45,34 +69,10 @@ public class Account : PlatformCollectionDocument
 
     public Account() => Permissions = new Passport();
 
-    public void UpdateRolesToPermissions() => Permissions ??= new Passport();
-
-    public static Account FromGoogleClaims(IEnumerable<Claim> claims)
+    public static Account FromSsoData(SsoData data) => new Account
     {
-        if (claims == null)
-            return null;
-        
-        Account output = new Account();
-        
-        foreach (Claim claim in claims)
-        {
-            string type = claim.Type;
-
-            if (type.EndsWith("/nameidentifier") || type.EndsWith("/name"))
-                continue;
-            
-            if (type.EndsWith("/givenname"))
-                output.FirstName = claim.Value.Trim();
-            else if (type.EndsWith("/surname"))
-                output.FamilyName = claim.Value.Trim();
-            else if (type.EndsWith("/emailaddress"))
-                output.Email = claim.Value.Trim();
-        }
-        
-        return output;
-    }
-    
-    // name
-    // email
-    // roles
+        Name = data.Name,
+        Email = data.Email,
+        Permissions = Passport.GetDefaultPermissions(data)
+    };
 }

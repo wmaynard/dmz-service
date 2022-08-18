@@ -1,7 +1,10 @@
 using System.Collections.Generic;
 using MongoDB.Driver;
+using Rumble.Platform.Common.Exceptions;
+using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Web;
+using TowerPortal.Exceptions;
 using TowerPortal.Models;
 using TowerPortal.Models.Permissions;
 
@@ -14,14 +17,21 @@ public class AccountService : PlatformMongoService<Account>
 
     public Account GetByEmail(string email) => _collection
         .Find(filter: account => account.Email == email)
-        .FirstOrDefault();
-
-    public List<Account> GetAllAccounts() => _collection
-        .Find(filter: account => true)
-        .ToList();
+        .FirstOrDefault()
+        ?? throw new PlatformException("No account found for specified email address.");
 
     public long UpdatePassport(string accountId, Passport passport) => _collection.UpdateOne(
         filter: account => account.Id == accountId,
         update: Builders<Account>.Update.Set(field: account => account.Permissions, passport)
     ).ModifiedCount;
+
+    public Account GoogleLogin(SsoData data) => FindOne(filter: account => account.Email == data.Email) 
+        ?? Create(Account.FromSsoData(data));
+    
+    public Account FindByToken(TokenInfo token) => token?.Email != null
+        ? _collection
+            .Find(account => account.Email == token.Email)
+            .FirstOrDefault()
+            ?? throw new AccountNotFoundException(token)
+        : throw new InvalidTokenException(token?.Authorization, HttpContext.Request.Path.ToString());
 }
