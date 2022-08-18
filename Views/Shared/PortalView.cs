@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Razor;
@@ -7,7 +6,6 @@ using TowerPortal.Exceptions;
 using TowerPortal.Extensions;
 using TowerPortal.Interfaces;
 using TowerPortal.Models.Permissions;
-using TowerPortal.Utilities;
 
 namespace TowerPortal.Views.Shared;
 

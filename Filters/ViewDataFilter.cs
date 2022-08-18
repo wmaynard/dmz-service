@@ -8,6 +8,7 @@ using TowerPortal.Controllers;
 using TowerPortal.Extensions;
 using TowerPortal.Models;
 using TowerPortal.Models.Permissions;
+using TowerPortal.Models.Portal;
 using TowerPortal.Services;
 
 namespace TowerPortal.Filters;

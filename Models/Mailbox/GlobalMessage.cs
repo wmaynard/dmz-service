@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace TowerPortal.Models;
+namespace TowerPortal.Models.Mailbox;
 
 [BsonIgnoreExtraElements]
 public class GlobalMessage : Message

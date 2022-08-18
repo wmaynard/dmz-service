@@ -7,7 +7,6 @@ using Rumble.Platform.Common.Models.Config;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using TowerPortal.Enums;
-using TowerPortal.Services;
 
 namespace TowerPortal.Controllers;
 
@@ -15,9 +14,11 @@ namespace TowerPortal.Controllers;
 [Route("portal/config")]
 public class DynamicConfigController : PortalController
 {
-    private readonly AccountService       _accountService;
+#pragma warning disable CS0649
     private readonly DynamicConfigService _dynamicConfigService;
+#pragma warning restore CS0649
 
+    // Loads page
     [Route("edit")]
     public async Task<IActionResult> Edit()
     {
@@ -33,6 +34,7 @@ public class DynamicConfigController : PortalController
         return View();
     }
 
+    // Creates a new section
     [HttpPost]
     [Route("newSection")]
     public async Task<IActionResult> NewSection(IFormCollection collection)
@@ -79,6 +81,7 @@ public class DynamicConfigController : PortalController
         return RedirectToAction("Edit");
     }
     
+    // Creates a new variable under a section
     [HttpPost]
     [Route("newVariable")]
     public async Task<IActionResult> NewVariable(IFormCollection collection)
@@ -99,7 +102,6 @@ public class DynamicConfigController : PortalController
         ClearStatus();
         
         _apiService
-            //.Request(requestUrl + "?game=" + PlatformEnvironment.GameSecret + "&secret=" + PlatformEnvironment.RumbleSecret)
             .Request(requestUrl)
             .AddParameter(key: "game", value: PlatformEnvironment.GameSecret)
             .AddParameter(key: "secret", value: PlatformEnvironment.RumbleSecret)
@@ -129,6 +131,7 @@ public class DynamicConfigController : PortalController
         return RedirectToAction("Edit");
     }
 
+    // Deletes a key value pair under a section
     [HttpPost]
     [Route("delete")]
     public async Task<IActionResult> Delete(IFormCollection collection)
@@ -170,6 +173,7 @@ public class DynamicConfigController : PortalController
         return RedirectToAction("Edit");
     }
 
+    // Edits a value for a key-value pair under a section
     [HttpPost]
     [Route("edit")]
     public async Task<IActionResult> Edit(IFormCollection collection)
@@ -217,6 +221,7 @@ public class DynamicConfigController : PortalController
         return RedirectToAction("edit");
     }
     
+    // Displays overlay for creating a new section
     [Route("showNewSection")]
     public IActionResult ShowNewSectionOverlay()
     {
@@ -228,6 +233,7 @@ public class DynamicConfigController : PortalController
         return RedirectToAction("Edit");
     }
     
+    // Displays overlay for adding a new variable under a section
     [Route("showNewVariable")]
     public IActionResult ShowNewVariableOverlay(string name)
     {
@@ -241,6 +247,7 @@ public class DynamicConfigController : PortalController
         return RedirectToAction("Edit");
     }
     
+    // Displays overlay for confirming a key-value pair deletion
     [Route("showDelete")]
     public IActionResult ShowDeleteOverlay(string name, string key, string value)
     {
@@ -256,6 +263,7 @@ public class DynamicConfigController : PortalController
         return RedirectToAction("Edit");
     }
 
+    // Hides overlays
     [Route("hideOverlay")]
     public IActionResult HideOverlay()
     {

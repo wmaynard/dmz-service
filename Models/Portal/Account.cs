@@ -3,10 +3,9 @@ using System.Security.Claims;
 using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
-using Rumble.Platform.Common.Web;
 using TowerPortal.Models.Permissions;
 
-namespace TowerPortal.Models;
+namespace TowerPortal.Models.Portal;
 
 [BsonIgnoreExtraElements]
 public class Account : PlatformCollectionDocument

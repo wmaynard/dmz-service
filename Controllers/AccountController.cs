@@ -9,8 +9,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
 using Rumble.Platform.Common.Utilities;
-using TowerPortal.Models;
 using TowerPortal.Models.Permissions;
+using TowerPortal.Models.Portal;
 using TowerPortal.Services;
 
 namespace TowerPortal.Controllers;
@@ -23,6 +23,7 @@ public class AccountController : PortalController
     private readonly AccountService _accountService;
 #pragma warning restore CS0649
     
+    // Logs in through Google OAuth
     [Route("google-login")]
     public IActionResult GoogleLogin()
     {
@@ -34,6 +35,7 @@ public class AccountController : PortalController
         return Challenge(properties, authenticationSchemes: GoogleDefaults.AuthenticationScheme);
     }
     
+    // Logs out through Google OAuth
     [Route("google-logout")]
     public async Task<IActionResult> GoogleLogout()
     {
@@ -42,12 +44,14 @@ public class AccountController : PortalController
         return Redirect("/portal/index");
     }
 
+    // Google signin through Dev console
     [Route("signin-google")]
     public async Task<IActionResult> GoogleSignin()
     {
         return Ok();
     }
 
+    // Restricts to company domain, then creates and sets default roles for a new user or logs in an existing user
     [Authorize(Policy = "CompanyStaffOnly")]
     [Route("google-response")]
     public async Task<IActionResult> GoogleResponse()
@@ -71,8 +75,6 @@ public class AccountController : PortalController
 
             output.Permissions = Passport.GetDefaultPermissions(output.Email);
                 
-            
-            // output.Permissions.SetUser();
             _accountService.Update(output);
         }
         

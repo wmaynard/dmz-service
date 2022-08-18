@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,11 +6,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
 using Rumble.Platform.Common.Exceptions;
-using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using TowerPortal.Enums;
-using TowerPortal.Models;
 using TowerPortal.Models.Permissions;
+using TowerPortal.Models.Portal;
 using TowerPortal.Services;
 
 namespace TowerPortal.Controllers;
@@ -20,9 +18,11 @@ namespace TowerPortal.Controllers;
 [Route("portal/permission")]
 public class PermissionController : PortalController
 {
-    private readonly DynamicConfigService _dynamicConfigService;
+#pragma warning disable CS0649
     private readonly AccountService _accountService;
+#pragma warning restore CS0649
 
+    // Lists all users
     [Route("list")]
     public async Task<IActionResult> List()
     {
@@ -31,7 +31,7 @@ public class PermissionController : PortalController
         ClearStatus();
 
         // Checking access permissions
-        if (!Permissions.Portal.ManagePermissions)
+        if (!Permissions.Portal.SuperUser && !Permissions.Portal.ManagePermissions)
         {
             return View("Error");
         }
@@ -54,11 +54,12 @@ public class PermissionController : PortalController
         return View();
     }
 
+    // Displays user permissions
     [Route("account")]
     public async Task<IActionResult> Account(string id)
     {
         // Checking access permissions
-        if (!Permissions.Portal.ManagePermissions)
+        if (!Permissions.Portal.SuperUser && !Permissions.Portal.ManagePermissions)
         {
             return View("Error");
         }
@@ -76,6 +77,7 @@ public class PermissionController : PortalController
         return View();
     }
 
+    // Modifies user permissions
     // TODO: This method should be accepting permission-related classes as parameters, not a ton of strings. 
     [HttpPost]
     [Route("account")]

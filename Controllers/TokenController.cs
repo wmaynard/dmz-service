@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
-using Rumble.Platform.Common.Web;
 using TowerPortal.Enums;
-using TowerPortal.Models;
+using TowerPortal.Models.Portal;
+using TowerPortal.Models.Token;
 using TowerPortal.Services;
 using TowerPortal.Utilities;
 
@@ -18,10 +18,12 @@ namespace TowerPortal.Controllers;
 [Route("portal/token")]
 public class TokenController : PortalController
 {
+#pragma warning disable CS0649
     private readonly DynamicConfigService _dynamicConfigService;
-    private readonly AccountService _accountService;
     private readonly TokenLogService _tokenLogService;
+#pragma warning restore CS0649
 
+    // Loads page
     [Route("ban")]
     public async Task<IActionResult> Ban()
     {
@@ -48,8 +50,7 @@ public class TokenController : PortalController
         return View();
     }
     
-    // post for main
-
+    // Request to ban/unban/logout player(s)
     [HttpPost]
     [Route("ban")]
     public async Task<IActionResult> Ban(string playerIds, string action, string unbanTime, string note)

@@ -1,8 +1,5 @@
-using Microsoft.AspNetCore.Mvc.Razor;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using TowerPortal.Controllers;
-using TowerPortal.Models;
 using TowerPortal.Models.Permissions;
 using TowerPortal.Views.Shared;
 

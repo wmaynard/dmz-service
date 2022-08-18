@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using MongoDB.Driver;
 using Rumble.Platform.Common.Services;
-using TowerPortal.Models;
+using TowerPortal.Models.Token;
 
 namespace TowerPortal.Services;
 

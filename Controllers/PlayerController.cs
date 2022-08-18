@@ -10,9 +10,7 @@ using RCL.Logging;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using TowerPortal.Enums;
-using TowerPortal.Interfaces;
-using TowerPortal.Models;
-using TowerPortal.Services;
+using TowerPortal.Models.Player;
 
 namespace TowerPortal.Controllers;
 
@@ -22,9 +20,11 @@ public class PlayerController : PortalController
 {
 #pragma warning disable CS0649
     private readonly DynamicConfigService _dynamicConfigService;
-    private readonly AccountService _accountService;
 #pragma warning restore CS0649
     
+    #region Player search
+    
+    // Search for player
     [Route("search")]
     public async Task<IActionResult> Search(string query)
     {
@@ -78,6 +78,11 @@ public class PlayerController : PortalController
         return View();
     }
     
+    #endregion
+    
+    #region Player details
+    
+    // Displays player details
     [Route("details")]
     public async Task<IActionResult> Details(string id)
     {
@@ -147,6 +152,7 @@ public class PlayerController : PortalController
         return View();
     }
 
+    // Sends request to edit player screenname
     [HttpPost]
     [Route("editScreenname")]
     public async Task<IActionResult> EditScreenname(string accountId, string editScreenname)
@@ -185,10 +191,10 @@ public class PlayerController : PortalController
         return RedirectToAction("Details", new { id = accountId });
     }
     
+    // Sends request to modify player wallet quantities
     [HttpPost]
     [Route("EditWallet")]
     public async Task<IActionResult> EditWallet(IFormCollection collection)
-    // hard coded in currencies, possibly subject to changes
     {
         // Checking access permissions
         if (!Permissions.Player.View_Page || !Permissions.Player.Edit)
@@ -276,4 +282,6 @@ public class PlayerController : PortalController
 
         return RedirectToAction("Details", new { id = aid });
     }
+    
+    #endregion
 }
