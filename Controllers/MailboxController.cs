@@ -48,7 +48,7 @@ public class MailboxController : PortalController
             })
             .OnFailure((sender, apiResponse) =>
             {
-                SetStatus("Failed to fetch chat announcements.", RequestStatus.Error);
+                SetStatus("Failed to fetch global messages.", RequestStatus.Error);
                 Log.Error(owner: Owner.Nathan, message: "Request to mailbox-service failed.", data: new
                 {
                     Response = apiResponse
@@ -177,7 +177,7 @@ public class MailboxController : PortalController
             long oldVisibleFrom = long.Parse(oldVisibleFromData);
             string oldExpirationData = TempData["EditExpiration"] as string;
             long oldExpiration = long.Parse(oldExpirationData);
-            string oldStatus = TempData["EditStatus"] as string;
+            int? oldStatus = TempData["EditStatus"] as int?;
             string oldInternalNote = TempData["EditInternalNote"] as string;
             long? oldForAccountsBefore = TempData["EditForAccountsBefore"] as long?;
             
@@ -221,11 +221,15 @@ public class MailboxController : PortalController
             int statusValue;
             if (status == "on")
             {
-                statusValue = 1;
+                statusValue = 0;
+            }
+            else if (oldStatus == 0)
+            {
+                statusValue = 0;
             }
             else
             {
-                statusValue = int.Parse(oldStatus);
+                statusValue = 1;
             }
 
             internalNote ??= oldInternalNote;
