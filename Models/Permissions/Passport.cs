@@ -15,6 +15,7 @@ namespace TowerPortal.Models.Permissions;
 /// Whenever a new PermissionGroup is created, the Passport needs to be given a new property to match it.  Accessing permissions is easy
 /// via the Passport, e.g.: Passport.Mail.SendGlobalMessage.
 /// </summary>
+[BsonIgnoreExtraElements]
 public class Passport : List<PermissionGroup>
 {
     private static readonly string[] PROD_SUPERUSERS =

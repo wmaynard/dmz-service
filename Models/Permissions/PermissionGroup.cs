@@ -12,6 +12,7 @@ using Rumble.Platform.Common.Utilities;
 namespace TowerPortal.Models.Permissions;
 
 [BsonDiscriminator(Required = true)]
+[BsonIgnoreExtraElements]
 public abstract class PermissionGroup : PlatformDataModel
 {
     /// <summary>
