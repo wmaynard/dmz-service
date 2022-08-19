@@ -7,6 +7,7 @@ namespace TowerPortal.Controllers;
 [Route("portal/mailbox"), RequireAuth(AuthType.ADMIN_TOKEN)]
 public class MailboxController : PortalController
 {
+  #region Global Messages
   // Gets all global messages
   [HttpGet, Route("global")]
   public ActionResult Global()
@@ -42,7 +43,9 @@ public class MailboxController : PortalController
 
     return Forward("/mail/admin/global/messages/expire");
   }
+  #endregion
 
+  #region Direct messages
   // Sends direct messages
   [HttpPost, Route("direct/send")]
   public ActionResult DirectSend()
@@ -51,7 +54,9 @@ public class MailboxController : PortalController
 
     return Forward("/mail/admin/messages/send");
   }
+  #endregion
 
+  #region Player inbox
   // Gets inbox for a player
   // TODO should be changed to GET
   [HttpPost, Route("inbox")]
@@ -61,4 +66,5 @@ public class MailboxController : PortalController
 
     return Forward("/mail/admin/inbox");
   }
+  #endregion
 }

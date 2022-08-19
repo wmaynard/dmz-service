@@ -7,6 +7,7 @@ namespace TowerPortal.Controllers;
 [Route("portal/config"), RequireAuth(AuthType.ADMIN_TOKEN)]
 public class DynamicConfigController : PortalController
 {
+  #region View config
   // Get all config settings
   [HttpGet, Route("settings")]
   public ActionResult Settings()
@@ -16,7 +17,9 @@ public class DynamicConfigController : PortalController
     // await _dc2Service.GetAdminDataAsync()
     return Forward("/config/settings/all");
   }
+  #endregion
 
+  #region Modify config
   // Create a new config section
   [HttpPost, Route("section")]
   public ActionResult Section()
@@ -44,4 +47,5 @@ public class DynamicConfigController : PortalController
 
     return Forward("/config/settings/value");
   }
+  #endregion
 }

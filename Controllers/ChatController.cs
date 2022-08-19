@@ -7,6 +7,7 @@ namespace TowerPortal.Controllers;
 [Route("portal/chat"), RequireAuth(AuthType.ADMIN_TOKEN)]
 public class ChatController : PortalController
 {
+  #region Announcements
   // Gets all announcements
   [HttpGet, Route("announcements")]
   public ActionResult Announcements()
@@ -34,7 +35,21 @@ public class ChatController : PortalController
 
     return Forward("/chat/admin/messages/unsticky");
   }
+  #endregion
   
+  #region Player lookup
+    // Gets player specific chat reports and bans
+    // TODO should be changed to GET
+    [HttpPost, Route("player")]
+    public ActionResult Player()
+    {
+      Require(Permissions.Chat.View_Page);
+
+      return Forward("/chat/admin/playerDetails");
+    }
+  #endregion
+  
+  #region Reports
   // Gets all reports
   [HttpGet, Route("reports")]
   public ActionResult Reports()
@@ -42,34 +57,6 @@ public class ChatController : PortalController
     Require(Permissions.Chat.View_Page);
 
     return Forward("/chat/admin/reports/list");
-  }
-  
-  // Gets player specific chat reports and bans
-  // TODO should be changed to GET
-  [HttpPost, Route("player")]
-  public ActionResult Player()
-  {
-    Require(Permissions.Chat.View_Page);
-
-    return Forward("/chat/admin/playerDetails");
-  }
-  
-  // Chat bans a player
-  [HttpPost, Route("ban")]
-  public ActionResult Ban()
-  {
-    Require(Permissions.Chat.Ban);
-
-    return Forward("/chat/admin/ban/player");
-  }
-  
-  // Chat unbans a player
-  [HttpPost, Route("unban")]
-  public ActionResult Unban()
-  {
-    Require(Permissions.Chat.Unban);
-
-    return Forward("/chat/admin/ban/lift");
   }
   
   // Ignores a report for a player
@@ -90,4 +77,26 @@ public class ChatController : PortalController
 
     return Forward("/chat/admin/reports/delete");
   }
+  #endregion
+  
+  
+  #region Chat bans
+  // Chat bans a player
+  [HttpPost, Route("ban")]
+  public ActionResult Ban()
+  {
+    Require(Permissions.Chat.Ban);
+
+    return Forward("/chat/admin/ban/player");
+  }
+  
+  // Chat unbans a player
+  [HttpPost, Route("unban")]
+  public ActionResult Unban()
+  {
+    Require(Permissions.Chat.Unban);
+
+    return Forward("/chat/admin/ban/lift");
+  }
+  #endregion
 }

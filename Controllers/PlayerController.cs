@@ -7,7 +7,8 @@ namespace TowerPortal.Controllers;
 [Route("portal/player"), RequireAuth(AuthType.ADMIN_TOKEN)]
 public class PlayerController : PortalController
 {
-    // Search for a player - screenname, id, etc are combined
+    #region Player lookup
+    // Search for a player
     [HttpGet, Route("search")]
     public ActionResult Search()
     {
@@ -24,7 +25,9 @@ public class PlayerController : PortalController
 
         return Forward("/player/v2/admin/details");
     }
+    #endregion
 
+    #region Modifying data
     // Update a player's screenname
     [HttpPatch, Route("screenname")]
     public ActionResult Screenname()
@@ -53,6 +56,5 @@ public class PlayerController : PortalController
 
         return Forward("/player/v2/admin/component");
     }
-    
-    
+    #endregion
 }

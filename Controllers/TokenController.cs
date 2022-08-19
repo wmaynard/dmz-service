@@ -7,6 +7,7 @@ namespace TowerPortal.Controllers;
 [Route("portal/token"), RequireAuth(AuthType.ADMIN_TOKEN)]
 public class TokenController : PortalController
 {
+  #region Player bans
   // Bans a player
   [HttpPatch, Route("ban")]
   public ActionResult Ban()
@@ -24,7 +25,9 @@ public class TokenController : PortalController
 
     return Forward("/token/admin/unban");
   }
+  #endregion
   
+  #region Token invalidation
   // Invalidate a player's token
   [HttpPatch, Route("invalidate")]
   public ActionResult Invalidate()
@@ -33,4 +36,5 @@ public class TokenController : PortalController
 
     return Forward("/token/admin/invalidate");
   }
+  #endregion
 }
