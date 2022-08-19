@@ -42,6 +42,11 @@
 dev:
   extends: .auto-deploy
   stage: dev
+  variables:
+    KUBE_INGRESS_BASE_DOMAIN: nonprod.tower.cdrentertainment.com
+    KUBE_NAMESPACE: "tower-admin-portal-29-dev"
+  tags:
+    - cluster
   environment:
     name: dev
     url: https://dev.nonprod.tower.cdrentertainment.com/
@@ -49,6 +54,11 @@ dev:
 stage-a:
   extends: .auto-deploy
   stage: staging
+  variables:
+    KUBE_INGRESS_BASE_DOMAIN: nonprod.tower.cdrentertainment.com
+    KUBE_NAMESPACE: "tower-admin-portal-29-stage-a"
+  tags:
+    - cluster
   environment:
     name: stage-a
     url: https://stage-a.nonprod.tower.cdrentertainment.com/
@@ -56,6 +66,11 @@ stage-a:
 stage-b:
   extends: .auto-deploy
   stage: staging
+  tags:
+    - cluster
+  variables:
+    KUBE_INGRESS_BASE_DOMAIN: nonprod.tower.cdrentertainment.com
+    KUBE_NAMESPACE: "tower-admin-portal-29-stage-b"
   environment:
     name: stage-b
     url: https://stage-b.nonprod.tower.cdrentertainment.com/
@@ -63,6 +78,11 @@ stage-b:
 stage-c:
   extends: .auto-deploy
   stage: staging
+  variables:
+    KUBE_INGRESS_BASE_DOMAIN: nonprod.tower.cdrentertainment.com
+    KUBE_NAMESPACE: "tower-admin-portal-29-stage-c"
+  tags:
+    - cluster
   environment:
     name: stage-c
     url: https://stage-c.nonprod.tower.cdrentertainment.com/
@@ -70,6 +90,9 @@ stage-c:
 production:
   extends: .auto-deploy
   stage: production
+  variables:
+    KUBE_INGRESS_BASE_DOMAIN: nonprod.tower.cdrentertainment.com
+    KUBE_NAMESPACE: "tower-admin-portal-29-production-platfo-bwm2vh"
   tags:
     - production
   environment:
@@ -79,8 +102,11 @@ production:
 production-b:
   extends: .auto-deploy
   stage: production
+  variables:
+    KUBE_INGRESS_BASE_DOMAIN: nonprod.tower.cdrentertainment.com
+    KUBE_NAMESPACE: "tower-admin-portal"
   tags:
-    - production
+    - production-b
   environment:
     name: production/platform-b
     url: https://platform-b.prod.tower.rumblegames.com/
