@@ -16,7 +16,7 @@ public class PlayerController : PortalController
         return Forward("/player/v2/admin/search");
     }
     
-    // Fetch player details
+    // Get player details
     [HttpGet, Route("details")]
     public ActionResult Details()
     {
@@ -25,7 +25,7 @@ public class PlayerController : PortalController
         return Forward("/player/v2/admin/details");
     }
 
-    // Sends a request to modify a player's screenname
+    // Update a player's screenname
     [HttpPatch, Route("screenname")]
     public ActionResult Screenname()
     {
@@ -34,8 +34,8 @@ public class PlayerController : PortalController
         return Forward("/player/v2/admin/screenname");
     }
 
-    // Sends a request to add currency to a player's wallet
-    // This requires the whole player component with field modified, as well as version += 1
+    // Add currency to a player's wallet
+    // Requires the whole player component with field modified, as well as version += 1
     [HttpPatch, Route("wallet/add")]
     public ActionResult WalletAdd()
     {
@@ -44,8 +44,8 @@ public class PlayerController : PortalController
         return Forward("/player/v2/admin/component");
     }
     
-    // Sends a request to remove currency from a player's wallet
-    // This requires the whole player component with field modified, as well as version += 1
+    // Remove currency from a player's wallet
+    // Requires the whole player component with field modified, as well as version += 1
     [HttpPatch, Route("wallet/remove")]
     public ActionResult WalletRemove()
     {

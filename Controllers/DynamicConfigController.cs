@@ -7,7 +7,7 @@ namespace TowerPortal.Controllers;
 [Route("portal/config"), RequireAuth(AuthType.ADMIN_TOKEN)]
 public class DynamicConfigController : PortalController
 {
-  // Fetches all config settings
+  // Get all config settings
   [HttpGet, Route("settings")]
   public ActionResult Settings()
   {
@@ -17,7 +17,7 @@ public class DynamicConfigController : PortalController
     return Forward("/config/settings/all");
   }
 
-  // Sends a request to create a new config section
+  // Create a new config section
   [HttpPost, Route("section")]
   public ActionResult Section()
   {
@@ -26,7 +26,7 @@ public class DynamicConfigController : PortalController
     return Forward("/config/settings/new");
   }
   
-  // Sends a request to update a section
+  // Update a section
   // Used for both adding a new variable and updating an existing variable
   [HttpPatch, Route("update")]
   public ActionResult Update()
@@ -36,11 +36,11 @@ public class DynamicConfigController : PortalController
     return Forward("/config/settings/update");
   }
   
-  // Sends a request to delete a variable
+  // Delete a variable
   [HttpDelete, Route("delete")]
   public ActionResult Delete()
   {
-    Require(Permissions.Config.Manage);
+    Require(Permissions.Config.Delete);
 
     return Forward("config/settings/value");
   }
