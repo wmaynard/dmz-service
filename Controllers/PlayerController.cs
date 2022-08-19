@@ -1,6 +1,3 @@
-using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Utilities;
@@ -29,7 +26,7 @@ public class PlayerController : PortalController
     }
 
     // Sends a request to modify a player's screenname
-    [HttpPost, Route("screenname")]
+    [HttpPatch, Route("screenname")]
     public ActionResult Screenname()
     {
         Require(Permissions.Player.Screenname);
@@ -39,7 +36,7 @@ public class PlayerController : PortalController
 
     // Sends a request to add currency to a player's wallet
     // This requires the whole player component with field modified, as well as version += 1
-    [HttpPost, Route("wallet/add")]
+    [HttpPatch, Route("wallet/add")]
     public ActionResult WalletAdd()
     {
         Require(Permissions.Player.Add_Currency);
@@ -49,7 +46,7 @@ public class PlayerController : PortalController
     
     // Sends a request to remove currency from a player's wallet
     // This requires the whole player component with field modified, as well as version += 1
-    [HttpPost, Route("wallet/remove")]
+    [HttpPatch, Route("wallet/remove")]
     public ActionResult WalletRemove()
     {
         Require(Permissions.Player.Remove_Currency);
