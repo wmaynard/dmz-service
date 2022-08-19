@@ -20,29 +20,24 @@ podAnnotations: {}
 nodeSelector: {}
 affinity: {}
 tolerations: []
-pv:
-  storageclass: efs-sc
-  enabled: true
-  volume_size: 1Gi
-  mountPath: /app/shared_storage
 application:
   track: stable
   tier: web
   migrateCommand:
   initializeCommand:
-  secretName: 
+  secretName:
   secretChecksum:
 hpa:
   enabled: false
-  minReplicas: 1
-  maxReplicas: 1
+  minReplicas: 2
+  maxReplicas: 5
   CPUUtilizationPercentage: 60
   MemUtilizationPercentage: 60
   keda:
     enabled: true
-    requestsPerSecond: "5"
+    requestsPerSecond: "100"
     serverAddress: http://prometheus-prometheus-server.gitlab-managed-apps.svc:80
-    filter: "eng"
+    filter: "service"
 gitlab:
   app:
   env:
@@ -52,29 +47,24 @@ gitlab:
 service:
   enabled: true
   annotations: {}
-  name: tapb-dev # 15 character limit..
+  name: tapb-stage-b # 15 character limit..
   type: NodePort
-  url: 
+  url: https://stage-b.nonprod.tower.cdrentertainment.com/
   additionalHosts:
-  commonName: 
+  commonName: stage-b.nonprod.tower.cdrentertainment.com
   externalPort: 5000
   internalPort: 80
 ingress:
+  className: nginx
   enabled: true
-  paths: 
-    - "/portal"
+  path: "/portal"
   tls:
     enabled: false
     acme: false
-    secretName: "admin-portal-dev"
+    secretName: "admin-portal-stage-b"
     useDefaultSecret: false
   annotations:
-    kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/client-body-buffer-size: 1m
-    nginx.ingress.kubernetes.io/affinity: "cookie"
-    nginx.ingress.kubernetes.io/session-cookie-expires: "3600"
-    nginx.ingress.kubernetes.io/session-cookie-max-age: "3600"
-    nginx.ingress.kubernetes.io/session-cookie-name: "RUMBLEPORTAL"
   modSecurity:
     enabled: false
     secRuleEngine: "DetectionOnly"
@@ -107,8 +97,8 @@ startupProbe:
 postgresql:
   managed: false
   managedClassSelector:
-    #   matchLabels:
-    #     stack: gitlab (This is an example. The labels should match the labels on the CloudSQLInstanceClass)
+  #   matchLabels:
+  #     stack: gitlab (This is an example. The labels should match the labels on the CloudSQLInstanceClass)
 
 resources:
   limits:
@@ -118,11 +108,11 @@ resources:
     cpu: 128m
     memory: 128Mi
 
-## Configure PodDisruptionBudget
+## Configure PodDisrptionBudget
 ## ref: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
 #
 podDisruptionBudget:
-  enabled: false
+  enabled: true
   minAvailable: 1
 
 ## Configure NetworkPolicy
@@ -134,12 +124,12 @@ networkPolicy:
     podSelector:
       matchLabels: {}
     ingress:
-    - from:
-      - podSelector:
-          matchLabels: {}
-      - namespaceSelector:
-          matchLabels:
-            app.gitlab.com/managed_by: gitlab
+      - from:
+          - podSelector:
+              matchLabels: {}
+          - namespaceSelector:
+              matchLabels:
+                app.gitlab.com/managed_by: gitlab
 
 ciliumNetworkPolicy:
   enabled: false
@@ -148,14 +138,30 @@ ciliumNetworkPolicy:
   spec:
     endpointSelector: {}
     ingress:
-    - fromEndpoints:
-      - matchLabels:
-          app.gitlab.com/managed_by: gitlab
+      - fromEndpoints:
+          - matchLabels:
+              app.gitlab.com/managed_by: gitlab
 
 serviceAccount:
   name:
   annotations: {}
   createNew: false
+
+persistence:
+  enabled: false
+  volumes:
+    - name: data
+      mount:
+        path: "/pvc-mount"
+        # subPath: "/pvc-mount/config.txt"
+      claim:
+        accessMode: ReadWriteOnce
+        size: 8Gi
+        # If you want to use a custom storage class, you can specify `storageClass`. In this case, you need to create a storage class at first.
+        # If `storageClass` is not specified, the behavior will vary per Kubernetes provider.
+        # For example, GKE automatically chooses a default storage class and allocate a physical storage.
+        # See https://cloud.google.com/kubernetes-engine/docs/concepts/persistent-volumes for more information.
+        # storageClass: "myStorage"
 
 workers: {}
   # worker:
@@ -188,4 +194,4 @@ workers: {}
   #   - /bin/herokuish
   #   - procfile
   #   - start
-  #   - stop_worker
+#   - stop_worker
