@@ -61,7 +61,7 @@
     <div class="player-wallet-item">
         <form class="edit-wallet-form" method="post" asp-controller="Player" asp-action="EditWallet">
             <input class="invisible" name="aid" value="@(ViewData["Id"])"/>
-            @foreach (WalletCurrency currency in (List<WalletCurrency>) ViewData["WalletCurrencies"])
+            @foreach (WalletCurrency currency in ((List<WalletCurrency>) ViewData["WalletCurrencies"])!)
             {
                 <div class="wallet-currency-item">
                     <label class="wallet-currency-item">@currency.CurrencyId</label>

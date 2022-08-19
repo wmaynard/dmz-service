@@ -29,7 +29,7 @@ public class ChatController : PortalController
     // Checking access permissions
     if (!Permissions.Chat.View_Page)
     {
-      return View("Error");
+      return View("AccessDenied");
     }
     
     ClearStatus();
@@ -76,7 +76,7 @@ public class ChatController : PortalController
     // Checking access permissions
     if (!Permissions.Chat.View_Page || !Permissions.Chat.Edit)
     {
-      return View("Error");
+      return View("AccessDenied");
     }
     
     ClearStatus();
@@ -133,15 +133,15 @@ public class ChatController : PortalController
     return RedirectToAction("Announcements");
   }
   
-  // Expiring an announcement; no functionality to delete
+  // Deleting an announcement; no functionality to manually expire (maybe when editing is put in)
   [HttpPost]
-  [Route("announcements/expire")]
-  public async Task<IActionResult> AnnouncementsExpire(string messageId)
+  [Route("announcements/delete")]
+  public async Task<IActionResult> AnnouncementsDelete(string messageId)
   {
     // Checking access permissions
     if (!Permissions.Chat.View_Page || !Permissions.Chat.Edit)
     {
-      return View("Error");
+      return View("AccessDenied");
     }
     
     ClearStatus();
@@ -155,12 +155,12 @@ public class ChatController : PortalController
                   })
       .OnSuccess((sender, apiResponse) =>
                  {
-                   SetStatus("Successfully expired chat announcement.", RequestStatus.Success);
+                   SetStatus("Successfully deleted chat announcement.", RequestStatus.Success);
                    Log.Local(Owner.Nathan, "Request to chat-service succeeded.");
                  })
       .OnFailure((sender, apiResponse) =>
                  {
-                   SetStatus("Failed to expire chat announcement.", RequestStatus.Error);
+                   SetStatus("Failed to delete chat announcement.", RequestStatus.Error);
                    Log.Error(owner: Owner.Nathan, message: "Request to chat-service failed.", data: new
                                                                                                     {
                                                                                                       Response = apiResponse
@@ -182,7 +182,7 @@ public class ChatController : PortalController
     // Checking access permissions
     if (!Permissions.Chat.View_Page)
     {
-      return View("Error");
+      return View("AccessDenied");
     }
     
     ClearStatus();
@@ -215,8 +215,25 @@ public class ChatController : PortalController
     {
       Log.Error(owner: Owner.Nathan, message: "Failed to parse response from chat-service.", data: e);
     }
+
+    // This is inefficient, TODO refactor
+    List<ChatReport> newChatReportsList = new List<ChatReport>();
+    List<ChatReport> oldChatReportsList = new List<ChatReport>();
     
-    ViewData["ChatReports"] = chatReportsList;
+    foreach (ChatReport report in chatReportsList)
+    {
+      if (report.Status == "new")
+      {
+        newChatReportsList.Add(report);
+      }
+      else
+      {
+        oldChatReportsList.Add(report);
+      }
+    }
+    
+    ViewData["NewChatReports"] = newChatReportsList;
+    ViewData["OldChatReports"] = oldChatReportsList;
   
     return View();
   }
@@ -233,7 +250,7 @@ public class ChatController : PortalController
     // Checking access permissions
     if (!Permissions.Chat.View_Page)
     {
-      return View("Error");
+      return View("AccessDenied");
     }
 
     return RedirectToAction("Player", new { accountId = accountId });
@@ -246,7 +263,7 @@ public class ChatController : PortalController
     // Checking access permissions
     if (!Permissions.Chat.View_Page)
     {
-      return View("Error");
+      return View("AccessDenied");
     }
     
     return View();
@@ -259,7 +276,7 @@ public class ChatController : PortalController
     // Checking access permissions
     if (!Permissions.Chat.View_Page)
     {
-      return View("Error");
+      return View("AccessDenied");
     }
 
     ClearStatus();
@@ -316,7 +333,7 @@ public class ChatController : PortalController
     // Checking access permissions
     if (!Permissions.Chat.View_Page || !Permissions.Chat.Edit)
     {
-      return View("Error");
+      return View("AccessDenied");
     }
     
     ClearStatus();
@@ -356,7 +373,7 @@ public class ChatController : PortalController
     // Checking access permissions
     if (!Permissions.Chat.View_Page || !Permissions.Chat.Edit)
     {
-      return View("Error");
+      return View("AccessDenied");
     }
     
     ClearStatus();
@@ -394,7 +411,7 @@ public class ChatController : PortalController
     // Checking access permissions
     if (!Permissions.Chat.View_Page || !Permissions.Chat.Edit)
     {
-      return View("Error");
+      return View("AccessDenied");
     }
     
     ClearStatus();
@@ -432,7 +449,7 @@ public class ChatController : PortalController
     // Checking access permissions
     if (!Permissions.Chat.View_Page || !Permissions.Chat.Edit)
     {
-      return View("Error");
+      return View("AccessDenied");
     }
     
     ClearStatus();

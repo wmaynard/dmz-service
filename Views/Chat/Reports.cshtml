@@ -20,44 +20,86 @@
     </div>
     
     <div class="chat-reports-container">
-        <h3>Chat Reports</h3>
-        <table id="chatReports" class="chat-reports">
+        <h3>New Chat Reports</h3>
+        <table id="newChatReports" class="chat-reports">
             <tr>
-                <td class="id">Id</td>
-                <td class="mid">Message Id</td>
-                <td class="logs">Logs</td>
-                <td class="players">Players</td>
+                <td class="time">Time</td>
                 <td class="reported">Reported</td>
                 <td class="reporters">Reporters</td>
-                <td class="status">Status</td>
-                <td class="time">Time</td>
+                <td class="logs">Logs</td>
+                <td class="report-ignore">Ignore</td>
             </tr>
-            @foreach (ChatReport data in (List<ChatReport>) ViewData["ChatReports"])
+            @foreach (ChatReport data in ((List<ChatReport>) ViewData["NewChatReports"])!)
             {
                 <tr>
-                    <td>@data.Id</td>
-                    <td>@data.MessageId</td>
-                    <td>
-                        @foreach (GenericData log in @data.Log)
-                        {
-                            <p>@log.JSON</p>
-                        }
-                    </td>
-                    <td>
-                        @foreach (GenericData players in @data.Players)
-                        {
-                            <p>@players.JSON</p>
-                        }
-                    </td>
-                    <td>@data.Reported.JSON</td>
+                    <td>@DateTimeOffset.FromUnixTimeSeconds(@data.Time)</td>
+                    <td><a href="/portal/player/details?id=@data.Reported["aid"]">@data.Reported["sn"]</a></td>
                     <td>
                         @foreach (GenericData reporters in @data.Reporters)
                         {
-                            <p>@reporters.JSON</p>
+                            <a href="/portal/player/details?id=@reporters["aid"]">@reporters["sn"]</a>
                         }
                     </td>
-                    <td>@data.Status</td>
+                    <td>
+                        @foreach (GenericData log in @data.Log)
+                        {
+                            if ((string) log["type"] == "chat")
+                            {
+                                GenericData player = data.Players.Find(entry => (string) entry["aid"] == (string) log["aid"]);
+                                <p>
+                                    <a href="/portal/player/details?id=@player?["aid"]">@player?["sn"]</a>: @log["text"]
+                                </p>
+                            }
+                        }
+                    </td>
+                    <td>
+                        <form class="chat-report-form" method="post" asp-controller="Chat" asp-action="Ignore">
+                            <div class="accountId invisible">
+                                <input id="accountId" class="accountId" type="text" name="accountId" value="@data.Reported["aid"]">
+                            </div>
+                            <div class="reportId invisible">
+                                <input id="reportId" class="reportId" type="text" name="reportId" value="@data.Id">
+                            </div>
+                            <button id="ignoreButton" class="ignoreButton" disabled="@(!Permissions.Chat.Edit)" type="submit">Ignore</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+    
+    <div class="chat-reports-container">
+        <h3>Old Chat Reports</h3>
+        <table id="oldChatReports" class="chat-reports">
+            <tr>
+                <td class="time">Time</td>
+                <td class="reported">Reported</td>
+                <td class="reporters">Reporters</td>
+                <td class="logs">Logs</td>
+            </tr>
+            @foreach (ChatReport data in ((List<ChatReport>) ViewData["OldChatReports"])!)
+            {
+                <tr>
                     <td>@DateTimeOffset.FromUnixTimeSeconds(@data.Time)</td>
+                    <td><a href="/portal/player/details?id=@data.Reported["aid"]">@data.Reported["sn"]</a></td>
+                    <td>
+                        @foreach (GenericData reporters in @data.Reporters)
+                        {
+                            <a href="/portal/player/details?id=@reporters["aid"]">@reporters["sn"]</a>
+                        }
+                    </td>
+                    <td>
+                        @foreach (GenericData log in @data.Log)
+                        {
+                            if ((string) log["type"] == "chat")
+                            {
+                                GenericData player = data.Players.Find(entry => (string) entry["aid"] == (string) log["aid"]);
+                                <p>
+                                    <a href="/portal/player/details?id=@player?["aid"]">@player?["sn"]</a>: @log["text"]
+                                </p>
+                            }
+                        }
+                    </td>
                 </tr>
             }
         </table>

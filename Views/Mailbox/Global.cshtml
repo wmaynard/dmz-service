@@ -158,8 +158,22 @@
                         </td>
                         <td>@DateTimeOffset.FromUnixTimeSeconds(@data.VisibleFrom)</td>
                         <td>@DateTimeOffset.FromUnixTimeSeconds(@data.Expiration)</td>
-                        <td>@data.Icon</td>
-                        <td>@data.Banner</td>
+                        @if (data.Icon == "")
+                        {
+                            <td>Default (empty)</td>
+                        }
+                        else
+                        {
+                            <td>@data.Icon</td>
+                        }
+                        @if (data.Banner == "")
+                        {
+                            <td>Default (empty)</td>
+                        }
+                        else
+                        {
+                            <td>@data.Banner</td>
+                        }
                         <td>@data.InternalNote</td>
                         @if (@data.ForAccountsBefore != null)
                         {
@@ -180,6 +194,7 @@
                                     attachments = data.Attachments,
                                     visibleFrom = data.VisibleFrom,
                                     expiration = data.Expiration,
+                                    status = data.Status,
                                     internalNote = data.InternalNote,
                                     forAccountsBefore = data.ForAccountsBefore
                                 }, htmlAttributes: new
@@ -190,6 +205,7 @@
                                     attachments = data.Attachments,
                                     visibleFrom = data.VisibleFrom,
                                     expiration = data.Expiration,
+                                    status = data.Status,
                                     internalNote = data.InternalNote,
                                     forAccountsBefore = data.ForAccountsBefore
                                 })
@@ -251,8 +267,22 @@
                         </td>
                         <td>@DateTimeOffset.FromUnixTimeSeconds(@data.VisibleFrom)</td>
                         <td>@DateTimeOffset.FromUnixTimeSeconds(@data.Expiration)</td>
-                        <td>@data.Icon</td>
-                        <td>@data.Banner</td>
+                        @if (data.Icon == "")
+                        {
+                            <td>Default (empty)</td>
+                        }
+                        else
+                        {
+                            <td>@data.Icon</td>
+                        }
+                        @if (data.Banner == "")
+                        {
+                            <td>Default (empty)</td>
+                        }
+                        else
+                        {
+                            <td>@data.Banner</td>
+                        }
                         <td>@data.InternalNote</td>
                         @if (@data.ForAccountsBefore != null)
                         {
@@ -273,6 +303,7 @@
                                     attachments = data.Attachments,
                                     visibleFrom = data.VisibleFrom,
                                     expiration = data.Expiration,
+                                    status = data.Status,
                                     internalNote = data.InternalNote,
                                     forAccountsBefore = data.ForAccountsBefore
                                 }, htmlAttributes: new
@@ -283,6 +314,7 @@
                                     attachments = data.Attachments,
                                     visibleFrom = data.VisibleFrom,
                                     expiration = data.Expiration,
+                                    status = data.Status,
                                     internalNote = data.InternalNote,
                                     forAccountsBefore = data.ForAccountsBefore
                                 })

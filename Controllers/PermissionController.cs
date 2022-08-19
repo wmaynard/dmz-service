@@ -33,7 +33,7 @@ public class PermissionController : PortalController
         // Checking access permissions
         if (!Permissions.Portal.SuperUser && !Permissions.Portal.ManagePermissions)
         {
-            return View("Error");
+            return View("AccessDenied");
         }
 
         List<Account> users = _accountService.GetAllAccounts();
@@ -61,7 +61,7 @@ public class PermissionController : PortalController
         // Checking access permissions
         if (!Permissions.Portal.SuperUser && !Permissions.Portal.ManagePermissions)
         {
-            return View("Error");
+            return View("AccessDenied");
         }
         
         ViewData["Environment"] = PlatformEnvironment.Optional<string>(key: "RUMBLE_DEPLOYMENT");

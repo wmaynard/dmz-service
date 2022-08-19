@@ -25,7 +25,7 @@ public class DynamicConfigController : PortalController
         // Checking access permissions
         if (!Permissions.Config.View_Page)
         {
-            return View("Error");
+            return View("AccessDenied");
         }
 
         Section[] sections = await _dc2Service.GetAdminDataAsync();
@@ -42,7 +42,7 @@ public class DynamicConfigController : PortalController
         // Checking access permissions
         if (!Permissions.Config.View_Page || !Permissions.Config.Edit)
         {
-            return View("Error");
+            return View("AccessDenied");
         }
 
         string name = collection["name"];
@@ -89,7 +89,7 @@ public class DynamicConfigController : PortalController
         // Checking access permissions
         if (!Permissions.Config.View_Page || !Permissions.Config.Edit)
         {
-            return View("Error");
+            return View("AccessDenied");
         }
 
         string name = collection["name"];
@@ -139,7 +139,7 @@ public class DynamicConfigController : PortalController
         // Checking access permissions
         if (!Permissions.Config.View_Page || !Permissions.Config.Edit)
         {
-            return View("Error");
+            return View("AccessDenied");
         }
 
         string name = collection["name"];
@@ -181,7 +181,7 @@ public class DynamicConfigController : PortalController
         // Checking access permissions
         if (!Permissions.Config.View_Page || !Permissions.Config.Edit)
         {
-            return View("Error");
+            return View("AccessDenied");
         }
 
         string name = collection["name"];

@@ -33,7 +33,7 @@ public class PlayerController : PortalController
         // Exit early if there's invalid data; easier to read.
         if (!Permissions.Player.View_Page)
         {
-            return View("Error");
+            return View("AccessDenied");
         }
 
         if (query == null)
@@ -89,8 +89,10 @@ public class PlayerController : PortalController
         // Checking access permissions
         if (!Permissions.Player.View_Page)
         {
-            return View("Error");
+            return View("AccessDenied");
         }
+        
+        ClearStatus();
 
         _apiService
             .Request(PlatformEnvironment.Url("/player/v2/admin/details"))
@@ -122,32 +124,45 @@ public class PlayerController : PortalController
         {
             component = response.Require<PlayerComponents>(key: "components");
             detailsResponse = JsonConvert.DeserializeObject<DetailsResponse>(responseString);
+            SetStatus("Successfully fetched player details.", RequestStatus.Success);
         }
         catch (Exception e)
         {
+            SetStatus("Failed to fetch player details.", RequestStatus.Error);
             Log.Error(owner: Owner.Nathan, message: "Failed to parse response from player-service.", data: e);
         }
-        
-        ViewData["ClientVersion"] = detailsResponse.Player.ClientVersion;
-        ViewData["DateCreated"] = detailsResponse.Player.DateCreated;
-        ViewData["DataVersion"] = detailsResponse.Player.DataVersion;
-        ViewData["DeviceType"] = detailsResponse.Player.DeviceType;
-        ViewData["LastSavedInstallId"] = detailsResponse.Player.LastSavedInstallId;
-        ViewData["MergeVersion"] = detailsResponse.Player.MergeVersion;
-        ViewData["LastChanged"] = detailsResponse.Player.LastChanged;
-        ViewData["LastDataVersion"] = detailsResponse.Player.LastDataVersion;
-        ViewData["Screenname"] = detailsResponse.Player.Screenname;
-        ViewData["LastUpdated"] = detailsResponse.Player.LastUpdated;
-        ViewData["Discriminator"] = detailsResponse.Player.Discriminator;
-        ViewData["Username"] = detailsResponse.Player.Username;
-        ViewData["Id"] = detailsResponse.Player.Id;
-        
-        ViewData["Profiles"] = detailsResponse.Profiles;
-        ViewData["Components"] = component;
-        ViewData["Items"] = detailsResponse.Items;
 
-        PlayerWallet playerWallet = component.Wallet;
-        ViewData["WalletCurrencies"] = playerWallet.Data.Currencies;
+        try
+        {
+            ViewData["ClientVersion"] = detailsResponse.Player.ClientVersion;
+            ViewData["DateCreated"] = detailsResponse.Player.DateCreated;
+            ViewData["DataVersion"] = detailsResponse.Player.DataVersion;
+            ViewData["DeviceType"] = detailsResponse.Player.DeviceType;
+            ViewData["LastSavedInstallId"] = detailsResponse.Player.LastSavedInstallId;
+            ViewData["MergeVersion"] = detailsResponse.Player.MergeVersion;
+            ViewData["LastChanged"] = detailsResponse.Player.LastChanged;
+            ViewData["LastDataVersion"] = detailsResponse.Player.LastDataVersion;
+            ViewData["Screenname"] = detailsResponse.Player.Screenname;
+            ViewData["LastUpdated"] = detailsResponse.Player.LastUpdated;
+            ViewData["Discriminator"] = detailsResponse.Player.Discriminator;
+            ViewData["Username"] = detailsResponse.Player.Username;
+            ViewData["Id"] = detailsResponse.Player.Id;
+        
+            ViewData["Profiles"] = detailsResponse.Profiles;
+            ViewData["Components"] = component;
+            ViewData["Items"] = detailsResponse.Items;
+
+            PlayerWallet playerWallet = component.Wallet;
+            ViewData["WalletCurrencies"] = playerWallet.Data.Currencies;
+            
+            SetStatus("Successfully fetched player details.", RequestStatus.Success);
+        }
+        catch (Exception e)
+        {
+            SetStatus("Failed to fetch player details. Player could not be found.", RequestStatus.Error);
+            Log.Error(owner: Owner.Nathan, message: "Player details request failed.", data:"Details response was missing data. It is possible that a player that does not exist was requested.", exception: e);
+            return View("Error");
+        }
 
         return View();
     }
@@ -160,7 +175,7 @@ public class PlayerController : PortalController
         // Checking access permissions
         if (!Permissions.Player.View_Page || !Permissions.Player.Edit)
         {
-            return View("Error");
+            return View("AccessDenied");
         }
 
         ClearStatus();
@@ -199,7 +214,7 @@ public class PlayerController : PortalController
         // Checking access permissions
         if (!Permissions.Player.View_Page || !Permissions.Player.Edit)
         {
-            return View("Error");
+            return View("AccessDenied");
         }
 
         string aid = collection["aid"];

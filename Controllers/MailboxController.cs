@@ -30,7 +30,7 @@ public class MailboxController : PortalController
         // Checking access permissions
         if (!Permissions.Mail.View_Page)
         {
-            return View("Error");
+            return View("AccessDenied");
         }
 
         ClearStatus();
@@ -97,7 +97,7 @@ public class MailboxController : PortalController
         // Checking access permissions
         if (!Permissions.Mail.View_Page || !Permissions.Mail.Edit)
         {
-            return View("Error");
+            return View("AccessDenied");
         }
         
         ClearStatus();
@@ -163,7 +163,7 @@ public class MailboxController : PortalController
         // Checking access permissions
         if (!Permissions.Mail.View_Page || !Permissions.Mail.Edit)
         {
-            return View("Error");
+            return View("AccessDenied");
         }
 
         ClearStatus();
@@ -177,6 +177,7 @@ public class MailboxController : PortalController
             long oldVisibleFrom = long.Parse(oldVisibleFromData);
             string oldExpirationData = TempData["EditExpiration"] as string;
             long oldExpiration = long.Parse(oldExpirationData);
+            string oldStatus = TempData["EditStatus"] as string;
             string oldInternalNote = TempData["EditInternalNote"] as string;
             long? oldForAccountsBefore = TempData["EditForAccountsBefore"] as long?;
             
@@ -217,6 +218,16 @@ public class MailboxController : PortalController
                 visibleFromUnix = ParseMessageData.ParseDateTime(visibleFrom);
             }
 
+            int statusValue;
+            if (status == "on")
+            {
+                statusValue = 1;
+            }
+            else
+            {
+                statusValue = int.Parse(oldStatus);
+            }
+
             internalNote ??= oldInternalNote;
 
             List<Message> previousVersions = new List<Message>();
@@ -241,7 +252,7 @@ public class MailboxController : PortalController
               {"visibleFrom", visibleFromUnix},
               {"icon", icon},
               {"banner", banner},
-              {"status", status},
+              {"status", statusValue},
               {"internalNote", internalNote},
               {"previousVersions", previousVersions},
               {"forAccountsBefore", forAccountsBeforeUnix}
@@ -285,7 +296,7 @@ public class MailboxController : PortalController
         // Checking access permissions
         if (!Permissions.Mail.View_Page || !Permissions.Mail.Edit)
         {
-            return View("Error");
+            return View("AccessDenied");
         }
 
         ClearStatus();
@@ -325,7 +336,7 @@ public class MailboxController : PortalController
 
     // Used to display edit form and overlay upon clicking edit on a global message
     [Route("showEdit")]
-    public IActionResult ShowEditOverlay(string id, string subject, string body, List<Attachment> attachments, string visibleFrom, string expiration, string icon, string banner, string internalNote, string forAccountsBefore)
+    public IActionResult ShowEditOverlay(string id, string subject, string body, List<Attachment> attachments, string visibleFrom, string expiration, string icon, string banner, int status, string internalNote, string forAccountsBefore)
     {
         TempData["EditId"] = id;
         TempData["EditSubject"] = subject;
@@ -333,6 +344,7 @@ public class MailboxController : PortalController
         TempData.Put("EditAttachments", attachments);
         TempData["EditVisibleFrom"] = visibleFrom;
         TempData["EditExpiration"] = expiration;
+        TempData["EditStatus"] = status;
         TempData["EditInternalNote"] = internalNote;
         TempData["EditForAccountsBefore"] = forAccountsBefore;
         TempData["VisibleOverlay"] = true;
@@ -392,7 +404,7 @@ public class MailboxController : PortalController
         // Checking access permissions
         if (!Permissions.Mail.View_Page)
         {
-            return View("Error");
+            return View("AccessDenied");
         }
         
         ClearStatus();
@@ -411,7 +423,7 @@ public class MailboxController : PortalController
         // Checking access permissions
         if (!Permissions.Mail.View_Page || !Permissions.Mail.Edit)
         {
-            return View("Error");
+            return View("AccessDenied");
         }
 
         try
@@ -477,7 +489,7 @@ public class MailboxController : PortalController
         // Checking access permissions
         if (!Permissions.Mail.View_Page)
         {
-            return View("Error");
+            return View("AccessDenied");
         }
         
         return View();
@@ -491,7 +503,7 @@ public class MailboxController : PortalController
         // Checking access permissions
         if (!Permissions.Mail.View_Page)
         {
-            return View("Error");
+            return View("AccessDenied");
         }
 
         ClearStatus();

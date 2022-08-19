@@ -30,7 +30,7 @@ public class TokenController : PortalController
         // Checking access permissions
         if (!Permissions.Token.View_Page)
         {
-            return View("Error");
+            return View("AccessDenied");
         }
 
         try
@@ -58,7 +58,7 @@ public class TokenController : PortalController
         // Checking access permissions
         if (!Permissions.Token.View_Page || !Permissions.Token.Edit)
         {
-            return View("Error");
+            return View("AccessDenied");
         }
 
         if (action == "ban")

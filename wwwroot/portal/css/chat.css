@@ -11,6 +11,7 @@ table.chat-announcements {
 table.chat-bans tr td,
 table.chat-reports tr td,
 table.chat-announcements tr td {
+    padding: 3px;
     border: 1px black solid;
 }
 
