@@ -53,7 +53,7 @@ public class MailboxController : PortalController
   }
 
   // Gets inbox for a player
-  // TODO should be changed to GET - in service too
+  // TODO should be changed to GET
   [HttpPost, Route("inbox")]
   public ActionResult Inbox()
   {

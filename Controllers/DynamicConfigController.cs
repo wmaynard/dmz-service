@@ -42,6 +42,6 @@ public class DynamicConfigController : PortalController
   {
     Require(Permissions.Config.Delete);
 
-    return Forward("config/settings/value");
+    return Forward("/config/settings/value");
   }
 }
