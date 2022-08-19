@@ -16,9 +16,7 @@ public class PlayerController : PortalController
 
         return Forward("/player/v2/admin/search");
     }
-    #endregion
     
-    #region Player details
     // Get player details
     [HttpGet, Route("details")]
     public ActionResult Details()
@@ -38,6 +36,7 @@ public class PlayerController : PortalController
 
         return Forward("/player/v2/admin/screenname");
     }
+    
     // Add currency to a player's wallet
     // Requires the whole player component with field modified, as well as version += 1
     [HttpPatch, Route("wallet/add")]
