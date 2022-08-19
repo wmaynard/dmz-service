@@ -91,6 +91,7 @@ production:
   extends: .auto-deploy
   stage: production
   variables:
+    KUBE_CONTEXT: "platform-services/platform-services-agent:prod-platform-services"
     KUBE_INGRESS_BASE_DOMAIN: nonprod.tower.cdrentertainment.com
     KUBE_NAMESPACE: "tower-admin-portal-29-production-platfo-bwm2vh"
   tags:
@@ -103,6 +104,7 @@ production-b:
   extends: .auto-deploy
   stage: production
   variables:
+    KUBE_CONTEXT: "platform-services/platform-services-agent:prod-platform-services"
     KUBE_INGRESS_BASE_DOMAIN: nonprod.tower.cdrentertainment.com
     KUBE_NAMESPACE: "tower-admin-portal"
   tags:
