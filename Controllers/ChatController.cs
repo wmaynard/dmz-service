@@ -1,483 +1,101 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RCL.Logging;
-using Rumble.Platform.Common.Services;
+using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Utilities;
-using TowerPortal.Enums;
-using TowerPortal.Models.Chat;
-using TowerPortal.Utilities;
 
 namespace TowerPortal.Controllers;
 
-[Authorize]
-[Route("/portal/chat")]
+[Route("portal/chat"), RequireAuth(AuthType.ADMIN_TOKEN)]
 public class ChatController : PortalController
 {
-#pragma warning disable CS0649
-  private readonly DynamicConfigService _dynamicConfigService;
-#pragma warning restore CS0649
-
   #region Announcements
-  
-  // Fetches existing announcements
-  [Route("announcements")]
-  public async Task<IActionResult> Announcements()
+  // Gets all announcements
+  [HttpGet, Route("announcements")]
+  public ActionResult Announcements()
   {
-    // Checking access permissions
-    if (!Permissions.Chat.View_Page)
-    {
-      return View("AccessDenied");
-    }
-    
-    ClearStatus();
-  
-    _apiService
-        .Request(PlatformEnvironment.Url("/chat/admin/messages/sticky"))
-        .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("chatToken"))
-        .OnSuccess((sender, apiResponse) =>
-        {
-            SetStatus("Successfully fetched chat announcements.", RequestStatus.Success);
-            Log.Local(Owner.Nathan, "Request to chat-service succeeded.");
-        })
-        .OnFailure((sender, apiResponse) =>
-        {
-            SetStatus("Failed to fetch chat announcements.", RequestStatus.Error);
-            Log.Error(owner: Owner.Nathan, message: "Request to chat-service failed.", data: new
-            {
-                Response = apiResponse
-            });
-        })
-        .Get(out GenericData response, out int code);
+    Require(Permissions.Chat.View_Page);
 
-    List<Announcement> announcements = new List<Announcement>();
-
-    try
-    {
-        announcements = response.Require<List<Announcement>>(key: "stickies");
-    }
-    catch (Exception e)
-    {
-        Log.Error(owner: Owner.Nathan, message: "Failed to parse response from chat-service.", data: e);
-    }
-    
-    ViewData["Announcements"] = announcements;
-    
-    return View();
+    return Forward("/chat/admin/messages/sticky");
   }
 
-  // Creating a new announcement
-  [HttpPost]
-  [Route("announcements")]
-  public async Task<IActionResult> Announcements(string text, long? durationInSeconds, string expiration, string visibleFrom, string language)
+  // Send a chat announcement
+  [HttpPost, Route("announcements/send")]
+  public ActionResult AnnouncementsSend()
   {
-    // Checking access permissions
-    if (!Permissions.Chat.View_Page || !Permissions.Chat.Edit)
-    {
-      return View("AccessDenied");
-    }
-    
-    ClearStatus();
+    Require(Permissions.Chat.Send_Announcements);
 
-    long? expirationUnix = ParseMessageData.ParseDateTime(expiration);
-    long? visibleFromUnix = ParseMessageData.ParseDateTime(visibleFrom);
-    
-    Dictionary<string, dynamic> stickyMessageDict = new Dictionary<string, dynamic>();
-    stickyMessageDict.Add("text", text);
-    if (durationInSeconds != null)
-    {
-      stickyMessageDict.Add("duration", durationInSeconds);
-    }
-
-    if (expirationUnix != 0)
-    {
-      stickyMessageDict.Add("expiration", expirationUnix);
-    }
-
-    if (visibleFromUnix != 0)
-    {
-      stickyMessageDict.Add("visibleFrom", visibleFromUnix);
-    }
-
-    if (language != null)
-    {
-      stickyMessageDict.Add("language", language);
-    }
-    
-    GenericData stickyMessage = GenericData.FromDictionary(stickyMessageDict);
-  
-    _apiService
-      .Request(PlatformEnvironment.Url("/chat/admin/messages/sticky"))
-      .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("chatToken"))
-      .SetPayload(new GenericData
-                  {
-                    {"message", stickyMessage}
-                  })
-      .OnSuccess((sender, apiResponse) =>
-                 {
-                   SetStatus("Successfully created chat announcement.", RequestStatus.Success);
-                   Log.Local(Owner.Nathan, "Request to chat-service succeeded.");
-                 })
-      .OnFailure((sender, apiResponse) =>
-                 {
-                   SetStatus("Failed to create chat announcement.", RequestStatus.Error);
-                   Log.Error(owner: Owner.Nathan, message: "Request to chat-service failed.", data: new
-                                                                                                    {
-                                                                                                      Response = apiResponse
-                                                                                                    });
-                 })
-      .Post(out GenericData response, out int code);
-
-    return RedirectToAction("Announcements");
+    return Forward("/chat/admin/messages/sticky");
   }
-  
-  // Deleting an announcement; no functionality to manually expire (maybe when editing is put in)
-  [HttpPost]
-  [Route("announcements/delete")]
-  public async Task<IActionResult> AnnouncementsDelete(string messageId)
+
+  // Deletes a chat announcement
+  // TODO should be changed to DELETE
+  [HttpPost, Route("announcements/delete")]
+  public ActionResult AnnouncementsDelete()
   {
-    // Checking access permissions
-    if (!Permissions.Chat.View_Page || !Permissions.Chat.Edit)
-    {
-      return View("AccessDenied");
-    }
-    
-    ClearStatus();
-  
-    _apiService
-      .Request(PlatformEnvironment.Url("/chat/admin/messages/unsticky"))
-      .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("chatToken"))
-      .SetPayload(new GenericData
-                  {
-                    {"messageId", messageId}
-                  })
-      .OnSuccess((sender, apiResponse) =>
-                 {
-                   SetStatus("Successfully deleted chat announcement.", RequestStatus.Success);
-                   Log.Local(Owner.Nathan, "Request to chat-service succeeded.");
-                 })
-      .OnFailure((sender, apiResponse) =>
-                 {
-                   SetStatus("Failed to delete chat announcement.", RequestStatus.Error);
-                   Log.Error(owner: Owner.Nathan, message: "Request to chat-service failed.", data: new
-                                                                                                    {
-                                                                                                      Response = apiResponse
-                                                                                                    });
-                 })
-      .Post(out GenericData response, out int code);
+    Require(Permissions.Chat.Delete_Announcements);
 
-    return RedirectToAction("Announcements");
+    return Forward("/chat/admin/messages/unsticky");
   }
+  #endregion
   
+  #region Player lookup
+    // Gets player specific chat reports and bans
+    // TODO should be changed to GET
+    [HttpPost, Route("player")]
+    public ActionResult Player()
+    {
+      Require(Permissions.Chat.View_Page);
+
+      return Forward("/chat/admin/playerDetails");
+    }
   #endregion
   
   #region Reports
-  
-  // Fetches all reports
-  [Route("reports")]
-  public async Task<IActionResult> Reports()
+  // Gets all reports
+  [HttpGet, Route("reports")]
+  public ActionResult Reports()
   {
-    // Checking access permissions
-    if (!Permissions.Chat.View_Page)
-    {
-      return View("AccessDenied");
-    }
-    
-    ClearStatus();
-  
-    _apiService
-      .Request(PlatformEnvironment.Url("/chat/admin/reports/list"))
-      .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("chatToken"))
-      .OnSuccess((sender, apiResponse) =>
-                 {
-                   SetStatus("Successfully fetched chat reports.", RequestStatus.Success);
-                   Log.Local(Owner.Nathan, "Request to chat-service succeeded.");
-                 })
-      .OnFailure((sender, apiResponse) =>
-                 {
-                   SetStatus("Failed to fetch chat reports.", RequestStatus.Error);
-                   Log.Error(owner: Owner.Nathan, message: "Request to chat-service failed.", data: new
-                                                                                              {
-                                                                                                Response = apiResponse
-                                                                                              });
-                 })
-      .Get(out GenericData response, out int code);
+    Require(Permissions.Chat.View_Page);
 
-    List<ChatReport> chatReportsList = new List<ChatReport>();
-
-    try
-    {
-      chatReportsList = response.Require<List<ChatReport>>(key: "reports");
-    }
-    catch (Exception e)
-    {
-      Log.Error(owner: Owner.Nathan, message: "Failed to parse response from chat-service.", data: e);
-    }
-
-    // This is inefficient, TODO refactor
-    List<ChatReport> newChatReportsList = new List<ChatReport>();
-    List<ChatReport> oldChatReportsList = new List<ChatReport>();
-    
-    foreach (ChatReport report in chatReportsList)
-    {
-      if (report.Status == "new")
-      {
-        newChatReportsList.Add(report);
-      }
-      else
-      {
-        oldChatReportsList.Add(report);
-      }
-    }
-    
-    ViewData["NewChatReports"] = newChatReportsList;
-    ViewData["OldChatReports"] = oldChatReportsList;
-  
-    return View();
+    return Forward("/chat/admin/reports/list");
   }
   
+  // Ignores a report for a player
+  [HttpPost, Route("reports/ignore")]
+  public ActionResult ReportsIgnore()
+  {
+    Require(Permissions.Chat.Ignore_Reports);
+
+    return Forward("/chat/admin/reports/ignore");
+  }
+  
+  // Deletes a report for a player
+  // TODO should be changed to DELETE
+  [HttpPost, Route("reports/delete")]
+  public ActionResult ReportsDelete()
+  {
+    Require(Permissions.Chat.Delete_Reports);
+
+    return Forward("/chat/admin/reports/delete");
+  }
   #endregion
-
-  #region Player specific
   
-  // Searching for a player
-  [HttpPost]
-  [Route("playerSearch")]
-  public async Task<IActionResult> PlayerSearch(string accountId)
+  #region Chat bans
+  // Chat bans a player
+  [HttpPost, Route("ban")]
+  public ActionResult Ban()
   {
-    // Checking access permissions
-    if (!Permissions.Chat.View_Page)
-    {
-      return View("AccessDenied");
-    }
+    Require(Permissions.Chat.Ban);
 
-    return RedirectToAction("Player", new { accountId = accountId });
+    return Forward("/chat/admin/ban/player");
   }
   
-  // Loads player page for chat reports/bans
-  [Route("player")]
-  public async Task<IActionResult> Player()
+  // Chat unbans a player
+  [HttpPost, Route("unban")]
+  public ActionResult Unban()
   {
-    // Checking access permissions
-    if (!Permissions.Chat.View_Page)
-    {
-      return View("AccessDenied");
-    }
-    
-    return View();
+    Require(Permissions.Chat.Unban);
+
+    return Forward("/chat/admin/ban/lift");
   }
-
-  // Specific player chat reports/bans
-  [Route("player/{accountId}")]
-  public async Task<IActionResult> Player(string accountId)
-  {
-    // Checking access permissions
-    if (!Permissions.Chat.View_Page)
-    {
-      return View("AccessDenied");
-    }
-
-    ClearStatus();
-
-    _apiService
-      .Request(PlatformEnvironment.Url("/chat/admin/playerDetails"))
-      .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("chatToken"))
-      .SetPayload(new GenericData
-                  {
-                    {"aid", accountId}
-                  })
-      .OnSuccess((sender, apiResponse) =>
-                 {
-                   SetStatus("Successfully fetched chat player details.", RequestStatus.Success);
-                   Log.Local(Owner.Nathan, "Request to chat-service succeeded.");
-                 })
-      .OnFailure((sender, apiResponse) =>
-                 {
-                   SetStatus("Failed to fetch chat player details.", RequestStatus.Error);
-                   Log.Error(owner: Owner.Nathan, message: "Request to chat-service failed.", data: new
-                                                                                                    {
-                                                                                                      Response =
-                                                                                                        apiResponse
-                                                                                                    });
-                 })
-      .Post(out GenericData response, out int code);
-
-    List<ChatBan> chatBansList = new List<ChatBan>();
-    List<ChatReport> chatReportsList = new List<ChatReport>();
-
-    try
-    {
-      chatBansList = response.Require<List<ChatBan>>(key: "bans");
-      chatReportsList = response.Require<List<ChatReport>>(key: "reports");
-    }
-    catch (Exception e)
-    {
-      Log.Error(owner: Owner.Nathan, message: "Failed to parse response from chat-service.", data: e);
-    }
-
-    ViewData["AccountId"] = accountId;
-
-    ViewData["ChatBans"] = chatBansList;
-    ViewData["ChatReports"] = chatReportsList;
-
-    return View();
-  }
-
-  // Chat banning a player
-  [HttpPost]
-  [Route("ban")]
-  public async Task<IActionResult> Ban(string accountId, string reason, long? duration)
-  {
-    // Checking access permissions
-    if (!Permissions.Chat.View_Page || !Permissions.Chat.Edit)
-    {
-      return View("AccessDenied");
-    }
-    
-    ClearStatus();
-        
-    _apiService
-      .Request(PlatformEnvironment.Url("/chat/admin/ban/player"))
-      .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("chatToken"))
-      .SetPayload(new GenericData
-                  {
-                    {"aid", accountId},
-                    {"reason", reason},
-                    {"durationInSeconds", duration}
-                  })
-      .OnSuccess(((sender, apiResponse) =>
-                  {
-                    SetStatus("Successfully banned player.", RequestStatus.Success);
-                    Log.Local(Owner.Nathan, "Request to chat-service succeeded.");
-                  }))
-      .OnFailure(((sender, apiResponse) =>
-                  {
-                    SetStatus("Failed to ban player.", RequestStatus.Error);
-                    Log.Error(Owner.Nathan, "Request to chat-service failed.", data: new
-                                                                                     {
-                                                                                       Response = apiResponse
-                                                                                     });
-                  }))
-      .Post(out GenericData response, out int code);
-  
-    return RedirectToAction("Player", new { accountId = accountId });
-  }
-  
-  // Chat unbanning a player
-  [HttpPost]
-  [Route("unban")]
-  public async Task<IActionResult> Unban(string accountId)
-  {
-    // Checking access permissions
-    if (!Permissions.Chat.View_Page || !Permissions.Chat.Edit)
-    {
-      return View("AccessDenied");
-    }
-    
-    ClearStatus();
-        
-    _apiService
-      .Request(PlatformEnvironment.Url("/chat/admin/ban/lift"))
-      .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("chatToken"))
-      .SetPayload(new GenericData
-                  {
-                    {"accountId", accountId}
-                  })
-      .OnSuccess(((sender, apiResponse) =>
-                  {
-                    SetStatus("Successfully unbanned player.", RequestStatus.Success);
-                    Log.Local(Owner.Nathan, "Request to chat-service succeeded.");
-                  }))
-      .OnFailure(((sender, apiResponse) =>
-                  {
-                    SetStatus("Failed to unban player.", RequestStatus.Error);
-                    Log.Error(Owner.Nathan, "Request to chat-service failed.", data: new
-                                                                                     {
-                                                                                       Response = apiResponse
-                                                                                     });
-                  }))
-      .Post(out GenericData response, out int code);
-  
-    return RedirectToAction("Player", new { accountId = accountId });
-  }
-  
-  // Ignore report for a player
-  [HttpPost]
-  [Route("ignore")]
-  public async Task<IActionResult> Ignore(string accountId, string reportId)
-  {
-    // Checking access permissions
-    if (!Permissions.Chat.View_Page || !Permissions.Chat.Edit)
-    {
-      return View("AccessDenied");
-    }
-    
-    ClearStatus();
-        
-    _apiService
-      .Request(PlatformEnvironment.Url("/chat/admin/reports/ignore"))
-      .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("chatToken"))
-      .SetPayload(new GenericData
-                  {
-                    {"reportId", reportId}
-                  })
-      .OnSuccess(((sender, apiResponse) =>
-                  {
-                    SetStatus("Successfully ignored report.", RequestStatus.Success);
-                    Log.Local(Owner.Nathan, "Request to chat-service succeeded.");
-                  }))
-      .OnFailure(((sender, apiResponse) =>
-                  {
-                    SetStatus("Failed to ignore report.", RequestStatus.Error);
-                    Log.Error(Owner.Nathan, "Request to chat-service failed.", data: new
-                                                                                     {
-                                                                                       Response = apiResponse
-                                                                                     });
-                  }))
-      .Post(out GenericData response, out int code);
-  
-    return RedirectToAction("Player", new { accountId = accountId });
-  }
-  
-  // Delete report for a player
-  [HttpPost]
-  [Route("delete")]
-  public async Task<IActionResult> Delete(string accountId, string reportId)
-  {
-    // Checking access permissions
-    if (!Permissions.Chat.View_Page || !Permissions.Chat.Edit)
-    {
-      return View("AccessDenied");
-    }
-    
-    ClearStatus();
-        
-    _apiService
-      .Request(PlatformEnvironment.Url("/chat/admin/reports/delete"))
-      .AddAuthorization(_dynamicConfigService.GameConfig.Require<string>("chatToken"))
-      .SetPayload(new GenericData
-                  {
-                    {"reportId", reportId}
-                  })
-      .OnSuccess(((sender, apiResponse) =>
-                  {
-                    SetStatus("Successfully deleted report.", RequestStatus.Success);
-                    Log.Local(Owner.Nathan, "Request to chat-service succeeded.");
-                  }))
-      .OnFailure(((sender, apiResponse) =>
-                  {
-                    SetStatus("Failed to delete report.", RequestStatus.Error);
-                    Log.Error(Owner.Nathan, "Request to chat-service failed.", data: new
-                                                                                       {
-                                                                                         Response = apiResponse
-                                                                                       });
-                  }))
-      .Post(out GenericData response, out int code);
-  
-    return RedirectToAction("Player", new { accountId = accountId });
-  }
-  
   #endregion
 }

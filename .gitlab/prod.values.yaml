@@ -6,7 +6,7 @@ strategyType:
 # `serviceAccountName` is deprecated in favor of `serviceAccount.name`
 serviceAccountName:
 image:
-  repository: gitlab.cdrentertainment.com:5050/platform-services/leaderboard-service
+  repository: gitlab.cdrentertainment.com:5050/platform-services/tower-admin-portal
   tag: stable
   pullPolicy: IfNotPresent
   # secrets:
@@ -52,7 +52,7 @@ gitlab:
 service:
   enabled: true
   annotations: {}
-  name: ap-prod
+  name: tapb-prod
   type: NodePort
   url: 
   additionalHosts:
@@ -61,8 +61,7 @@ service:
   internalPort: 80
 ingress:
   enabled: true
-  paths: 
-    - "/"
+  path: "/portal"
   tls:
     enabled: false
     acme: false

@@ -15,6 +15,7 @@ namespace TowerPortal.Models.Permissions;
 /// Whenever a new PermissionGroup is created, the Passport needs to be given a new property to match it.  Accessing permissions is easy
 /// via the Passport, e.g.: Passport.Mail.SendGlobalMessage.
 /// </summary>
+[BsonIgnoreExtraElements]
 public class Passport : List<PermissionGroup>
 {
     private static readonly string[] PROD_SUPERUSERS =
@@ -25,6 +26,7 @@ public class Passport : List<PermissionGroup>
     {
         "nathan.mac@rumbleentertainment.com",
         "william.maynard@rumbleentertainment.com",
+        "william.maynard@rumblegames.com",
         "mark.spenner@rumbleentertainment.com",
         "david.bethune@rumbleentertainment.com"
     };
@@ -32,6 +34,7 @@ public class Passport : List<PermissionGroup>
     private static readonly string[] READONLY_DOMAINS =
     {
         "rumbleentertainment.com",
+        "rumblegames.com",
         "willmaynard.com"
         // TODO: Testronic
     };
@@ -100,14 +103,15 @@ public class Passport : List<PermissionGroup>
     }
     public enum PassportType { Superuser, Readonly, Nonprivileged, Unauthorized }
 
-    public static Passport GetDefaultPermissions(string email)
+    public static Passport GetDefaultPermissions(SsoData data)
     {
-        if (PlatformEnvironment.IsProd && PROD_SUPERUSERS.Contains(email))
+        if (PlatformEnvironment.IsProd && PROD_SUPERUSERS.Contains(data.Email))
             return new Passport(PassportType.Superuser);
-        if (!PlatformEnvironment.IsProd && DEV_SUPERUSERS.Contains(email))
+        if (!PlatformEnvironment.IsProd && DEV_SUPERUSERS.Contains(data.Email))
             return new Passport(PassportType.Superuser);
-        if (READONLY_DOMAINS.Any(email.EndsWith))
+        if (READONLY_DOMAINS.Contains(data.Domain))
             return new Passport(PassportType.Readonly);
-        return new Passport(PassportType.Unauthorized);
+        // return new Passport(PassportType.Unauthorized);
+        throw new PlatformException("Unauthorized.");
     }
 }
