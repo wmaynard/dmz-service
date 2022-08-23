@@ -1,16 +1,11 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
 using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Exceptions;
-using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
-using TowerPortal.Models;
 using TowerPortal.Models.Permissions;
 using TowerPortal.Models.Portal;
 using TowerPortal.Services;
@@ -55,9 +50,11 @@ public class PermissionController : PortalController
   // Update account permissions
   // TODO: This method should be accepting permission-related classes as parameters, not a ton of strings. 
   [HttpPatch, Route("account")]
-  public ActionResult UpdatePermissions(string id, GenericData data)
+  public ActionResult UpdatePermissions()
   {
     Require(Permissions.Portal.ManagePermissions);
+
+    string id = Require<string>(key: "id");
     
     // Differentiate this from the regular Permissions property, which refers to the current user - not the one displayed on screen.
     Passport displayedUserPermissions = _accountService.FindById(id).Permissions;
