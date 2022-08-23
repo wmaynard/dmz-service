@@ -70,7 +70,7 @@ public class MailboxController : PortalController
   [HttpPatch, Route("inbox/edit")]
   public ActionResult InboxEdit()
   {
-    Require(Permissions.Mail.Edit);
+    Require(Permissions.Mail.Modify_Inbox);
 
     return Forward("/mail/admin/messages/edit");
   }
@@ -79,7 +79,7 @@ public class MailboxController : PortalController
   [HttpPatch, Route("inbox/expire")]
   public ActionResult InboxExpire()
   {
-    Require(Permissions.Mail.Edit);
+    Require(Permissions.Mail.Modify_Inbox);
 
     return Forward("/mail/admin/messages/expire");
   }

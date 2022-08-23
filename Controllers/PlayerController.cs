@@ -12,7 +12,7 @@ public class PlayerController : PortalController
     [HttpGet, Route("search")]
     public ActionResult Search()
     {
-        Require(Permissions.Player.Search);
+        Require(Permissions.Player.Search); // necessary? maybe change to view_page
 
         return Forward("/player/v2/admin/search");
     }
@@ -41,7 +41,7 @@ public class PlayerController : PortalController
     [HttpDelete, Route("unlink")]
     public ActionResult Unlink()
     {
-        Require(Permissions.Player.Edit);
+        Require(Permissions.Player.Unlink_Accounts);
 
         return Forward("/player/v2/admin/profiles/unlink");
     }
