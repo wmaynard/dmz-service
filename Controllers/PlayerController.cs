@@ -37,6 +37,15 @@ public class PlayerController : PortalController
         return Forward("/player/v2/admin/screenname");
     }
     
+    // Unlink account
+    [HttpDelete, Route("unlink")]
+    public ActionResult Unlink()
+    {
+        Require(Permissions.Player.Edit);
+
+        return Forward("/player/v2/admin/profiles/unlink");
+    }
+    
     // Add currency to a player's wallet
     // Requires the whole player component with field modified, as well as version += 1
     [HttpPatch, Route("wallet/add")]

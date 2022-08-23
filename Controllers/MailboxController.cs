@@ -58,7 +58,6 @@ public class MailboxController : PortalController
 
   #region Player inbox
   // Gets inbox for a player
-  // TODO should be changed to GET
   [HttpPost, Route("inbox")]
   public ActionResult Inbox()
   {

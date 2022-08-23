@@ -25,6 +25,14 @@ public class ChatController : PortalController
 
     return Forward("/chat/admin/messages/sticky");
   }
+  // Edit a Chat announcement
+  [HttpPatch, Route("announcements/edit")]
+  public ActionResult AnnouncementsEdit()
+  {
+    Require(Permissions.Chat.Send_Announcements);
+
+    return Forward(""); // TODO fill out when endpoint is implemented
+  }
 
   // Deletes a chat announcement
   // TODO should be changed to DELETE
