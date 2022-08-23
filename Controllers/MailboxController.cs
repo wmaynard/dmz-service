@@ -58,7 +58,7 @@ public class MailboxController : PortalController
 
   #region Player inbox
   // Gets inbox for a player
-  [HttpPost, Route("inbox")]
+  [HttpGet, Route("inbox")]
   public ActionResult Inbox()
   {
     Require(Permissions.Mail.View_Page);
