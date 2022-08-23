@@ -66,5 +66,23 @@ public class MailboxController : PortalController
 
     return Forward("/mail/admin/inbox");
   }
-  #endregion
+  
+  // Edits message in player inbox
+  [HttpPatch, Route("inbox/edit")]
+  public ActionResult InboxEdit()
+  {
+    Require(Permissions.Mail.Edit);
+
+    return Forward("/mail/admin/messages/edit");
+  }
+  
+  // Expires message in player inbox
+  [HttpPatch, Route("inbox/expire")]
+  public ActionResult InboxExpire()
+  {
+    Require(Permissions.Mail.Edit);
+
+    return Forward("/mail/admin/messages/expire");
+  }
+#endregion
 }
