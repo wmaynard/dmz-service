@@ -9,6 +9,6 @@ public class MailPermissions : PermissionGroup
 
     public bool Send_Direct_Messages   { get; set; } // TODO: Implement
     public bool Send_Global_Messages   { get; set; } // TODO: Implement
-    public bool Delete_Global_Messages { get; set; }
+    public bool Expire_Global_Messages { get; set; }
     public bool Modify_Inbox           { get; set; }
 }

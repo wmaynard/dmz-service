@@ -36,10 +36,10 @@ public class MailboxController : PortalController
   }
 
   // Expires global message - service does not actually delete
-  [HttpPatch, Route("global/delete")]
-  public ActionResult GlobalDelete()
+  [HttpPatch, Route("global/expire")]
+  public ActionResult GlobalExpire()
   {
-    Require(Permissions.Mail.Delete_Global_Messages);
+    Require(Permissions.Mail.Expire_Global_Messages);
 
     return Forward("/mail/admin/global/messages/expire");
   }
