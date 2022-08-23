@@ -20,7 +20,9 @@ namespace TowerPortal.Controllers;
 [Route("portal/permissions"), RequireAuth(AuthType.ADMIN_TOKEN)]
 public class PermissionController : PortalController
 {
-  private readonly AccountService _accountService;
+  #pragma warning disable
+    private readonly AccountService _accountService;
+  #pragma warning restore
   
   #region List
   // TODO search?
