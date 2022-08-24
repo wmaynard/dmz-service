@@ -24,7 +24,7 @@ and specific users on the portal depending on their permissions. The admin token
 as a `Bearer {token}`.
 
 # Endpoints
-All endpoints are reached with the base route `/portal/` (subject to change soon as of time of writing.
+**All endpoints are reached with the base route `/portal/`** (subject to change soon as of time of writing).
 Any following endpoints listed are appended on to the base route. If the parameters for the endpoints on the corresponding 
 services are updated, the endpoints here will reflect those changes.
 
@@ -37,6 +37,7 @@ No tokens are required for this endpoint.
 
 ## Permissions
 All non-health endpoints require a valid token.
+**All endpoints are prefixed with `/permissions/`.**
 
 | Method | Endpoint   | Description                                           | Required Parameters                | Optional Parameters |
 |-------:|:-----------|:------------------------------------------------------|:-----------------------------------|:--------------------|
@@ -46,6 +47,7 @@ All non-health endpoints require a valid token.
 
 ## Chat Service
 All non-health endpoints require a valid token.
+**All endpoints are prefixed with `/chat/`.**
 
 | Method | Endpoint                | Description                             | Required Parameters                  | Optional Parameters                                                                                 |
 |-------:|:------------------------|:----------------------------------------|:-------------------------------------|:----------------------------------------------------------------------------------------------------|
@@ -62,24 +64,32 @@ All non-health endpoints require a valid token.
 
 ## Dynamic Config Service
 All non-health endpoints require a valid token.
+**All endpoints are prefixed with `/config/`.**
 
-| Method | Endpoint | Description | Required Parameters | Optional Parameters |
-|-------:|:---------|:------------|:--------------------|:--------------------|
+| Method | Endpoint    | Description                                    | Required Parameters                                                            | Optional Parameters |
+|-------:|:------------|:-----------------------------------------------|:-------------------------------------------------------------------------------|:--------------------|
+|    GET | `/settings` | Fetches all dynamic config settings            |                                                                                |                     |
+|   POST | `/section`  | Creates a new section in config                | *string* `name`<br/>*string* `friendlyName`                                    |                     |
+|  PATCH | `/update`   | Updates an existing value or creates a new key | *string* `name`<br/>*string* `key`<br/>*string* `value`<br/>*string* `comment` |                     |
+| DELETE | `/delete`   | Deletes an existing key                        | *string* `name`<br/>*string* `key`                                             |                     |
 
 ## Mailbox Service
 All non-health endpoints require a valid token.
+**All endpoints are prefixed with `/mailbox/`.**
 
 | Method | Endpoint | Description | Required Parameters | Optional Parameters |
 |-------:|:---------|:------------|:--------------------|:--------------------|
 
 ## Player Service
 All non-health endpoints require a valid token.
+**All endpoints are prefixed with `/player/`.**
 
 | Method | Endpoint | Description | Required Parameters | Optional Parameters |
 |-------:|:---------|:------------|:--------------------|:--------------------|
 
 ## Token Service
 All non-health endpoints require a valid token.
+**All endpoints are prefixed with `/token/`.**
 
 | Method | Endpoint | Description | Required Parameters | Optional Parameters |
 |-------:|:---------|:------------|:--------------------|:--------------------|
