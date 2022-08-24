@@ -105,5 +105,8 @@ All non-health endpoints require a valid token.
 All non-health endpoints require a valid token.
 **All endpoints are prefixed with `/token/`.**
 
-| Method | Endpoint | Description | Required Parameters | Optional Parameters |
-|-------:|:---------|:------------|:--------------------|:--------------------|
+| Method | Endpoint      | Description                                  | Required Parameters | Optional Parameters |
+|-------:|:--------------|:---------------------------------------------|:--------------------|:--------------------|
+|  PATCH | `/ban`        | Bans a player permanently or for a duration  | *string* `aid`      | *long* `duration`   |
+|  PATCH | `/unban`      | Unbans a player                              | *string* `aid`      |                     |
+|  PATCH | `/invalidate` | Invalidates a player's token (logs them out) | *string* `aid`      |                     |
