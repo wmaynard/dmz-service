@@ -25,26 +25,40 @@ as a `Bearer {token}`.
 
 # Endpoints
 All endpoints are reached with the base route `/portal/` (subject to change soon as of time of writing.
-Any following endpoints listed are appended on to the base route.
+Any following endpoints listed are appended on to the base route. If the parameters for the endpoints on the corresponding 
+services are updated, the endpoints here will reflect those changes.
 
 ## Top Level
 No tokens are required for this endpoint.
 
-| Method | Endpoint  | Description                                                                         | Required Parameters | Optional Parameters |
-|-------:|:----------|:------------------------------------------------------------------------------------|:--------------------|:--------------------|
-|    GET | `/health` | **INTERNAL** Health check on the status of the following services: `AccountService` |                     |                     |
+| Method | Endpoint  | Description                                                            | Required Parameters | Optional Parameters |
+|-------:|:----------|:-----------------------------------------------------------------------|:--------------------|:--------------------|
+|    GET | `/health` | Health check on the status of the following services: `AccountService` |                     |                     |
 
 ## Permissions
 All non-health endpoints require a valid token.
 
-| Method | Endpoint | Description | Required Parameters | Optional Parameters |
-|-------:|:---------|:------------|:--------------------|:--------------------|
+| Method | Endpoint   | Description                                           | Required Parameters                | Optional Parameters |
+|-------:|:-----------|:------------------------------------------------------|:-----------------------------------|:--------------------|
+|    GET | `/list`    | Lists all user accounts on the portal                 |                                    |                     |
+|    GET | `/account` | Returns the account associated with the provided `id` | *string* `id`                      |                     |
+|  PATCH | `/update`  | Modifies permissions on the account provided          | *string* `id`<br />*object* `data` |                     |
 
 ## Chat Service
 All non-health endpoints require a valid token.
 
-| Method | Endpoint | Description | Required Parameters | Optional Parameters |
-|-------:|:---------|:------------|:--------------------|:--------------------|
+| Method | Endpoint                | Description                             | Required Parameters                  | Optional Parameters                                                                                 |
+|-------:|:------------------------|:----------------------------------------|:-------------------------------------|:----------------------------------------------------------------------------------------------------|
+|    GET | `/announcements`        | Fetches all chat announcements          |                                      |                                                                                                     |
+|   POST | `/announcements/send`   | Sends a new chat announcement           | *string* `text`                      | *long* `durationInSeconds`<br/>*long* `expiration`<br/>*long* `visibleFrom`<br/>*string* `language` |
+|  PATCH | `/announcements/edit`   | Edits an existing chat announcement     |                                      |                                                                                                     |
+|   POST | `/announcements/delete` | Deletes an existing chat announcement   | *string* `messageId`                 |                                                                                                     |
+|   POST | `/player`               | Fetches reports and bans for the player | *string* `aid`                       |                                                                                                     |
+|    GET | `/reports`              | Lists all reports                       |                                      |                                                                                                     |
+|   POST | `/reports/ignore`       | Ignores(archives) a specific report     | *string* `reportId`                  |                                                                                                     |
+|   POST | `/reports/delete`       | Deletes a specific report               | *string* `reportId`                  |                                                                                                     |
+|   POST | `/ban`                  | Chat bans a player                      | *string* `aid`<br/>*string* `reason` | *long* `durationInSeconds`<br/>*string* `reportId`                                                  |
+|   POST | `/unban`                | Chat unbans a player                    | *string* `accountId`                 |                                                                                                     |
 
 ## Dynamic Config Service
 All non-health endpoints require a valid token.
