@@ -77,8 +77,16 @@ All non-health endpoints require a valid token.
 All non-health endpoints require a valid token.
 **All endpoints are prefixed with `/mailbox/`.**
 
-| Method | Endpoint | Description | Required Parameters | Optional Parameters |
-|-------:|:---------|:------------|:--------------------|:--------------------|
+| Method | Endpoint         | Description                           | Required Parameters                                   | Optional Parameters |
+|-------:|:-----------------|:--------------------------------------|:------------------------------------------------------|:--------------------|
+|    GET | `/global`        | Fetches all global messages           |                                                       |                     |
+|   POST | `/global/send`   | Sends a new global message            | *GlobalMessage* `globalMessage`                       |                     |
+|  PATCH | `/global/edit`   | Edits an existing global message      | *GlobalMessage* `globalMessage`                       |                     |
+|  PATCH | `/global/expire` | Expires an existing global message    | *string* `messageId`                                  |                     |
+|   POST | `/direct/send`   | Sends a new direct(or group) message  | *List<*string*>* `accountIds`<br/>*Message* `message` |                     |
+|    GET | `/inbox`         | Views inbox for the specified player  | *query* `accountId`                                   |                     |
+|  PATCH | `/inbox/edit`    | Edits a message in a player's inbox   | *string* `accountId`<br/>*Message* `message`          |                     |
+|  PATCH | `/inbox/expire`  | Expires a message in a player's inbox | *string* `accountId`<br/>*string* `messageId`         |                     |
 
 ## Player Service
 All non-health endpoints require a valid token.
