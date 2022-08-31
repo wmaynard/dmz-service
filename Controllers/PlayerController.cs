@@ -46,24 +46,13 @@ public class PlayerController : PortalController
         return Forward("/player/v2/admin/profiles/unlink");
     }
     
-    // Add currency to a player's wallet
     // Requires the whole player component with field modified, as well as version += 1
-    [HttpPatch, Route("wallet/add")]
-    public ActionResult WalletAdd()
+    [HttpPatch, Route("update")]
+    public ActionResult Update()
     {
-        Require(Permissions.Player.Add_Currency);
+        Require(Permissions.Player.Update);
 
         return Forward("/player/v2/admin/component");
     }
-    
-    // Remove currency from a player's wallet
-    // Requires the whole player component with field modified, as well as version += 1
-    [HttpPatch, Route("wallet/remove")]
-    public ActionResult WalletRemove()
-    {
-        Require(Permissions.Player.Remove_Currency);
-
-        return Forward("/player/v2/admin/component");
-    }
-    #endregion
+#endregion
 }
