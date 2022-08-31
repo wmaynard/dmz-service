@@ -97,8 +97,7 @@ All non-health endpoints require a valid token.
 |    GET | `/search`        | Searches for a list of players by query |                                                |                     |
 |    GET | `/details`       | Fetches data for a player               | *query* `accountId`                            |                     |
 |  PATCH | `/screenname`    | Modifies a player's screenname          | *string* `accountId`<br/>*string* `screenname` |                     |
-|  PATCH | `/wallet/add`    | Adds currency to a player's wallet      | *Wallet* `component`                           |                     |
-|  PATCH | `/wallet/remove` | Removes currency from a player's wallet | *Wallet* `component`                           |                     |
+|  PATCH | `/update`        | Modifies a player component             | *Component* `component`                        |                     |
 | DELETE | `/unlink`        | Unlinks a google account from a player  | *string* `email`                               |                     |
 
 ## Token Service
