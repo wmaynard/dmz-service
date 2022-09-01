@@ -47,7 +47,6 @@ public class ChatController : PortalController
   
 #region Player lookup
     // Gets player specific chat reports and bans
-    // TODO should be changed to GET
     [HttpGet, Route("player")]
     public ActionResult Player()
     {
