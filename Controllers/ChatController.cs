@@ -8,14 +8,14 @@ namespace TowerPortal.Controllers;
 public class ChatController : PortalController
 {
   #region Announcements
-  // Gets all announcements
-  [HttpGet, Route("announcements")]
-  public ActionResult Announcements()
-  {
-    Require(Permissions.Chat.View_Page);
+    // Gets all announcements
+    [HttpGet, Route("announcements")]
+    public ActionResult Announcements()
+    {
+        Require(Permissions.Chat.View_Page);
 
-    return Forward("/chat/admin/messages/sticky");
-  }
+        return Forward("/chat/admin/messages/sticky");
+    }
 
   // Send a chat announcement
   [HttpPost, Route("announcements/send")]
@@ -45,16 +45,16 @@ public class ChatController : PortalController
   }
   #endregion
   
-  #region Player lookup
+#region Player lookup
     // Gets player specific chat reports and bans
     [HttpGet, Route("player")]
     public ActionResult Player()
     {
-      Require(Permissions.Chat.View_Page);
+        Require(Permissions.Chat.View_Page);
 
-      return Forward("/chat/admin/playerDetails");
+        return Forward("/chat/admin/playerDetails");
     }
-  #endregion
+#endregion
   
   #region Reports
   // Gets all reports
