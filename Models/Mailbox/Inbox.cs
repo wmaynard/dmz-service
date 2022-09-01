@@ -43,7 +43,7 @@ public class Inbox : PlatformCollectionDocument
         if (id != null)
         {
             Id = id;
-        };
+        }
     }
     
     // Required for JSON serialization

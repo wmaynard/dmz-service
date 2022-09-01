@@ -33,12 +33,13 @@ public class SsoData : PlatformDataModel
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_DOMAIN), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string Domain { get; init; }
 
+    // ReSharper disable once ArrangeMethodOrOperatorBody
     public static implicit operator SsoData(GoogleJsonWebSignature.Payload payload) => new SsoData
-    {
-        AccountId = payload.Subject,
-        Email = payload.Email,
-        Photo = payload.Picture,
-        Name = payload.Name,
-        Domain = payload.HostedDomain
-    };
+                                                                                       {
+                                                                                           AccountId = payload.Subject,
+                                                                                           Email = payload.Email,
+                                                                                           Photo = payload.Picture,
+                                                                                           Name = payload.Name,
+                                                                                           Domain = payload.HostedDomain
+                                                                                       };
 }

@@ -5,6 +5,7 @@ namespace TowerPortal.Models.Permissions;
 [BsonIgnoreExtraElements]
 public class ChatPermissions : PermissionGroup
 {
+    // ReSharper disable once ArrangeAccessorOwnerBody
     public override string Name => "Chat Service";
   
     public bool Send_Announcements   { get; set; }

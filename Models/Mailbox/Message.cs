@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
+// ReSharper disable InconsistentNaming
 
 namespace TowerPortal.Models.Mailbox;
 
@@ -80,6 +81,7 @@ public class Message : PlatformCollectionDocument
 
     [BsonIgnore]
     [JsonIgnore]
+    // ReSharper disable once ArrangeAccessorOwnerBody
     public bool IsExpired => Expiration <= UnixTime; // no setter, change expiration to UnixTime instead
 
     public Message(string subject, string body, List<Attachment> attachments, long expiration, long visibleFrom, string icon, string banner, StatusType status, string internalNote)

@@ -3,9 +3,9 @@ using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Services;
 using TowerPortal.Exceptions;
-using TowerPortal.Models;
 using TowerPortal.Models.Permissions;
 using TowerPortal.Models.Portal;
+// ReSharper disable ArrangeMethodOrOperatorBody
 
 namespace TowerPortal.Services;
 public class AccountService : PlatformMongoService<Account>

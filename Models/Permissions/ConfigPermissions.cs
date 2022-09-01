@@ -5,6 +5,7 @@ namespace TowerPortal.Models.Permissions;
 [BsonIgnoreExtraElements]
 public class ConfigPermissions : PermissionGroup
 {
+    // ReSharper disable once ArrangeAccessorOwnerBody
     public override string Name => "Config";
     
     public bool Manage { get; set; }

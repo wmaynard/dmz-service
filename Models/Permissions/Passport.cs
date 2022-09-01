@@ -7,6 +7,8 @@ using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Utilities;
 using TowerPortal.Exceptions;
 using TowerPortal.Models.Portal;
+// ReSharper disable InconsistentNaming
+// ReSharper disable ArrangeAccessorOwnerBody
 
 namespace TowerPortal.Models.Permissions;
 

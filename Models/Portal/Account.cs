@@ -67,12 +67,14 @@ public class Account : PlatformCollectionDocument
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_PERMISSIONS)]
     public Passport Permissions { get; set; } // TODO: private set
 
+    // ReSharper disable once ArrangeAccessorOwnerBody
     public Account() => Permissions = new Passport();
 
+    // ReSharper disable once ArrangeMethodOrOperatorBody
     public static Account FromSsoData(SsoData data) => new Account
-    {
-        Name = data.Name,
-        Email = data.Email,
-        Permissions = Passport.GetDefaultPermissions(data)
-    };
+                                                       {
+                                                           Name = data.Name,
+                                                           Email = data.Email,
+                                                           Permissions = Passport.GetDefaultPermissions(data)
+                                                       };
 }

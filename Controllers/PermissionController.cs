@@ -20,7 +20,7 @@ public class PermissionController : PortalController
     #pragma warning restore
     
     #region List
-    // TODO search if userbase becomes large
+    // TODO search if user base becomes large
     
     // List all accounts
     [HttpGet, Route("list")]

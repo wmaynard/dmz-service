@@ -28,7 +28,7 @@ public class Attachment : PlatformDataModel
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_QUANTITY)]
     public int Quantity { get; private set; }
     
-    public Attachment(string type, string rewardId, int quantity = 1) : base()
+    public Attachment(string type, string rewardId, int quantity = 1)
     {
         Type = type;
         RewardId = rewardId;
