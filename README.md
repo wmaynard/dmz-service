@@ -55,7 +55,7 @@ All non-health endpoints require a valid token.
 |   POST | `/announcements/send`   | Sends a new chat announcement           | *string* `text`                      | *long* `durationInSeconds`<br/>*long* `expiration`<br/>*long* `visibleFrom`<br/>*string* `language` |
 |  PATCH | `/announcements/edit`   | Edits an existing chat announcement     |                                      |                                                                                                     |
 |   POST | `/announcements/delete` | Deletes an existing chat announcement   | *string* `messageId`                 |                                                                                                     |
-|   POST | `/player`               | Fetches reports and bans for the player | *string* `aid`                       |                                                                                                     |
+|    GET | `/player`               | Fetches reports and bans for the player | *string* `aid`                       |                                                                                                     |
 |    GET | `/reports`              | Lists all reports                       |                                      |                                                                                                     |
 |   POST | `/reports/ignore`       | Ignores(archives) a specific report     | *string* `reportId`                  |                                                                                                     |
 |   POST | `/reports/delete`       | Deletes a specific report               | *string* `reportId`                  |                                                                                                     |
@@ -72,6 +72,15 @@ All non-health endpoints require a valid token.
 |   POST | `/section`  | Creates a new section in config                | *string* `name`<br/>*string* `friendlyName`                                    |                     |
 |  PATCH | `/update`   | Updates an existing value or creates a new key | *string* `name`<br/>*string* `key`<br/>*string* `value`<br/>*string* `comment` |                     |
 | DELETE | `/delete`   | Deletes an existing key                        | *string* `name`<br/>*string* `key`                                             |                     |
+
+## Leaderboard Service
+All non-health endpoints require a valid token.
+**All endpoints are prefixed with `/leaderboard/`.**
+
+| Method | Endpoint | Description                 | Required Parameters      | Optional Parameters                       |
+|-------:|:---------|:----------------------------|:-------------------------|:------------------------------------------|
+|    GET | `/`      | Fetches leaderboard by ID   | *string* `leaderboardId` | *string* `accountId`<br/>*string* `count` |
+|    GET | `/list`  | Fetches all leaderboard IDs |                          |                                           |
 
 ## Mailbox Service
 All non-health endpoints require a valid token.
