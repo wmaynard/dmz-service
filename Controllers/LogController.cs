@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
 using Rumble.Platform.Common.Utilities;
 using TowerPortal.Models;
+using TowerPortal.Models.Portal;
 
 namespace TowerPortal.Controllers;
 

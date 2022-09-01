@@ -49,11 +49,11 @@ public class ChatBan : PlatformDataModel
       
     public ChatBan(string id, string accountId, long issued, string reason, List<GenericData> snapshot, string timeRemaining)
     {
-      Id = id;
-      AccountId = accountId;
-      Issued = issued;
-      Reason = reason;
-      Snapshot = snapshot;
-      TimeRemaining = timeRemaining;
+        Id = id;
+        AccountId = accountId;
+        Issued = issued;
+        Reason = reason;
+        Snapshot = snapshot;
+        TimeRemaining = timeRemaining;
     }
 }

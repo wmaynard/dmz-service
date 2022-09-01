@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using RCL.Logging;
-using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Utilities;
 
@@ -34,9 +33,15 @@ public abstract class PermissionGroup : PlatformDataModel
     public bool Edit { get; set; }
     
     [BsonIgnore, JsonIgnore]
-    internal string Key => Name.Replace(oldChar: '.', newChar: '-').Replace(oldChar: ' ', newChar: '_');
+    internal string Key
+    {
+        get { return Name.Replace(oldChar: '.', newChar: '-').Replace(oldChar: ' ', newChar: '_'); }
+    }
 
-    internal string GetPermissionKey(string name) => $"{Key}.{name}";
+    internal string GetPermissionKey(string name)
+    {
+        return $"{Key}.{name}";
+    }
 
     public Dictionary<string, bool> Values
     {
@@ -44,7 +49,10 @@ public abstract class PermissionGroup : PlatformDataModel
         {
             Dictionary<string, bool> output = new Dictionary<string, bool>();
             foreach (PropertyInfo info in GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(info => info.PropertyType.IsAssignableTo(typeof(bool))))
+            {
                 output[GetPermissionKey(info.Name)] = (bool)(info.GetValue(this) ?? false);
+            }
+
             return output;
         }
     }
@@ -61,16 +69,20 @@ public abstract class PermissionGroup : PlatformDataModel
             if (value != null)
             {
                 if (info.GetValue(this)?.Equals(value) ?? false)
+                {
                     continue;
+                }
+
                 info.SetValue(this, (bool)value);
                 valuesChanged++;
             }
-                
             else
+            {
                 Log.Warn(Owner.Will, "Unable to update permission from GenericData; key not found.", data: new
-                {
-                    PermissionKey = key
-                });
+                                                                                                           {
+                                                                                                               PermissionKey = key
+                                                                                                           });
+            }
         }
         return valuesChanged;
     }
@@ -114,7 +126,9 @@ public abstract class PermissionGroup : PlatformDataModel
             .Where(info => info.PropertyType.IsAssignableTo(typeof(bool))))
         {
             if (values.TryGetValue(info.Name, out bool permission))
+            {
                 info.SetValue(this, (bool)(info.GetValue(this) ?? false) || permission);
+            }
         }
     }
 }

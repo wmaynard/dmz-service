@@ -54,5 +54,5 @@ public class PlayerController : PortalController
 
         return Forward("/player/v2/admin/component");
     }
-#endregion
+    #endregion
 }

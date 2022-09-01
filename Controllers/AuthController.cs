@@ -30,8 +30,10 @@ public class AuthController : PlatformController
         SsoData data = await ValidateGoogleToken(token);
         
         if (string.IsNullOrWhiteSpace(data.Email))
+        {
             throw new PlatformException(message: "Email address not provided from Google token.", code: ErrorCode.Unauthorized);
-        
+        }
+
         Account account = _accountService.GoogleLogin(data);
         string platformToken = GenerateToken(account);
 
@@ -87,7 +89,9 @@ public class AuthController : PlatformController
             .Post(out GenericData json, out int code);
 
         if (!code.Between(200, 299))
+        {
             throw new PlatformException("Portal token generation failed.");
+        }
 
         return json.Require<GenericData>("authorization").Require<string>("token");
     }

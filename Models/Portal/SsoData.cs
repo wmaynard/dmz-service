@@ -3,7 +3,7 @@ using Google.Apis.Auth;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
 
-namespace TowerPortal.Models;
+namespace TowerPortal.Models.Portal;
 
 public class SsoData : PlatformDataModel
 {

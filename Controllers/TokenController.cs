@@ -34,9 +34,9 @@ public class TokenController : PortalController
 
         return Forward("/token/admin/unban");
     }
-#endregion
+    #endregion
 
-#region Token invalidation
+    #region Token invalidation
     // Invalidate a player's token
     [HttpPatch, Route("invalidate")]
     public ActionResult Invalidate()
@@ -45,5 +45,5 @@ public class TokenController : PortalController
 
         return Forward("/token/admin/invalidate");
     }
-#endregion
+    #endregion
 }

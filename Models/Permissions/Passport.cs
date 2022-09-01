@@ -4,9 +4,9 @@ using System.Linq;
 using System.Reflection;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Exceptions;
-using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Utilities;
 using TowerPortal.Exceptions;
+using TowerPortal.Models.Portal;
 
 namespace TowerPortal.Models.Permissions;
 
@@ -56,7 +56,10 @@ public class Passport : List<PermissionGroup>
     {
         T output = this.OfType<T>().FirstOrDefault();
         if (output == null)
+        {
             base.Add(output = Activator.CreateInstance<T>());
+        }
+
         return output;
     }
     
@@ -97,20 +100,33 @@ public class Passport : List<PermissionGroup>
     {
         PermissionGroup current = this.FirstOrDefault(group => group.GetType() == toAdd.GetType());
         if (current == null)
+        {
             base.Add(toAdd);
+        }
         else
+        {
             current.Merge(toAdd);
+        }
     }
     public enum PassportType { Superuser, Readonly, Nonprivileged, Unauthorized }
 
     public static Passport GetDefaultPermissions(SsoData data)
     {
         if (PlatformEnvironment.IsProd && PROD_SUPERUSERS.Contains(data.Email))
+        {
             return new Passport(PassportType.Superuser);
+        }
+
         if (!PlatformEnvironment.IsProd && DEV_SUPERUSERS.Contains(data.Email))
+        {
             return new Passport(PassportType.Superuser);
+        }
+
         if (READONLY_DOMAINS.Contains(data.Domain))
+        {
             return new Passport(PassportType.Readonly);
+        }
+
         // return new Passport(PassportType.Unauthorized);
         throw new PlatformException("Unauthorized.");
     }

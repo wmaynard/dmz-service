@@ -61,13 +61,13 @@ public class ChatReport : PlatformDataModel
       
     public ChatReport(string id, string messageId, List<GenericData> log, List<GenericData> players, GenericData reported, List<GenericData> reporters, string status, long time)
     {
-      Id = id;
-      MessageId = messageId;
-      Log = log;
-      Players = players;
-      Reported = reported;
-      Reporters = reporters;
-      Status = status;
-      Time = time;
+        Id = id;
+        MessageId = messageId;
+        Log = log;
+        Players = players;
+        Reported = reported;
+        Reporters = reporters;
+        Status = status;
+        Time = time;
     }
 }

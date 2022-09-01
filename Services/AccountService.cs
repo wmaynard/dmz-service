@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using MongoDB.Driver;
 using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Models;
