@@ -119,6 +119,15 @@ public class PlayerController : PortalController
             newWalletCurrencies.Add(currencies.FirstOrDefault(currency => currency.CurrencyId == oldCurrency.CurrencyId) ?? oldCurrency);
         }
 
+        foreach (WalletCurrency newCurrency in currencies)
+        {
+            if (!component.Wallet.Data.Currencies.Exists(oldCurrency =>
+                                                             oldCurrency.CurrencyId == newCurrency.CurrencyId))
+            {
+                newWalletCurrencies.Add(newCurrency);
+            }
+        }
+
         component.Wallet.Data.Currencies = newWalletCurrencies;
         component.Wallet.Version += 1;
 
