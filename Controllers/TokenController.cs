@@ -7,7 +7,7 @@ namespace TowerPortal.Controllers;
 [Route("portal/token"), RequireAuth(AuthType.ADMIN_TOKEN)]
 public class TokenController : PortalController
 {
-#region Player bans
+    #region Player bans
 
     [HttpGet, Route("status")]
     public ActionResult BanStatus()
