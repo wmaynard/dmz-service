@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Utilities;
 
-namespace TowerPortal.Controllers;
+namespace Dmz.Controllers;
 
-[Route("portal/config"), RequireAuth(AuthType.ADMIN_TOKEN)]
-public class DynamicConfigController : PortalController
+[Route("dmz/config"), RequireAuth(AuthType.ADMIN_TOKEN)]
+public class DynamicConfigController : DmzController
 {
     #region View config
     // Get all config settings

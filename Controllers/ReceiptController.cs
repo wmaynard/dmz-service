@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Utilities;
 
-namespace TowerPortal.Controllers;
+namespace Dmz.Controllers;
 
-[Route("portal/receipt"), RequireAuth(AuthType.ADMIN_TOKEN)]
-public class ReceiptController : PortalController
+[Route("dmz/receipt"), RequireAuth(AuthType.ADMIN_TOKEN)]
+public class ReceiptController : DmzController
 {
     #region Fetch receipts
     // Gets all receipts

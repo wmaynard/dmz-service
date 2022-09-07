@@ -1,12 +1,12 @@
+using Dmz.Models.Portal;
 using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
 using Rumble.Platform.Common.Utilities;
-using TowerPortal.Models.Portal;
 
-namespace TowerPortal.Controllers;
+namespace Dmz.Controllers;
 
-[Route("/portal/log")]
-public class LogController : PortalController
+[Route("/dmz/log")]
+public class LogController : DmzController
 {
     [HttpPost, Route("critical")]
     public ActionResult Critical()

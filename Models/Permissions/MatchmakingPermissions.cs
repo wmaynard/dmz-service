@@ -1,6 +1,6 @@
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace TowerPortal.Models.Permissions;
+namespace Dmz.Models.Permissions;
 
 [BsonIgnoreExtraElements]
 public class MatchmakingPermissions : PermissionGroup

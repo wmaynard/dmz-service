@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
 
-namespace TowerPortal.Models.Player;
+namespace Dmz.Models.Player;
 
 [BsonIgnoreExtraElements]
 public class SearchResponse : PlatformDataModel

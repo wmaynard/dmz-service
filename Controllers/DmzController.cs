@@ -1,14 +1,14 @@
 using System.Linq;
+using Dmz.Exceptions;
+using Dmz.Models.Permissions;
+using Dmz.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Web;
-using TowerPortal.Exceptions;
-using TowerPortal.Extensions;
-using TowerPortal.Models.Permissions;
-using TowerPortal.Utilities;
+using Dmz.Extensions;
 
-namespace TowerPortal.Controllers;
+namespace Dmz.Controllers;
 
-public abstract class PortalController : PlatformController
+public abstract class DmzController : PlatformController
 {
     protected static Passport Permissions
     {

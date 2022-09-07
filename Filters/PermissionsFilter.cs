@@ -1,5 +1,7 @@
 using System;
 using System.Linq;
+using Dmz.Services;
+using Dmz.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using RCL.Logging;
@@ -7,17 +9,15 @@ using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Extensions;
 using Rumble.Platform.Common.Filters;
 using Rumble.Platform.Common.Utilities;
-using TowerPortal.Controllers;
-using TowerPortal.Models;
-using TowerPortal.Models.Permissions;
-using TowerPortal.Services;
-using TowerPortal.Utilities;
+using Dmz.Controllers;
+using Dmz.Models;
+using Dmz.Models.Permissions;
 
-namespace TowerPortal.Filters;
+namespace Dmz.Filters;
 
 public class PermissionsFilter : PlatformFilter, IActionFilter
 {
-    public const string KEY_PERMISSIONS = "PortalPermissions";
+    public const string KEY_PERMISSIONS = "DmzPermissions";
     public const string KEY_PARAMETERS = "QueryParameters";
     public const string KEY_HTTP_METHOD = "RequestMethod";
     

@@ -1,11 +1,11 @@
+using Dmz.Utilities;
 using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Extensions;
 using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
-using TowerPortal.Utilities;
 
-namespace TowerPortal.Extensions;
+namespace Dmz.Extensions;
 
 public static class ApiServiceExtension
 {

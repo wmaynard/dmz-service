@@ -58,7 +58,7 @@ build_app:
     - dotnet restore
     - dotnet build --no-restore --configuration Release
     - dotnet publish --configuration Release -o publish
-    - CURRENTVERSION="$(dotnet ./bin/Release/net6.0/tower-admin-portal.dll -version | cut -d':' -f2)"
+    - CURRENTVERSION="$(dotnet ./bin/Release/net6.0/dmz-service.dll -version | cut -d':' -f2)"
     - git tag $CURRENTVERSION; git push https://$BOT_USER:${BOT_PAT}@gitlab.cdrentertainment.com/platform-services/$CI_PROJECT_NAME.git --tags
     - echo "$CURRENTVERSION"
   artifacts:

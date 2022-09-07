@@ -2,10 +2,10 @@
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
-        <AssemblyName>tower-admin-portal</AssemblyName>
+        <AssemblyName>dmz-service</AssemblyName>
         <AssemblyVersion>1.0.*</AssemblyVersion>
         <Deterministic>false</Deterministic>
-        <RootNamespace>TowerPortal</RootNamespace>
+        <RootNamespace>Dmz</RootNamespace>
         <LangVersion>10</LangVersion>
     </PropertyGroup>
 

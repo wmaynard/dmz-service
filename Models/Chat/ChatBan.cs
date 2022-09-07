@@ -4,7 +4,7 @@ using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Utilities;
 
-namespace TowerPortal.Models.Chat;
+namespace Dmz.Models.Chat;
 
 [BsonIgnoreExtraElements]
 public class ChatBan : PlatformDataModel

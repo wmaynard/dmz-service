@@ -1,5 +1,7 @@
 using System;
 using System.Threading.Tasks;
+using Dmz.Models.Portal;
+using Dmz.Services;
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
@@ -9,12 +11,10 @@ using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Extensions;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
-using TowerPortal.Models.Portal;
-using TowerPortal.Services;
 
-namespace TowerPortal.Controllers;
+namespace Dmz.Controllers;
 
-[Route("/portal/auth")]
+[Route("/dmz/auth")]
 public class AuthController : PlatformController
 {
 #pragma warning disable
@@ -39,7 +39,9 @@ public class AuthController : PlatformController
         return Ok(new GenericData
         {
             { "platformToken", platformToken },
-            { "permissions", account.Permissions }
+            { "permissions", account.Permissions },
+            { "gameSecret", PlatformEnvironment.GameSecret },
+            { "rumbleSecret", PlatformEnvironment.RumbleSecret }
         });
     }
 
@@ -80,7 +82,7 @@ public class AuthController : PlatformController
             })
             .OnFailure((_, response) =>
             {
-                Log.Error(Owner.Will, "Portal token generation failed.", data: new
+                Log.Error(Owner.Will, "DMZ token generation failed.", data: new
                 {
                     Response = response.AsGenericData
                 });
@@ -89,7 +91,7 @@ public class AuthController : PlatformController
 
         if (!code.Between(200, 299))
         {
-            throw new PlatformException("Portal token generation failed.");
+            throw new PlatformException("DMZ token generation failed.");
         }
 
         return json.Require<GenericData>("authorization").Require<string>("token");

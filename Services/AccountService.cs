@@ -1,13 +1,14 @@
+using Dmz.Exceptions;
+using Dmz.Models.Permissions;
+using Dmz.Models.Portal;
 using MongoDB.Driver;
 using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Services;
-using TowerPortal.Exceptions;
-using TowerPortal.Models.Permissions;
-using TowerPortal.Models.Portal;
+
 // ReSharper disable ArrangeMethodOrOperatorBody
 
-namespace TowerPortal.Services;
+namespace Dmz.Services;
 public class AccountService : PlatformMongoService<Account>
 {
     public AccountService() : base(collection: "accounts") { }

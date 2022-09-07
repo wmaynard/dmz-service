@@ -3,10 +3,10 @@ using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 
-namespace TowerPortal.Controllers;
+namespace Dmz.Controllers;
 
-[Route("portal/player"), RequireAuth(AuthType.ADMIN_TOKEN)]
-public class PlayerController : PortalController
+[Route("dmz/player"), RequireAuth(AuthType.ADMIN_TOKEN)]
+public class PlayerController : DmzController
 {
 #pragma warning disable CS0649
     private readonly DynamicConfigService _dynamicConfigService;

@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Utilities;
 
-namespace TowerPortal.Models.Portal;
+namespace Dmz.Models.Portal;
 
 public class FrontendLog : PlatformDataModel
 {

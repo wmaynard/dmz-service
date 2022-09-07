@@ -1,7 +1,7 @@
 using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Models;
 
-namespace TowerPortal.Exceptions;
+namespace Dmz.Exceptions;
 
 public class AccountNotFoundException : PlatformException
 {

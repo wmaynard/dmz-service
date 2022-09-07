@@ -1,19 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dmz.Models.Permissions;
+using Dmz.Models.Portal;
+using Dmz.Services;
 using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
 using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Utilities;
-using TowerPortal.Models.Permissions;
-using TowerPortal.Models.Portal;
-using TowerPortal.Services;
 
-namespace TowerPortal.Controllers;
+namespace Dmz.Controllers;
 
-[Route("portal/permissions"), RequireAuth(AuthType.ADMIN_TOKEN)]
-public class PermissionController : PortalController
+[Route("dmz/permissions"), RequireAuth(AuthType.ADMIN_TOKEN)]
+public class PermissionController : DmzController
 {
     #pragma warning disable
         private readonly AccountService _accountService;

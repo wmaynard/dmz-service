@@ -5,7 +5,7 @@ using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
 // ReSharper disable InconsistentNaming
 
-namespace TowerPortal.Models.Mailbox;
+namespace Dmz.Models.Mailbox;
 
 [BsonIgnoreExtraElements]
 public class Message : PlatformCollectionDocument

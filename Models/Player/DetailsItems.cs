@@ -1,4 +1,4 @@
-namespace TowerPortal.Models.Player;
+namespace Dmz.Models.Player;
 
 public class DetailsItems
 {

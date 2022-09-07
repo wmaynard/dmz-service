@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Utilities;
 
-namespace TowerPortal.Controllers;
+namespace Dmz.Controllers;
 
-[Route("portal/mailbox"), RequireAuth(AuthType.ADMIN_TOKEN)]
-public class MailboxController : PortalController
+[Route("dmz/mailbox"), RequireAuth(AuthType.ADMIN_TOKEN)]
+public class MailboxController : DmzController
 {
     #region Global Messages
     // Gets all global messages

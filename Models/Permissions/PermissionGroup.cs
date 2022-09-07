@@ -8,7 +8,7 @@ using RCL.Logging;
 using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Utilities;
 
-namespace TowerPortal.Models.Permissions;
+namespace Dmz.Models.Permissions;
 
 [BsonDiscriminator(Required = true)]
 [BsonIgnoreExtraElements]

@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace TowerPortal.Models.Player;
+namespace Dmz.Models.Player;
 
 public class DetailsPlayer
 {

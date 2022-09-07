@@ -2,15 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Dmz.Exceptions;
+using Dmz.Models.Portal;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Utilities;
-using TowerPortal.Exceptions;
-using TowerPortal.Models.Portal;
+
 // ReSharper disable InconsistentNaming
 // ReSharper disable ArrangeAccessorOwnerBody
 
-namespace TowerPortal.Models.Permissions;
+namespace Dmz.Models.Permissions;
 
 /// <summary>
 /// This class is representative of all the permissions a user can hold.  It contains helper properties to improve code readability.

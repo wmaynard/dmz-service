@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Web;
 
-namespace TowerPortal.Controllers;
+namespace Dmz.Controllers;
 
-[ApiController, Route(template: "portal")]
+[ApiController, Route(template: "dmz")]
 public class TopController : PlatformController
 {   
     // health handled by platform controller

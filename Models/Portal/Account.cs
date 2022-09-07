@@ -1,10 +1,10 @@
 using System.Linq;
 using System.Text.Json.Serialization;
+using Dmz.Models.Permissions;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
-using TowerPortal.Models.Permissions;
 
-namespace TowerPortal.Models.Portal;
+namespace Dmz.Models.Portal;
 
 [BsonIgnoreExtraElements]
 public class Account : PlatformCollectionDocument

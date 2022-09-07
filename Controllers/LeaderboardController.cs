@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Utilities;
 
-namespace TowerPortal.Controllers;
+namespace Dmz.Controllers;
 
-[Route("/portal/leaderboard"), RequireAuth(AuthType.ADMIN_TOKEN)]
-public class LeaderboardController : PortalController
+[Route("/dmz/leaderboard"), RequireAuth(AuthType.ADMIN_TOKEN)]
+public class LeaderboardController : DmzController
 {
     #region Leaderboards
     // Gets all leaderboard ids

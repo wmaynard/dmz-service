@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
 
-namespace TowerPortal.Models.Token;
+namespace Dmz.Models.Token;
 
 [BsonIgnoreExtraElements]
 public class TokenLog : PlatformCollectionDocument

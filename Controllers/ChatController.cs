@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Utilities;
 
-namespace TowerPortal.Controllers;
+namespace Dmz.Controllers;
 
-[Route("portal/chat"), RequireAuth(AuthType.ADMIN_TOKEN)]
-public class ChatController : PortalController
+[Route("dmz/chat"), RequireAuth(AuthType.ADMIN_TOKEN)]
+public class ChatController : DmzController
 {
     #region Announcements
     // Gets all announcements

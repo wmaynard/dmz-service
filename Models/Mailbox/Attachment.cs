@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
 
-namespace TowerPortal.Models.Mailbox;
+namespace Dmz.Models.Mailbox;
 
 [BsonIgnoreExtraElements]
 public class Attachment : PlatformDataModel

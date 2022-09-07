@@ -57,11 +57,11 @@ service:
 ingress:
   className: nginx
   enabled: true
-  path: "/portal"
+  path: "/dmz"
   tls:
     enabled: false
     acme: false
-    secretName: "admin-portal-stage-c"
+    secretName: "dmz-service-stage-c"
     useDefaultSecret: false
   annotations:
     nginx.ingress.kubernetes.io/client-body-buffer-size: 1m
@@ -77,19 +77,19 @@ ingress:
 prometheus:
   metrics: false
 livenessProbe:
-  path: "/portal/health"
+  path: "/dmz/health"
   initialDelaySeconds: 30
   timeoutSeconds: 3
   scheme: "HTTP"
   probeType: "httpGet"
 readinessProbe:
-  path: "/portal/health"
+  path: "/dmz/health"
   initialDelaySeconds: 30
   timeoutSeconds: 3
   scheme: "HTTP"
   probeType: "httpGet"
 startupProbe:
-  path: "/portal/health"
+  path: "/dmz/health"
   failureThreshold: 30
   timeoutSeconds: 2
   scheme: "HTTP"

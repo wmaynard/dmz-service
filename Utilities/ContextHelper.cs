@@ -1,12 +1,12 @@
 using System;
+using Dmz.Filters;
+using Dmz.Models.Permissions;
 using Microsoft.AspNetCore.Http;
 using Rumble.Platform.Common.Filters;
 using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Utilities;
-using TowerPortal.Filters;
-using TowerPortal.Models.Permissions;
 
-namespace TowerPortal.Utilities;
+namespace Dmz.Utilities;
 
 public static class ContextHelper
 {

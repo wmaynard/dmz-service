@@ -1,4 +1,4 @@
-namespace TowerPortal.Models.Portal;
+namespace Dmz.Models.Portal;
 
 public class ErrorViewModel
 {

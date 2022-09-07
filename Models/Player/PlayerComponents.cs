@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Utilities;
 
-namespace TowerPortal.Models.Player;
+namespace Dmz.Models.Player;
 
 [BsonIgnoreExtraElements]
 public class PlayerComponents : PlatformDataModel

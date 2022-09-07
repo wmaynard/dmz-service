@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
 
-namespace TowerPortal.Models.Chat;
+namespace Dmz.Models.Chat;
 
 [BsonIgnoreExtraElements]
 public class Announcement : PlatformDataModel
