@@ -7,7 +7,7 @@ namespace Dmz;
 
 public class Startup : PlatformStartup
 {
-    protected override PlatformOptions Configure(PlatformOptions options) => options
+    protected override PlatformOptions ConfigureOptions(PlatformOptions options) => options
         .SetRegistrationName("DMZ")
         .SetProjectOwner(Owner.Nathan)
         .SetPerformanceThresholds(warnMS: 30_000, errorMS: 60_000, criticalMS: 90_000)
