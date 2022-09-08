@@ -2,6 +2,7 @@ using Dmz.Models.Portal;
 using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
 using Rumble.Platform.Common.Utilities;
+// ReSharper disable ArrangeAttributes
 
 namespace Dmz.Controllers;
 
