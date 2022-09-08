@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Attributes;
-using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 
 namespace Dmz.Controllers;
@@ -8,11 +7,6 @@ namespace Dmz.Controllers;
 [Route("dmz/player"), RequireAuth(AuthType.ADMIN_TOKEN)]
 public class PlayerController : DmzController
 {
-#pragma warning disable CS0649
-    private readonly DynamicConfigService _dynamicConfigService;
-#pragma warning restore CS0649
-
-    
     #region Player lookup
     // Search for a player
     [HttpGet, Route("search")]

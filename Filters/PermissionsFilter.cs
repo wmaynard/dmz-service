@@ -2,16 +2,12 @@ using System;
 using System.Linq;
 using Dmz.Services;
 using Dmz.Utilities;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using RCL.Logging;
 using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Extensions;
 using Rumble.Platform.Common.Filters;
 using Rumble.Platform.Common.Utilities;
-using Dmz.Controllers;
-using Dmz.Models;
-using Dmz.Models.Permissions;
 
 namespace Dmz.Filters;
 
@@ -57,10 +53,14 @@ public class PermissionsFilter : PlatformFilter, IActionFilter
         // Prepare the query parameters for forwarding.
         GenericData param = new GenericData();
         foreach (string key in context.HttpContext.Request.Query.Keys)
+        {
             param[key] = context.HttpContext.Request.Query[key];
-        
+        }
+
         if (param.Any())
+        {
             context.HttpContext.Items[KEY_PARAMETERS] = param;
+        }
     }
 
     public void OnActionExecuted(ActionExecutedContext context) { }

@@ -2,6 +2,9 @@ using System.Text.Json.Serialization;
 using Google.Apis.Auth;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable ArrangeAttributes
+// ReSharper disable ArrangeMethodOrOperatorBody
 
 namespace Dmz.Models.Portal;
 
@@ -33,7 +36,6 @@ public class SsoData : PlatformDataModel
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_DOMAIN), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string Domain { get; init; }
 
-    // ReSharper disable once ArrangeMethodOrOperatorBody
     public static implicit operator SsoData(GoogleJsonWebSignature.Payload payload) => new SsoData
                                                                                        {
                                                                                            AccountId = payload.Subject,

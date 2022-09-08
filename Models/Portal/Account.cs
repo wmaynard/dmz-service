@@ -3,6 +3,10 @@ using System.Text.Json.Serialization;
 using Dmz.Models.Permissions;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable ArrangeAttributes
+// ReSharper disable ArrangeConstructorOrDestructorBody
+// ReSharper disable ArrangeMethodOrOperatorBody
 
 namespace Dmz.Models.Portal;
 
@@ -67,10 +71,8 @@ public class Account : PlatformCollectionDocument
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_PERMISSIONS)]
     public Passport Permissions { get; set; } // TODO: private set
 
-    // ReSharper disable once ArrangeAccessorOwnerBody
     public Account() => Permissions = new Passport();
 
-    // ReSharper disable once ArrangeMethodOrOperatorBody
     public static Account FromSsoData(SsoData data) => new Account
                                                        {
                                                            Name = data.Name,

@@ -5,7 +5,6 @@ using MongoDB.Driver;
 using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Services;
-
 // ReSharper disable ArrangeMethodOrOperatorBody
 
 namespace Dmz.Services;

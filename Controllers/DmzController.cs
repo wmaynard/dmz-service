@@ -5,6 +5,7 @@ using Dmz.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Web;
 using Dmz.Extensions;
+// ReSharper disable InconsistentNaming
 
 namespace Dmz.Controllers;
 

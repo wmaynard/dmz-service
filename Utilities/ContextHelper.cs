@@ -1,10 +1,11 @@
-using System;
 using Dmz.Filters;
 using Dmz.Models.Permissions;
 using Microsoft.AspNetCore.Http;
 using Rumble.Platform.Common.Filters;
 using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Utilities;
+// ReSharper disable ArrangeAccessorOwnerBody
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace Dmz.Utilities;
 
@@ -25,7 +26,10 @@ public static class ContextHelper
         IHttpContextAccessor accessor = new HttpContextAccessor();
 
         if (accessor.HttpContext == null || !accessor.HttpContext.Items.TryGetValue(key, out object value))
+        {
             return (T)default;
+        }
+
         return (T)value;
     }
 }

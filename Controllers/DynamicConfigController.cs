@@ -14,7 +14,6 @@ public class DynamicConfigController : DmzController
     {
         Require(Permissions.Config.View_Page);
 
-        // await _dc2Service.GetAdminDataAsync()
         return Forward("/config/settings/all");
     }
     #endregion

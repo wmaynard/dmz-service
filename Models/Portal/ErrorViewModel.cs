@@ -1,3 +1,7 @@
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable ArrangeAttributes
+
 namespace Dmz.Models.Portal;
 
 public class ErrorViewModel
