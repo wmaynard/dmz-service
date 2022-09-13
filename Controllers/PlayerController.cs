@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Attributes;
+using Rumble.Platform.Common.Extensions;
 using Rumble.Platform.Common.Utilities;
 // ReSharper disable ArrangeAttributes
 
@@ -26,6 +27,13 @@ public class PlayerController : DmzController
 
         return Forward("/player/v2/admin/details");
     }
+
+    /// <summary>
+    /// This is used to log player into their player-service accounts, and return a corresponding token.
+    /// Permissions are not necessary, since they are not site admins.
+    /// </summary>
+    [HttpPost, Route("login"), NoAuth]
+    public ActionResult Login() => Forward("/player/v2/login");
     #endregion
 
     #region Modifying data

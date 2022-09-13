@@ -25,12 +25,21 @@ public class PermissionsFilter : PlatformFilter, IActionFilter
     /// <param name="context"></param>
     public void OnActionExecuting(ActionExecutingContext context)
     {
+        // Prepare the HTTP method for forwarding.
+        context.HttpContext.Items[KEY_HTTP_METHOD] = context.HttpContext.Request.Method;
+        
         if (context.GetControllerAttributes<NoAuth>().Any())
         {
             Log.Local(Owner.Default, message: "NoAuth attribute found on endpoint; Permissions cannot be loaded.", emphasis: Log.LogType.WARN);
             return;
         }
-        
+
+        if (!ContextHelper.Token.IsAdmin)
+        {
+            Log.Local(Owner.Default, message: "Token is not an admin; it must be a player, so permissions are not relevant.");
+            return;
+        }
+
         if (!GetService(out AccountService accountService))
         {
             Log.Local(Owner.Will, "Account Service was null, returning.", emphasis: Log.LogType.ERROR);
@@ -47,8 +56,6 @@ public class PermissionsFilter : PlatformFilter, IActionFilter
             Log.Error(Owner.Will, "Unable to load permissions for a user.", exception: e);
         }
         
-        // Prepare the HTTP method for forwarding.
-        context.HttpContext.Items[KEY_HTTP_METHOD] = context.HttpContext.Request.Method;
 
         // Prepare the query parameters for forwarding.
         GenericData param = new GenericData();
