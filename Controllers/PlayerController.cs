@@ -1,4 +1,6 @@
+using Dmz.Utilities;
 using Microsoft.AspNetCore.Mvc;
+using RCL.Logging;
 using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Utilities;
 // ReSharper disable ArrangeAttributes
@@ -35,6 +37,27 @@ public class PlayerController : DmzController
     {
         Require(Permissions.Player.Screenname);
 
+        string aid = Require<string>(key: "accountId");
+        _apiService
+            .Request(PlatformEnvironment.Url("/token/admin/invalidate"))
+            .AddAuthorization(ContextHelper.Token.Authorization)
+            .SetPayload(new GenericData
+                        {
+                            {"aid", aid}
+                        })
+            .OnSuccess((sender, response) =>
+                       {
+                           Log.Info(owner: Owner.Nathan,
+                                    message: "Invalidating token to force user refresh due to a portal request.");
+                       })
+            .OnFailure((sender, response) =>
+                       {
+                           Log.Error(owner: Owner.Nathan,
+                                     message:
+                                     "Failed to invalidate token when attempting to force user refresh due to a portal request.");
+                       })
+            .Patch();
+
         return Forward("/player/v2/admin/screenname");
     }
     
@@ -61,6 +84,27 @@ public class PlayerController : DmzController
     public ActionResult UpdateWallet()
     {
         Require(Permissions.Player.Update);
+        
+        string aid = Require<string>(key: "accountId");
+        _apiService
+            .Request(PlatformEnvironment.Url("/token/admin/invalidate"))
+            .AddAuthorization(ContextHelper.Token.Authorization)
+            .SetPayload(new GenericData
+                        {
+                            {"aid", aid}
+                        })
+            .OnSuccess((sender, response) =>
+                       {
+                           Log.Info(owner: Owner.Nathan,
+                                    message: "Invalidating token to force user refresh due to a portal request.");
+                       })
+            .OnFailure((sender, response) =>
+                       {
+                           Log.Error(owner: Owner.Nathan,
+                                     message:
+                                     "Failed to invalidate token when attempting to force user refresh due to a portal request.");
+                       })
+            .Patch();
 
         return Forward("/player/v2/admin/currency");
     }
