@@ -1,4 +1,5 @@
 using Dmz.Utilities;
+using RCL.Logging;
 using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Extensions;
 using Rumble.Platform.Common.Models;
@@ -66,5 +67,32 @@ public static class ApiServiceExtension
         code.ValidateSuccessCode(url, json);
         
         return json;
+    }
+    
+    public static void ForceRefresh(this ApiService apiService, string aid)
+    {
+        ApiRequest request = apiService.Request(PlatformEnvironment.Url("/token/admin/invalidate"));
+        
+        if (ContextHelper.Fetch(out TokenInfo token))
+        {
+            request.AddAuthorization(token.Authorization);
+        }
+
+        request.SetPayload(new GenericData
+                           {
+                               {"aid", aid}
+                           })
+               .OnSuccess((sender, response) =>
+                          {
+                              Log.Info(owner: Owner.Nathan,
+                                       message: "Invalidating token to force user refresh due to a portal request.");
+                          })
+               .OnFailure((sender, response) =>
+                          {
+                              Log.Error(owner: Owner.Nathan,
+                                        message:
+                                        "Failed to invalidate token when attempting to force user refresh due to a portal request.");
+                          })
+               .Patch();
     }
 }
