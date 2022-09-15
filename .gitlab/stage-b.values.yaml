@@ -6,7 +6,7 @@ strategyType:
 # `serviceAccountName` is deprecated in favor of `serviceAccount.name`
 serviceAccountName:
 image:
-  repository: gitlab.cdrentertainment.com:5050/platform-services/tower-admin-portal
+  repository: gitlab.cdrentertainment.com:5050/platform-services/dmz-service
   tag: stable
   pullPolicy: IfNotPresent
   # secrets:
