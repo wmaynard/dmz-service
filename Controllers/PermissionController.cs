@@ -31,7 +31,7 @@ public class PermissionController : DmzController
       
         IEnumerable<Account> accounts = _accountService.List();
 
-        return Ok(accounts);
+        return Ok(new {Accounts = accounts});
     }
     #endregion
     
