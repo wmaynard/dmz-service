@@ -7,7 +7,7 @@ using Rumble.Platform.Common.Web;
 
 namespace Dmz.Controllers;
 
-[Route("dmz/otp"), RequireAuth(AuthType.ADMIN_TOKEN)]
+[Route("dmz/otp"), RequireAuth]
 public class OtpController : PlatformController
 {
 #pragma warning disable
