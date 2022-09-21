@@ -5,6 +5,8 @@ using Dmz.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Web;
 using Dmz.Extensions;
+using Rumble.Platform.Common.Utilities;
+
 // ReSharper disable InconsistentNaming
 
 namespace Dmz.Controllers;
@@ -37,5 +39,11 @@ public abstract class DmzController : PlatformController
     protected ActionResult Forward(string url)
     {
         return Ok(data: _apiService.Forward(url));
+    }
+    
+    protected ActionResult Forward(string url, out GenericData response)
+    {
+        response = _apiService.Forward(url);
+        return Ok(data: response);
     }
 }
