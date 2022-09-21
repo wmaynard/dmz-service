@@ -1,4 +1,5 @@
 using Dmz.Extensions;
+using Dmz.Services;
 using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Utilities;
@@ -37,7 +38,6 @@ public class PlayerController : DmzController
     {
         return Forward("/player/v2/login");
     }
-
 #endregion
 
     #region Modifying data
