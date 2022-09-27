@@ -44,18 +44,12 @@ public class OtpService : PlatformMongoService<StoredValue>
     {
         try
         {
-            // TODO: Remove this by 9/27
-            HttpContext.Request.Query.TryGetValue(key: "keep", out StringValues value);
-            bool keep = value.ToString() == "true";
-            
-            StoredValue output = (PlatformEnvironment.IsDev || PlatformEnvironment.IsLocal) && keep 
-                ? _collection.Find(filter: stored => stored.Id == id && !stored.Claimed).FirstOrDefault()
-                : _collection.FindOneAndUpdate(
-                    filter: stored => stored.Id == id && !stored.Claimed,
-                    update: Builders<StoredValue>.Update.Combine(
-                        Builders<StoredValue>.Update.Set(stored => stored.Claimed, true),
-                        Builders<StoredValue>.Update.Set(stored => stored.Value, null)
-                    ));
+            StoredValue output = _collection.FindOneAndUpdate(
+                filter: stored => stored.Id == id && !stored.Claimed,
+                update: Builders<StoredValue>.Update.Combine(
+                    Builders<StoredValue>.Update.Set(stored => stored.Claimed, true),
+                    Builders<StoredValue>.Update.Set(stored => stored.Value, null)
+                ));
 
             if (output != null)
                 return output;
