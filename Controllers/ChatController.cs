@@ -110,5 +110,14 @@ public class ChatController : DmzController
 
         return Forward("/chat/admin/ban/lift");
     }
+    
+    // List chat bans
+    [HttpGet, Route("bans")]
+    public ActionResult Bans()
+    {
+        Require(Permissions.Chat.View_Page);
+
+        return Forward("/chat/admin/ban/list");
+    }
     #endregion
 }
