@@ -28,6 +28,15 @@ public class PlayerController : DmzController
 
         return Forward("/player/v2/admin/details");
     }
+    
+    // Returns found information for a csv's accountIds
+    [HttpGet, Route("lookup")]
+    public ActionResult Lookup()
+    {
+        Require(Permissions.Player.Search);
+
+        return Forward("/player/v2/lookup");
+    }
 
     /// <summary>
     /// This is used to log player into their player-service accounts, and return a corresponding token.
@@ -38,7 +47,7 @@ public class PlayerController : DmzController
     {
         return Forward("/player/v2/login");
     }
-#endregion
+    #endregion
 
     #region Modifying data
     // Update a player's screenname
