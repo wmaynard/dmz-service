@@ -42,6 +42,7 @@ public class Passport : List<PermissionGroup>
         // TODO: Testronic
     };
 
+    public CalendarPermissions     Calendar    => Fetch<CalendarPermissions>();
     public ChatPermissions         Chat        => Fetch<ChatPermissions>();
     public ConfigPermissions       Config      => Fetch<ConfigPermissions>();
     public LeaderboardsPermissions Leaderboard => Fetch<LeaderboardsPermissions>();
