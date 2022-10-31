@@ -48,13 +48,6 @@ public class AuthController : PlatformController
         });
     }
 
-    [HttpGet, Route("environment"), RequireAuth]
-    public ActionResult GetEnvironment() => Ok(new RumbleJson
-        {
-            { "gameSecret", PlatformEnvironment.GameSecret },
-            { "rumbleSecret", PlatformEnvironment.RumbleSecret }
-        });
-
     /// <summary>
     /// Validates the provided Google token.
     /// </summary>
