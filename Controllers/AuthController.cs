@@ -11,6 +11,8 @@ using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Extensions;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
+using Rumble.Platform.Data;
+
 // ReSharper disable ArrangeAttributes
 
 namespace Dmz.Controllers;
@@ -37,7 +39,7 @@ public class AuthController : PlatformController
         Account account = _accountService.GoogleLogin(data);
         string platformToken = GenerateToken(account);
 
-        return Ok(new GenericData
+        return Ok(new RumbleJson
         {
             { "platformToken", platformToken },
             { "permissions", account.Permissions },
@@ -47,7 +49,7 @@ public class AuthController : PlatformController
     }
 
     [HttpGet, Route("environment"), RequireAuth]
-    public ActionResult GetEnvironment() => Ok(new GenericData
+    public ActionResult GetEnvironment() => Ok(new RumbleJson
         {
             { "gameSecret", PlatformEnvironment.GameSecret },
             { "rumbleSecret", PlatformEnvironment.RumbleSecret }
@@ -79,7 +81,7 @@ public class AuthController : PlatformController
     {
         _apiService
             .Request("/secured/token/generate")
-            .SetPayload(new GenericData
+            .SetPayload(new RumbleJson
             {
                 { "aid", account.Id },
                 { "screenname", account.Name },
@@ -92,16 +94,16 @@ public class AuthController : PlatformController
             {
                 Log.Error(Owner.Will, "DMZ token generation failed.", data: new
                 {
-                    Response = response.AsGenericData
+                    Response = response.AsRumbleJson
                 });
             })
-            .Post(out GenericData json, out int code);
+            .Post(out RumbleJson json, out int code);
 
         if (!code.Between(200, 299))
         {
             throw new PlatformException("DMZ token generation failed.");
         }
 
-        return json.Require<GenericData>("authorization").Require<string>("token");
+        return json.Require<RumbleJson>("authorization").Require<string>("token");
     }
 }

@@ -5,6 +5,7 @@ using Rumble.Platform.Common.Extensions;
 using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
+using Rumble.Platform.Data;
 
 namespace Dmz.Extensions;
 
@@ -15,11 +16,11 @@ public static class ApiServiceExtension
     /// </summary>
     /// <param name="apiService">The ApiService singleton.</param>
     /// <param name="url">The url to forward the request to.</param>
-    /// <param name="parameters">The query string, translated to a GenericData object.</param>
-    /// <param name="payload">The request body, translated to a GenericData object.  This is accessible in controllers via the Body property.</param>
-    /// <returns>GenericData representing the request response.</returns>
+    /// <param name="parameters">The query string, translated to a RumbleJson object.</param>
+    /// <param name="payload">The request body, translated to a RumbleJson object.  This is accessible in controllers via the Body property.</param>
+    /// <returns>RumbleJson representing the request response.</returns>
     /// <exception cref="PlatformException"></exception>
-    public static GenericData Forward(this ApiService apiService, string url, GenericData parameters = null, GenericData payload = null)
+    public static RumbleJson Forward(this ApiService apiService, string url, RumbleJson parameters = null, RumbleJson payload = null)
     {
         ApiRequest request = apiService.Request(url);
 
@@ -32,7 +33,7 @@ public static class ApiServiceExtension
         if ((payload ??= ContextHelper.Payload) != null)
             request.SetPayload(payload);
 
-        GenericData json = null;
+        RumbleJson json = null;
         int code = -1;
         switch (ContextHelper.HttpMethod)
         {
@@ -78,7 +79,7 @@ public static class ApiServiceExtension
             request.AddAuthorization(token.Authorization);
         }
 
-        request.SetPayload(new GenericData
+        request.SetPayload(new RumbleJson
                            {
                                {"aid", aid}
                            })

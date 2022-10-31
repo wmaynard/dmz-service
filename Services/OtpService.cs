@@ -11,6 +11,7 @@ using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
+using Rumble.Platform.Data;
 
 namespace Dmz.Services;
 
@@ -81,7 +82,7 @@ public class OtpService : PlatformMongoService<StoredValue>
     private void InvalidateTokens(string accountId) => _apiService
         .Request("/token/invalidate")
         .AddAuthorization(_dc2Service.AdminToken)
-        .SetPayload(new GenericData
+        .SetPayload(new RumbleJson
         {
             { "aid", accountId }
         })

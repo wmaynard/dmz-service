@@ -9,6 +9,7 @@ public class Startup : PlatformStartup
 {
     protected override PlatformOptions ConfigureOptions(PlatformOptions options) => options
         .SetRegistrationName("DMZ")
+        .SetTokenAudience(Audience.DmzService)
         .SetProjectOwner(Owner.Nathan)
         .SetPerformanceThresholds(warnMS: 30_000, errorMS: 60_000, criticalMS: 90_000)
         // .DisableFeatures(CommonFeature.ConsoleObjectPrinting)

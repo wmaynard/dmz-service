@@ -3,6 +3,8 @@ using System.Text.Json.Serialization;
 using Dmz.Models.Permissions;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
+using Rumble.Platform.Data;
+
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable ArrangeAttributes
 // ReSharper disable ArrangeConstructorOrDestructorBody

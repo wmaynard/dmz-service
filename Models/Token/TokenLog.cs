@@ -1,6 +1,8 @@
 using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
+using Rumble.Platform.Data;
+
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable ArrangeAttributes
 
@@ -52,7 +54,7 @@ public class TokenLog : PlatformCollectionDocument
         Actor = actor;
         Action = action;
         UnbanTime = unbanTime;
-        Timestamp = UnixTime;
+        Timestamp = Rumble.Platform.Common.Utilities.Timestamp.UnixTime;
         Target = target;
         Note = note;
     }

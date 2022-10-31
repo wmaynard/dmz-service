@@ -2,6 +2,8 @@ using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Utilities;
+using Rumble.Platform.Data;
+
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable ArrangeAttributes
 
@@ -36,39 +38,39 @@ public class PlayerComponents : PlatformDataModel
     
     [BsonElement(DB_KEY_AB_TEST)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_AB_TEST)]
-    public GenericData AbTest { get; set; }
+    public RumbleJson AbTest { get; set; }
     
     [BsonElement(DB_KEY_ACCOUNT)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_ACCOUNT)]
-    public GenericData Account { get; set; }
+    public RumbleJson Account { get; set; }
     
     [BsonElement(DB_KEY_EQUIPMENT)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_EQUIPMENT)]
-    public GenericData Equipment { get; set; }
+    public RumbleJson Equipment { get; set; }
     
     [BsonElement(DB_KEY_HERO)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_HERO)]
-    public GenericData Hero { get; set; }
+    public RumbleJson Hero { get; set; }
     
     [BsonElement(DB_KEY_MULTIPLAYER)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_MULTIPLAYER)]
-    public GenericData Multiplayer { get; set; }
+    public RumbleJson Multiplayer { get; set; }
     
     [BsonElement(DB_KEY_QUEST)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_QUEST)]
-    public GenericData Quest { get; set; }
+    public RumbleJson Quest { get; set; }
     
     [BsonElement(DB_KEY_STORE)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_STORE)]
-    public GenericData Store { get; set; }
+    public RumbleJson Store { get; set; }
     
     [BsonElement(DB_KEY_SUMMARY)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_SUMMARY)]
-    public GenericData Summary { get; set; }
+    public RumbleJson Summary { get; set; }
     
     [BsonElement(DB_KEY_TUTORIAL)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_TUTORIAL)]
-    public GenericData Tutorial { get; set; }
+    public RumbleJson Tutorial { get; set; }
     
     [BsonElement(DB_KEY_WALLET)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_WALLET)]
@@ -76,5 +78,5 @@ public class PlayerComponents : PlatformDataModel
     
     [BsonElement(DB_KEY_WORLD)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_WORLD)]
-    public GenericData World { get; set; }
+    public RumbleJson World { get; set; }
 }

@@ -3,6 +3,8 @@ using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Utilities;
+using Rumble.Platform.Data;
+
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable ArrangeAttributes
 
@@ -39,19 +41,19 @@ public class ChatReport : PlatformDataModel
       
     [BsonElement(DB_KEY_LOG)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_LOG)]
-    public List<GenericData> Log { get; private set; }
+    public List<RumbleJson> Log { get; private set; }
       
     [BsonElement(DB_KEY_PLAYERS)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_PLAYERS)]
-    public List<GenericData> Players { get; private set; }
+    public List<RumbleJson> Players { get; private set; }
       
     [BsonElement(DB_KEY_REPORTED)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_REPORTED)]
-    public GenericData Reported { get; private set; }
+    public RumbleJson Reported { get; private set; }
     
     [BsonElement(DB_KEY_REPORTERS)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_REPORTERS)]
-    public List<GenericData> Reporters { get; private set; }
+    public List<RumbleJson> Reporters { get; private set; }
       
     [BsonElement(DB_KEY_STATUS)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_STATUS)]
@@ -61,7 +63,7 @@ public class ChatReport : PlatformDataModel
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_TIME)]
     public long Time { get; private set; }
       
-    public ChatReport(string id, string messageId, List<GenericData> log, List<GenericData> players, GenericData reported, List<GenericData> reporters, string status, long time)
+    public ChatReport(string id, string messageId, List<RumbleJson> log, List<RumbleJson> players, RumbleJson reported, List<RumbleJson> reporters, string status, long time)
     {
         Id = id;
         MessageId = messageId;

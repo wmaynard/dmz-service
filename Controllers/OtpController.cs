@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
+using Rumble.Platform.Data;
 
 namespace Dmz.Controllers;
 
@@ -15,7 +16,7 @@ public class OtpController : PlatformController
 #pragma warning restore
     
     [HttpPost, Route("token")]
-    public ActionResult StoreValue() => Ok(new GenericData
+    public ActionResult StoreValue() => Ok(new RumbleJson
     {
         { "otp", _otpService.Store(new StoredValue
         {
@@ -29,7 +30,7 @@ public class OtpController : PlatformController
     {
         string otp = Require<string>("id");
 
-        return Ok(new GenericData
+        return Ok(new RumbleJson
         {
             { "value", _otpService.Retrieve(otp).Value }
         });

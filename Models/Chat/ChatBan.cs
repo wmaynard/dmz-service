@@ -3,6 +3,8 @@ using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Utilities;
+using Rumble.Platform.Data;
+
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable ArrangeAttributes
 
@@ -43,13 +45,13 @@ public class ChatBan : PlatformDataModel
       
     [BsonElement(DB_KEY_SNAPSHOT)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_SNAPSHOT)]
-    public List<GenericData> Snapshot { get; private set; }
+    public List<RumbleJson> Snapshot { get; private set; }
       
     [BsonElement(DB_KEY_TIME_REMAINING)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_TIME_REMAINING)]
     public string TimeRemaining { get; private set; }
       
-    public ChatBan(string id, string accountId, long issued, string reason, List<GenericData> snapshot, string timeRemaining)
+    public ChatBan(string id, string accountId, long issued, string reason, List<RumbleJson> snapshot, string timeRemaining)
     {
         Id = id;
         AccountId = accountId;

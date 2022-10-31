@@ -8,6 +8,7 @@ using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Extensions;
 using Rumble.Platform.Common.Filters;
 using Rumble.Platform.Common.Utilities;
+using Rumble.Platform.Data;
 
 namespace Dmz.Filters;
 
@@ -57,7 +58,7 @@ public class PermissionsFilter : PlatformFilter, IActionFilter
             Log.Local(Owner.Default, message: "Token is not an admin; it must be a player, so permissions are not relevant.");
 
         // Prepare the query parameters for forwarding.
-        GenericData param = new GenericData();
+        RumbleJson param = new RumbleJson();
         foreach (string key in context.HttpContext.Request.Query.Keys)
             param[key] = context.HttpContext.Request.Query[key];
 

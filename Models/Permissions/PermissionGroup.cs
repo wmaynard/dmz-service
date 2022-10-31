@@ -7,6 +7,8 @@ using MongoDB.Bson.Serialization.Attributes;
 using RCL.Logging;
 using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Utilities;
+using Rumble.Platform.Data;
+
 // ReSharper disable ArrangeAccessorOwnerBody
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedAutoPropertyAccessor.Global
@@ -63,7 +65,7 @@ public abstract class PermissionGroup : PlatformDataModel
         }
     }
 
-    public int UpdateFromValues(GenericData json)
+    public int UpdateFromValues(RumbleJson json)
     {
         int valuesChanged = 0;
         foreach (PropertyInfo info in GetType()
@@ -84,7 +86,7 @@ public abstract class PermissionGroup : PlatformDataModel
             }
             else
             {
-                Log.Warn(Owner.Will, "Unable to update permission from GenericData; key not found.", data: new
+                Log.Warn(Owner.Will, "Unable to update permission from RumbleJson; key not found.", data: new
                                                                                                            {
                                                                                                                PermissionKey = key
                                                                                                            });

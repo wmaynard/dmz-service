@@ -3,6 +3,8 @@ using System.Text.Json.Serialization;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
+using Rumble.Platform.Data;
+
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable InconsistentNaming
 // ReSharper disable ArrangeAttributes
@@ -84,14 +86,14 @@ public class Message : PlatformCollectionDocument
 
     [BsonIgnore]
     [JsonIgnore]
-    public bool IsExpired => Expiration <= UnixTime; // no setter, change expiration to UnixTime instead
+    public bool IsExpired => Expiration <= Rumble.Platform.Common.Utilities.Timestamp.UnixTime; // no setter, change expiration to UnixTime instead
 
     public Message(string subject, string body, List<Attachment> attachments, long expiration, long visibleFrom, string icon, string banner, StatusType status, string internalNote)
     {
         Subject = subject;
         Body = body;
         Attachments = attachments;
-        Timestamp = UnixTime;
+        Timestamp = Rumble.Platform.Common.Utilities.Timestamp.UnixTime;
         Expiration = expiration;
         VisibleFrom = visibleFrom;
         Icon = icon;
