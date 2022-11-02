@@ -20,31 +20,12 @@
       when: never
     - when: manual
 
-.auto-deploy-prod:
-  image: "registry.gitlab.com/gitlab-org/cluster-integration/auto-deploy-image:v2.26.0"
-  dependencies: []
-  variables:
-    KUBE_CONTEXT: "platform-services/platform-services-agent:prod-platform-services"
-  allow_failure: false
-  script:
-    - auto-deploy check_kube_domain
-    - auto-deploy download_chart
-    - auto-deploy ensure_namespace
-    - auto-deploy create_secret
-    - auto-deploy deploy
-  rules:
-    - if: '$CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH'
-      when: never
-    - if: $CI_COMMIT_TAG
-      when: never
-    - when: manual
-
 dev:
   extends: .auto-deploy
   stage: dev
   variables:
     KUBE_INGRESS_BASE_DOMAIN: nonprod.tower.cdrentertainment.com
-    KUBE_NAMESPACE: "dmz-service-29-dev"
+    KUBE_NAMESPACE: "dmz-service-29-dev" 
   tags:
     - cluster
   environment:
@@ -56,7 +37,7 @@ stage-a:
   stage: staging
   variables:
     KUBE_INGRESS_BASE_DOMAIN: nonprod.tower.cdrentertainment.com
-    KUBE_NAMESPACE: "dmz-service-29-stage-a"
+    KUBE_NAMESPACE: "dmz-service-stage-a"
   tags:
     - cluster
   environment:
@@ -70,7 +51,7 @@ stage-b:
     - cluster
   variables:
     KUBE_INGRESS_BASE_DOMAIN: nonprod.tower.cdrentertainment.com
-    KUBE_NAMESPACE: "dmz-service-29-stage-b"
+    KUBE_NAMESPACE: "dmz-service-stage-b"
   environment:
     name: stage-b
     url: https://stage-b.nonprod.tower.cdrentertainment.com/
@@ -80,35 +61,36 @@ stage-c:
   stage: staging
   variables:
     KUBE_INGRESS_BASE_DOMAIN: nonprod.tower.cdrentertainment.com
-    KUBE_NAMESPACE: "dmz-service-29-stage-c"
+    KUBE_NAMESPACE: "dmz-service-stage-c"
   tags:
     - cluster
   environment:
     name: stage-c
     url: https://stage-c.nonprod.tower.cdrentertainment.com/
 
-production:
+TT-production-a1:
   extends: .auto-deploy
   stage: production
   variables:
-    KUBE_CONTEXT: "platform-services/platform-services-agent:prod-platform-services"
-    KUBE_INGRESS_BASE_DOMAIN: nonprod.tower.cdrentertainment.com
-    KUBE_NAMESPACE: "dmz-service-29-production-platfo-bwm2vh"
-  tags:
-    - production
-  environment:
-    name: production/platform
-    url: https://platform-a.prod.tower.rumblegames.com/
-
-production-b:
-  extends: .auto-deploy
-  stage: production
-  variables:
-    KUBE_CONTEXT: "platform-services/platform-services-agent:prod-platform-services"
-    KUBE_INGRESS_BASE_DOMAIN: nonprod.tower.cdrentertainment.com
+    KUBE_CONTEXT: "platform-services/platform-services-agent:prod-a1-platform-services"
+    KUBE_INGRESS_BASE_DOMAIN: prod.tower.rumblegames.com
     KUBE_NAMESPACE: "dmz-service"
   tags:
-    - production-b
+    - production-a1
   environment:
-    name: production/platform-b
-    url: https://platform-b.prod.tower.rumblegames.com/
+    name: TT-Prod-A1
+    url: https://platform-a1.prod.tower.rumblegames.com/
+
+
+TT-production-a2:
+  extends: .auto-deploy
+  stage: production
+  variables:
+    KUBE_CONTEXT: "platform-services/platform-services-agent:prod-a2-platform-services"
+    KUBE_INGRESS_BASE_DOMAIN: prod.tower.rumblegames.com
+    KUBE_NAMESPACE: "dmz-service"
+  tags:
+    - production-a2
+  environment:
+    name: TT-Prod-A2
+    url: https://platform-a2.prod.tower.rumblegames.com/
