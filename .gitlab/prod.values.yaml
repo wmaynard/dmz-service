@@ -36,8 +36,8 @@ hpa:
   keda:
     enabled: true
     requestsPerSecond: "10"
-    serverAddress: http://prometheus-prometheus-server.gitlab-managed-apps.svc:80
-    filter: "service"
+    serverAddress: http://prometheus-server.gitlab-managed-apps.svc:80
+    filter: "exported_service"
 gitlab:
   app:
   env:
