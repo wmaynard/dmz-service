@@ -61,7 +61,7 @@ ingress:
   tls:
     enabled: false
     acme: false
-    secretName: "dmz-service-stage-a"
+    secretName: "dmz-service-prod"
     useDefaultSecret: false
   annotations:
     nginx.ingress.kubernetes.io/client-body-buffer-size: 1m
