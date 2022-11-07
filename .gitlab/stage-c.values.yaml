@@ -28,14 +28,14 @@ application:
   secretName:
   secretChecksum:
 hpa:
-  enabled: false
+  enabled: true
   minReplicas: 2
   maxReplicas: 5
   CPUUtilizationPercentage: 60
   MemUtilizationPercentage: 60
   keda:
     enabled: true
-    requestsPerSecond: "100"
+    requestsPerSecond: "10"
     serverAddress: http://prometheus-prometheus-server.gitlab-managed-apps.svc:80
     filter: "service"
 gitlab:
@@ -47,11 +47,11 @@ gitlab:
 service:
   enabled: true
   annotations: {}
-  name: tapb-stage-c # 15 character limit..
+  name: dmz-stage-c # 15 character limit..
   type: NodePort
-  url: https://stage-c.nonprod.tower.cdrentertainment.com/
+  url: https://stage-a.nonprod.tower.cdrentertainment.com/
   additionalHosts:
-  commonName: stage-c.nonprod.tower.cdrentertainment.com
+  commonName: stage-a.nonprod.tower.cdrentertainment.com
   externalPort: 5000
   internalPort: 80
 ingress:
@@ -61,7 +61,7 @@ ingress:
   tls:
     enabled: false
     acme: false
-    secretName: "dmz-service-stage-c"
+    secretName: "dmz-service-stage-a"
     useDefaultSecret: false
   annotations:
     nginx.ingress.kubernetes.io/client-body-buffer-size: 1m
@@ -103,12 +103,12 @@ postgresql:
 resources:
   limits:
     cpu: 128m
-    memory: 128Mi
+    memory: 192Mi
   requests:
     cpu: 128m
     memory: 128Mi
 
-## Configure PodDisrptionBudget
+## Configure PodDisruptionBudget
 ## ref: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
 #
 podDisruptionBudget:
@@ -161,7 +161,7 @@ persistence:
         # If `storageClass` is not specified, the behavior will vary per Kubernetes provider.
         # For example, GKE automatically chooses a default storage class and allocate a physical storage.
         # See https://cloud.google.com/kubernetes-engine/docs/concepts/persistent-volumes for more information.
-        # storageClass: "myStorage"
+        storageClass: "efs-sc"
 
 workers: {}
   # worker:
