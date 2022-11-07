@@ -49,9 +49,9 @@ service:
   annotations: {}
   name: dmz-stage-c # 15 character limit..
   type: NodePort
-  url: https://stage-a.nonprod.tower.cdrentertainment.com/
+  url: 
   additionalHosts:
-  commonName: stage-a.nonprod.tower.cdrentertainment.com
+  commonName: 
   externalPort: 5000
   internalPort: 80
 ingress:
@@ -61,7 +61,7 @@ ingress:
   tls:
     enabled: false
     acme: false
-    secretName: "dmz-service-stage-a"
+    secretName: "dmz-service-stage-c"
     useDefaultSecret: false
   annotations:
     nginx.ingress.kubernetes.io/client-body-buffer-size: 1m
