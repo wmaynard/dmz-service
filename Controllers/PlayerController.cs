@@ -1,4 +1,6 @@
+using System;
 using Dmz.Extensions;
+using Dmz.Interop;
 using Dmz.Services;
 using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Attributes;
@@ -92,4 +94,37 @@ public class PlayerController : DmzController
         return Forward("/player/v2/admin/currency");
     }
     #endregion
+    
+#region Rumble Account Login
+    [HttpPost, Route("account/confirmation")]
+    public ActionResult SendConfirmationEmail()
+    {
+        string email = Require<string>("email");
+        string accountId = Require<string>("accountId");
+        string code = Require<string>("code");
+        long expiration = Require<long>("expiration");
+        
+        PlayerServiceEmail.SendConfirmation(email, accountId, code, expiration);
+
+        return Ok();
+    }
+
+    [HttpPost, Route("account/2fa")]
+    public ActionResult Send2FACode()
+    {
+        string email = Require<string>("email");
+        string accountId = Require<string>("accountId");
+        string code = Require<string>("code");
+        string device = Require<string>("device");
+        long expiration = Require<long>("expiration");
+        
+        PlayerServiceEmail.SendTwoFactorCode(email, accountId, code, device, expiration);
+
+        return Ok();
+    }
+
+    [HttpGet, Route("account/confirm"), NoAuth]
+    public ActionResult AcceptConfirmation() => Forward("/player/v2/account/confirm");
+
+    #endregion Rumble Account Login
 }
