@@ -53,6 +53,12 @@ public static class PlayerServiceEmail
         int hours = (int)time.TotalDays * 24 + time.Hours;
         int minutes = time.Minutes + (time.Seconds > 0 ? 1 : 0); // round seconds up
 
+        while (minutes > 60)
+        {
+            hours++;
+            minutes -= 60;
+        }
+
         string output = "";
 
         if (hours > 0)
