@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dmz.Filters;
 using Dmz.Interop;
+using Dmz.Utilities;
 using RCL.Logging;
 using Rumble.Platform.Common.Enums;
 using Rumble.Platform.Common.Utilities;
@@ -23,30 +24,102 @@ public class Startup : PlatformStartup
         .AddFilter<PermissionsFilter>()
         .OnBeforeStartup(async () =>
         {
-            // This is just temporary.  Once we have template management in Portal, this can go the way of the dodo.
             try
             {
                 #if DEBUG
-                await AmazonSes.Nuke();
+                // await AmazonSes.Nuke();
                 #endif
-                
-                await AmazonSes.CreateOrUpdateTemplate(
-                    name: "Hello World",
-                    subject: "Hello World",
-                    html: "<html><body><h1>Hello, World!</h1>This is a test email from dmz-service.</body></html>",
-                    backupText: "Hello, World!"
-                );
                 await AmazonSes.CreateOrUpdateTemplate(
                     name: PlayerServiceEmail.TEMPLATE_CONFIRMATION,
                     subject: "Confirm Your Rumble Account",
-                    html: "<html><body><h1>Welcome to Towers & Titans!</h1><a href=\"{endpoint}?id={accountId}&code={code}\">Confirm your account!</a></body><html>",
-                    backupText: "Welcome to Towers & Titans!\n\nConfirm your account by copying and pasting the following link into your browser: {endpoint}?id={accountId}&code={code}"
+                    html: @"
+<html>
+<body>
+    <h1>Confirm your email address</h1>
+    <br />
+    Please confirm your email address by tapping on the link below.
+    <br />
+    <a href='{endpoint}?id={accountId}&code={code}'>Confirm your account!</a>
+    <br />
+    This link will expire in {duration}.
+</body>
+</html>",
+                    backupText: @"
+Confirm your email address
+
+Copy the link below and paste it into your browser to confirm your account.
+
+{endpoint}?id={accountId}&code={code}
+
+This link will expire in {duration}."
                 );
                 await AmazonSes.CreateOrUpdateTemplate(
                     name: PlayerServiceEmail.TEMPLATE_2FA,
-                    subject: "Another Device Logged In",
-                    html: "<html><body><h1>New Login From {device}.</h1><br /><br /><h3>Enter the following code in the game to grant access: <b>{code}</b></h3><b4 />This code expires in {duration}.<h4>Not you?  It's safe to ignore this email.</h4><br /></body><html>",
-                    backupText: ""
+                    subject: "Your Rumble Verification Code",
+                    html: @"
+<html>
+<body>
+    <h1>Here is your verification code for your Rumble account:</h1>
+    <br />
+    <h1>{code}</h1>
+    <br />
+    This code expires in {duration}.
+    <br />
+    <h4>Not you?  It's safe to ignore this email.</h4>
+</body>
+<html>",
+                    backupText: @"
+Here is your verification code for your Rumble account:
+
+{code}
+
+This code expires in {duration}.
+
+Not you?  It's safe to ignore this email."
+                );
+                await AmazonSes.CreateOrUpdateTemplate(
+                    name: PlayerServiceEmail.TEMPLATE_NEW_DEVICE_NOTIFICATION,
+                    subject: "New Login From {device}",
+                    html: @"
+<html>
+<body>
+    <h1>A new device was logged into your account on {timestamp}.<h1>
+    <br />
+    <h4>Not you?  Contact support so we can assist you.</h4>
+</body>
+<html>",
+                    backupText: @"
+A new device was logged into your account on {timestamp}.
+
+Not you?  Contact support so we can assist you."
+                );
+                await AmazonSes.CreateOrUpdateTemplate(
+                    name: PlayerServiceEmail.TEMPLATE_PASSWORD_RESET,
+                    subject: "Rumble Password Reset",
+                    html: @"
+<html>
+<body>
+    <h1>Here is your verification code for your Rumble account:</h1>
+    <br />
+    <h1>{code}</h1>
+    <br />
+    This code expires in {duration}.
+    <br />
+    Please enter this code in-game to reset your password and sign in.
+    <br />
+    <h4>Not you?  It's safe to ignore this email.</h4>
+</body>
+<html>",
+                    backupText: @"
+Here is your verification code for your Rumble account:
+
+{code}
+
+This code expires in {duration}.
+
+Please enter this code in-game to reset your password and sign in.
+
+Not you?  It's safe to ignore this email"
                 );
             }
             catch (Exception e)

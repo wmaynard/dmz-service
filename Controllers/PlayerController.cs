@@ -2,6 +2,7 @@ using System;
 using Dmz.Extensions;
 using Dmz.Interop;
 using Dmz.Services;
+using Dmz.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Utilities;
@@ -109,17 +110,38 @@ public class PlayerController : DmzController
         return Ok();
     }
 
-    [HttpPost, Route("account/2fa")]
-    public ActionResult Send2FACode()
+    [HttpPost, Route("account/reset")]
+    public ActionResult SendPasswordResetEmail()
     {
         string email = Require<string>("email");
         string accountId = Require<string>("accountId");
         string code = Require<string>("code");
-        string device = Require<string>("device");
         long expiration = Require<long>("expiration");
         
-        PlayerServiceEmail.SendTwoFactorCode(email, accountId, code, device, expiration);
+        PlayerServiceEmail.SendPasswordReset(email, accountId, code, expiration);
 
+        return Ok();
+    }
+
+    [HttpPost, Route("account/notification")]
+    public ActionResult SendLoginNotification()
+    {
+        string email = Require<string>("email");
+        string device = Require<string>("device");
+        
+        PlayerServiceEmail.SendNewDeviceLogin(email, device);
+
+        return Ok();
+    }
+
+    [HttpPost, Route("account/2fa")]
+    public ActionResult SendTwoFactorCoe()
+    {
+        string email = Require<string>("email");
+        string code = Require<string>("code");
+        long expiration = Require<long>("expiration");
+        
+        PlayerServiceEmail.SendTwoFactorCode(email, code, expiration);
         return Ok();
     }
 

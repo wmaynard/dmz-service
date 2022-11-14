@@ -19,8 +19,6 @@ namespace Dmz.Interop;
 
 public static class AmazonSes
 {
-    private const string ACCESS_KEY = "deadbeefdeadbeef";
-    private const string SECRET_KEY = "badfoodbadfoodbadfood";
     private const string FROM_EMAIL = "noreply@rumbleentertainment.com";
     
     private static AmazonSimpleEmailServiceV2Client _client;
@@ -176,31 +174,4 @@ public static class AmazonSes
             });
     }
 #endif
-}
-
-public static class PlayerServiceEmail
-{
-    public const string TEMPLATE_CONFIRMATION = "Rumble Account Confirmation";
-    public const string TEMPLATE_2FA = "Rumble Account 2FA";
-
-    public static void SendConfirmation(string email, string accountId, string code, long expiration)
-    {
-        AmazonSes.SendEmail(email, TEMPLATE_CONFIRMATION, replacements: new RumbleJson
-        {
-            { "endpoint", PlatformEnvironment.Url("/dmz/player/account/confirm") },
-            { "accountId", accountId },
-            { "code", code }
-        }).Wait();
-    }
-
-    public static void SendTwoFactorCode(string email, string accountId, string code, string device, long expiration)
-    {
-        AmazonSes.SendEmail(email, TEMPLATE_2FA, replacements: new RumbleJson
-        {
-            { "endpoint", PlatformEnvironment.Url("/dmz/player/account/reset") },
-            { "accountId", accountId },
-            { "code", code },
-            { "device", device }
-        }).Wait();
-    }
 }
