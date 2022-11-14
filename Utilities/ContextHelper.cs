@@ -28,9 +28,7 @@ public static class ContextHelper
         IHttpContextAccessor accessor = new HttpContextAccessor();
 
         if (accessor.HttpContext == null || !accessor.HttpContext.Items.TryGetValue(key, out object value))
-        {
             return (T)default;
-        }
 
         return (T)value;
     }

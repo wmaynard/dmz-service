@@ -33,6 +33,14 @@ public class PermissionsFilter : PlatformFilter, IActionFilter
         // Prepare the HTTP method for forwarding.
         context.HttpContext.Items[KEY_HTTP_METHOD] = context.HttpContext.Request.Method;
         
+        // Prepare the query parameters for forwarding.
+        RumbleJson param = new RumbleJson();
+        foreach (string key in context.HttpContext.Request.Query.Keys)
+            param[key] = context.HttpContext.Request.Query[key];
+
+        if (param.Any())
+            context.HttpContext.Items[KEY_PARAMETERS] = param;
+        
         if (context.GetControllerAttributes<NoAuth>().Any())
         {
             Log.Local(Owner.Default, message: "NoAuth attribute found on endpoint; Permissions cannot be loaded.", emphasis: Log.LogType.WARN);
@@ -89,14 +97,6 @@ public class PermissionsFilter : PlatformFilter, IActionFilter
         }
         else
             Log.Local(Owner.Default, message: "Token is not an admin; it must be a player, so permissions are not relevant.");
-
-        // Prepare the query parameters for forwarding.
-        RumbleJson param = new RumbleJson();
-        foreach (string key in context.HttpContext.Request.Query.Keys)
-            param[key] = context.HttpContext.Request.Query[key];
-
-        if (param.Any())
-            context.HttpContext.Items[KEY_PARAMETERS] = param;
     }
 
     public void OnActionExecuted(ActionExecutedContext context) { }
