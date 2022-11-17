@@ -162,6 +162,9 @@ public static class AmazonSes
         } while (templateName.Contains("  "));
 
         templateName = templateName.ToLower().Replace(" ", "-");
+
+        if (!templateName.StartsWith(PlatformEnvironment.Deployment))
+            templateName = $"{PlatformEnvironment.Deployment}-{templateName}";
     }
     
 #if DEBUG
