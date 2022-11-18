@@ -80,6 +80,8 @@ public class PlayerController : DmzController
     {
         Require(Permissions.Player.Update);
 
+        Body["origin"] = PlatformEnvironment.Url("dmz/player/update");
+
         return Forward("/player/v2/admin/component");
     }
     
