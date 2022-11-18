@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Dmz.Exceptions;
 using Dmz.Models.Permissions;
@@ -5,6 +6,7 @@ using Dmz.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Web;
 using Dmz.Extensions;
+using RCL.Logging;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Data;
 
@@ -29,7 +31,22 @@ public abstract class DmzController : PlatformController
     
     protected ActionResult Forward(string url, out RumbleJson response)
     {
-        response = _apiService.Forward(url);
+        try
+        {
+            response = _apiService.Forward(url);
+        }
+        catch (UriFormatException e)
+        {
+            Log.Error(Owner.Default, "Bad URL prevented DMZ from forwarding a request.", data: new
+            {
+                url = url
+            }, exception: e);
+            throw;
+        }
+        catch (Exception e)
+        {
+            throw;
+        }
         return Ok(data: response);
     }
 }
