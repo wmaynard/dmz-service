@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using Amazon.Runtime;
 using Amazon.SimpleEmailV2;
@@ -60,7 +61,6 @@ public static class AmazonSes
 
         EmailTemplateContent content = await GetTemplate(templateName);
         string charset = "UTF-8";
-
 
         string html = Replace(content.Html, replacements);
         string text = Replace(content.Text, replacements);
@@ -133,13 +133,19 @@ public static class AmazonSes
 
         foreach (string replacement in replacements.Keys)
         {
+            int depth = 5;
             do
             {
                 target = target.Replace($"{{{replacement}}}", replacements.Require<string>(replacement));
-            } while (target.Contains($"{{{replacement}}}"));
+            } while (target.Contains($"{{{replacement}}}") && --depth > 0);
         }
 
-        return target;
+        // TODO: These replacements are a kluge for the sed command issues in the CI script
+        return target
+            .Replace("__name__", "&")
+            .Replace("__subject", "&")
+            .Replace("__html__", "&")
+            .Replace("__text__", "&");
     }
 
     private static async Task<EmailTemplateContent> GetTemplate(string name)
@@ -171,10 +177,13 @@ public static class AmazonSes
     public static async Task Nuke()
     {
         foreach (string template in TemplateNames)
+        {
             await Client.DeleteEmailTemplateAsync(new DeleteEmailTemplateRequest
             {
                 TemplateName = template
             });
+            Thread.Sleep(1500);
+        }
     }
 #endif
 }
