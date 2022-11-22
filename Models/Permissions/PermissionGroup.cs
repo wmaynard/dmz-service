@@ -133,7 +133,7 @@ public abstract class PermissionGroup : PlatformDataModel
             .GetProperties(bindingAttr: BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
             .Where(info => info.PropertyType.IsAssignableTo(typeof(bool))))
         {
-            if (values.TryGetValue(info.Name, out bool permission))
+            if (values.TryGetValue(group.Name + "." + info.Name, out bool permission))
             {
                 info.SetValue(this, (bool)(info.GetValue(this) ?? false) || permission);
             }

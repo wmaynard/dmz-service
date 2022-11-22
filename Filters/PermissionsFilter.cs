@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using Dmz.Models.Permissions;
+using Dmz.Models.Portal;
 using Dmz.Services;
 using Dmz.Utilities;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -17,6 +20,7 @@ public class PermissionsFilter : PlatformFilter, IActionFilter
     public const string KEY_PERMISSIONS = "DmzPermissions";
     public const string KEY_PARAMETERS = "QueryParameters";
     public const string KEY_HTTP_METHOD = "RequestMethod";
+    
     
     /// <summary>
     /// This executes before every single controller endpoint.  We need to check the Google permissions
@@ -47,7 +51,36 @@ public class PermissionsFilter : PlatformFilter, IActionFilter
             // Prepare the current user's permissions to be checked by controllers.
             try
             {
-                context.HttpContext.Items[KEY_PERMISSIONS] = accountService.FindByToken(ContextHelper.Token).Permissions;
+                Account account = accountService.FindByToken(ContextHelper.Token);
+                Passport accountPassport = account.Permissions;
+                Passport combined = accountPassport.Copy();
+                
+                List<Role> roles = account.Roles;
+                
+                if (account.Roles == null)
+                {
+                    account.InitPropertyRole();
+                    accountService.Update(account);
+                    
+                    roles = account.Roles;
+                }
+                
+                foreach (Role role in roles)
+                {
+                    Passport rolePassport = role.Permissions;
+                    foreach (PermissionGroup permissionGroup in combined)
+                    {
+                        foreach (PermissionGroup rolePermissionGroup in rolePassport)
+                        {
+                            if (permissionGroup.Name == rolePermissionGroup.Name)
+                            {
+                                permissionGroup.Merge(rolePermissionGroup);
+                            }
+                        }
+                    }
+                }
+
+                context.HttpContext.Items[KEY_PERMISSIONS] = combined;
             }
             catch (Exception e)
             {

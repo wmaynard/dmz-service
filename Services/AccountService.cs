@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Dmz.Exceptions;
 using Dmz.Models.Permissions;
 using Dmz.Models.Portal;
@@ -33,4 +34,26 @@ public class AccountService : PlatformMongoService<Account>
             .FirstOrDefault()
             ?? throw new AccountNotFoundException(token)
         : throw new InvalidTokenException(token?.Authorization, HttpContext.Request.Path.ToString());
+    
+    public void UpdateEditedRole(Role role)
+    {
+        List<WriteModel<Account>> listWrites = new List<WriteModel<Account>>();
+
+        FilterDefinition<Account> filter = Builders<Account>.Filter.ElemMatch(account => account.Roles,oldRole => oldRole.Name == role.Name);
+        UpdateDefinition<Account> update = Builders<Account>.Update.Set(account => account.Roles[-1], role);
+		
+        listWrites.Add(new UpdateManyModel<Account>(filter, update));
+        _collection.BulkWrite(listWrites);
+    }
+
+    public void RemoveDeletedRole(string roleName)
+    {
+        List<WriteModel<Account>> listWrites = new List<WriteModel<Account>>();
+
+        FilterDefinition<Account> filter = Builders<Account>.Filter.ElemMatch(account => account.Roles, role => role.Name == roleName);
+        UpdateDefinition<Account> update = Builders<Account>.Update.PullFilter(account => account.Roles, role => role.Name == roleName);
+		
+        listWrites.Add(new UpdateManyModel<Account>(filter, update));
+        _collection.BulkWrite(listWrites);
+    }
 }

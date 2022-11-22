@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
 using Dmz.Models.Permissions;
@@ -15,16 +17,18 @@ namespace Dmz.Models.Portal;
 [BsonIgnoreExtraElements]
 public class Account : PlatformCollectionDocument
 {
-    internal const string DB_KEY_NAME = "name";
-    internal const string DB_KEY_EMAIL = "email";
+    internal const string DB_KEY_NAME        = "name";
+    internal const string DB_KEY_EMAIL       = "email";
+    internal const string DB_KEY_ROLES       = "roles";
     internal const string DB_KEY_PERMISSIONS = "perms";
-    internal const string DB_KEY_FIRST_NAME = "fn";
-    internal const string DB_KEY_LAST_NAME = "ln";
+    internal const string DB_KEY_FIRST_NAME  = "fn";
+    internal const string DB_KEY_LAST_NAME   = "ln";
 
-    public const string FRIENDLY_KEY_NAME = "name";
-    public const string FRIENDLY_KEY_EMAIL = "email";
+    public const string FRIENDLY_KEY_NAME        = "name";
+    public const string FRIENDLY_KEY_EMAIL       = "email";
+    public const string FRIENDLY_KEY_ROLES       = "roles";
     public const string FRIENDLY_KEY_PERMISSIONS = "permissions";
-    public const string FRIENDLY_KEY_GIVEN_NAME = "givenName";
+    public const string FRIENDLY_KEY_GIVEN_NAME  = "givenName";
     public const string FRIENDLY_KEY_FAMILY_NAME = "familyName";
 
     [BsonElement(DB_KEY_NAME)]
@@ -69,6 +73,10 @@ public class Account : PlatformCollectionDocument
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_EMAIL)]
     public string Email { get; private set; }
     
+    [BsonElement(DB_KEY_ROLES)]
+    [JsonInclude, JsonPropertyName(FRIENDLY_KEY_ROLES)]
+    public List<Role> Roles { get; set; }
+    
     [BsonElement(DB_KEY_PERMISSIONS)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_PERMISSIONS)]
     public Passport Permissions { get; set; } // TODO: private set
@@ -81,4 +89,10 @@ public class Account : PlatformCollectionDocument
                                                            Email = data.Email,
                                                            Permissions = Passport.GetDefaultPermissions(data)
                                                        };
+
+    // Temporary to add in missing properties
+    public void InitPropertyRole()
+    {
+        Roles = new List<Role>();
+    }
 }

@@ -9,6 +9,8 @@ using RCL.Logging;
 using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Utilities;
+using Rumble.Platform.Data;
+
 // ReSharper disable ArrangeAttributes
 
 namespace Dmz.Controllers;
@@ -18,6 +20,7 @@ public class PermissionController : DmzController
 {
     #pragma warning disable
         private readonly AccountService _accountService;
+        private readonly RoleService    _roleService;
     #pragma warning restore
     
     #region List
@@ -81,6 +84,119 @@ public class PermissionController : DmzController
         }
 
         return Ok();
+    }
+    
+    // Modify roles
+    [HttpPatch, Route("account/roles")]
+    public ActionResult AccountRoles()
+    {
+        Require(Permissions.Portal.ManagePermissions);
+
+        string id = Require<string>(key: "id");
+        List<string> roleNames = Require<List<string>>(key: "roles");
+
+        Account account = _accountService.FindById(id);
+
+        List<Role> newRoles = new List<Role>();
+
+        foreach (string roleName in roleNames)
+        {
+            try
+            {
+                Role role = _roleService.FindByName(roleName);
+                newRoles.Add(role);
+            }
+            catch (Exception)
+            {
+                Log.Error(owner: Owner.Nathan, message: "Attempted to add an unidentified role.", data: $"Role name: {roleName}.");
+                throw new PlatformException(message: $"An attempt was made to add a non-existent role {roleName}.");
+            }
+        }
+
+        account.Roles = newRoles;
+
+        _accountService.Update(account);
+
+        return Ok();
+    }
+    #endregion
+    
+    #region Roles
+    // Get roles
+    [HttpGet, Route("roles")]
+    public ActionResult GetRoles()
+    {
+        Require(Permissions.Portal.ManagePermissions);
+
+        List<Role> roles = (List<Role>) _roleService.List();
+        return Ok(new {Roles = roles});
+    }
+    
+    // New role
+    [HttpPost, Route("roles/add")]
+    public ActionResult AddRole()
+    {
+        Require(Permissions.Portal.ManagePermissions);
+
+        string name = Require<string>(key: "name");
+
+        if (_roleService.FindByName(name) != null)
+        {
+            throw new PlatformException(message: "Role already exists.");
+        }
+
+        Passport passport = new Passport(Passport.PassportType.Readonly);
+        
+        int sum = passport.Sum(group => group.UpdateFromValues(Body));
+
+        Role role = new Role(name: name, passport: passport);
+        _roleService.Create(role);
+
+        return Ok(message: $"{sum} permissions were added for new role {name}.");
+    }
+    
+    // Edit role
+    [HttpPatch, Route("roles/edit")]
+    public ActionResult EditRole()
+    {
+        Require(Permissions.Portal.ManagePermissions);
+        
+        string name = Require<string>(key: "name");
+        
+        Role role = _roleService.FindByName(name);
+
+        if (role == null)
+        {
+            throw new PlatformException(message: "Role does not exist.");
+        }
+
+        int sum = role.Permissions.Sum(group => group.UpdateFromValues(Body));
+        
+        _roleService.Update(role); // role definition in mongo
+        _accountService.UpdateEditedRole(role); // for roles already in accounts
+
+        return Ok(message: $"{sum} permissions were edited for role {name}.");
+    }
+    
+    // Delete role
+    [HttpDelete, Route("roles/delete")]
+    public ActionResult DeleteRole()
+    {
+        Require(Permissions.Portal.ManagePermissions);
+
+        string name = Require<string>(key: "name");
+
+        Role role = _roleService.FindByName(name);
+        
+        if (role == null)
+        {
+            throw new PlatformException(message: "Role does not exist.");
+        }
+        
+        _roleService.Delete(role);
+        _accountService.RemoveDeletedRole(role.Name);
+
+        return Ok(message: $"Role {name} has been deleted");
     }
     #endregion
 }
