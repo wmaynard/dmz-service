@@ -19,12 +19,28 @@ public class LeaderboardController : DmzController
     }
     
     // Gets a leaderboard's data by id
-    [HttpGet, Route("")]
-    public ActionResult Leaderboard()
+    [HttpGet, Route("archive")]
+    public ActionResult FetchArchive()
     {
         Require(Permissions.Leaderboard.View_Page);
 
-        return Forward("/leaderboard/archive");
+        return Forward("/leaderboard/admin/archive");
+    }
+
+    [HttpGet, Route("")]
+    public ActionResult FetchLeaderboard()
+    {
+        Require(Permissions.Leaderboard.View_Page);
+
+        return Forward("/leaderboard");
+    }
+
+    [HttpGet, Route("enrollments")]
+    public ActionResult GetPlayerEnrollments()
+    {
+        Require(Permissions.Leaderboard.View_Page);
+
+        return Forward("leaderboard/admin/enrollments");
     }
     #endregion
 }
