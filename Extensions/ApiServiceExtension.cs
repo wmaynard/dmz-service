@@ -22,7 +22,7 @@ public static class ApiServiceExtension
     /// <exception cref="PlatformException"></exception>
     public static RumbleJson Forward(this ApiService apiService, string url, RumbleJson parameters = null, RumbleJson payload = null)
     {
-        ApiRequest request = apiService.Request(url);
+        ApiRequest request = apiService.Request(PlatformEnvironment.Url(url));
 
         if (ContextHelper.Fetch(out TokenInfo token))
             request.AddAuthorization(token.Authorization);
