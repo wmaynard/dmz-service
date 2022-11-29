@@ -72,5 +72,5 @@ public static class PlayerServiceEmail
     private static string TimestampToDate(long? timestamp = null) => DateTimeOffset
         .FromUnixTimeSeconds(timestamp ?? Timestamp.UnixTime)
         .DateTime
-        .ToString(format: "yyyy.MM.dd HH:mm:ss UTC");
+        .ToString(format: "MM/dd/yyyy HH:mm (UTC)");
 }
