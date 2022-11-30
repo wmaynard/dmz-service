@@ -42,5 +42,13 @@ public class LeaderboardController : DmzController
 
         return Forward("leaderboard/admin/enrollments");
     }
+
+    [HttpPatch, Route("season")]
+    public ActionResult UpdateSeason()
+    {
+        Require(Permissions.Leaderboard.View_Page);
+
+        return Forward("leaderboard/admin/season");
+    }
     #endregion
 }
