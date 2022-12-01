@@ -50,5 +50,21 @@ public class LeaderboardController : DmzController
 
         return Forward("leaderboard/admin/season");
     }
+
+    [HttpPost, Route("mockScores"), IgnorePerformance]
+    public ActionResult AddMockLeaderboardScores()
+    {
+        Require(Permissions.Leaderboard.View_Page);
+
+        return Forward("leaderboard/admin/mockScores");
+    }
+
+    [HttpPost, Route("rollover"), IgnorePerformance]
+    public ActionResult ManualRollover()
+    {
+        Require(Permissions.Leaderboard.View_Page);
+
+        return Forward("leaderboard/admin/rollover");
+    }
     #endregion
 }
