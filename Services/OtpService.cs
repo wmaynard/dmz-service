@@ -18,12 +18,12 @@ namespace Dmz.Services;
 public class OtpService : PlatformMongoService<StoredValue>
 {
     private readonly ApiService _apiService;
-    private readonly DC2Service _dc2Service;
+    private readonly DynamicConfig _dynamicConfig;
 
-    public OtpService(ApiService apiService, DC2Service dc2Service) : base("otpStore")
+    public OtpService(ApiService apiService, DynamicConfig dynamicConfig) : base("otpStore")
     {
         _apiService = apiService;
-        _dc2Service = dc2Service;
+        _dynamicConfig = dynamicConfig;
     }
 
     /// <summary>
@@ -81,7 +81,7 @@ public class OtpService : PlatformMongoService<StoredValue>
     /// <param name="accountId">The account to force a relog for.</param>
     private void InvalidateTokens(string accountId) => _apiService
         .Request("/token/invalidate")
-        .AddAuthorization(_dc2Service.AdminToken)
+        .AddAuthorization(_dynamicConfig.AdminToken)
         .SetPayload(new RumbleJson
         {
             { "aid", accountId }

@@ -20,7 +20,7 @@ namespace Dmz.Interop;
 
 public static class AmazonSes
 {
-    private const string FROM_EMAIL = "noreply@rumbleentertainment.com";
+    private const string FROM_EMAIL = "Rumble Entertainment <noreply@rumbleentertainment.com>";
     
     private static AmazonSimpleEmailServiceV2Client _client;
     
