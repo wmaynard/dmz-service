@@ -104,7 +104,7 @@ resources:
   limits:
     memory: 256Mi
   requests:
-    cpu: 200m
+    cpu: 256m
     memory: 128Mi
 
 ## Configure PodDisrptionBudget
