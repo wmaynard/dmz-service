@@ -13,6 +13,7 @@ public static class PlayerServiceEmail
     public static readonly string TEMPLATE_2FA = $"{PlatformEnvironment.Deployment}-tower-login-2fa";
     public static readonly string TEMPLATE_PASSWORD_RESET = $"{PlatformEnvironment.Deployment}-tower-reset-password";
     public static readonly string TEMPLATE_NEW_DEVICE_NOTIFICATION = $"{PlatformEnvironment.Deployment}-tower-new-device-notification";
+    public static readonly string TEMPLATE_WELCOME = $"{PlatformEnvironment.Deployment}-tower-welcome";
 
     public static void SendConfirmation(string email, string accountId, string code, long expiration) =>
         AmazonSes.SendEmail(email, TEMPLATE_CONFIRMATION, replacements: new RumbleJson
@@ -44,6 +45,12 @@ public static class PlayerServiceEmail
         {
             { "code", code },
             { "duration", TimestampToText(expiration) }
+        }).Wait();
+
+    public static void SendWelcome(string email) =>
+        AmazonSes.SendEmail(email, TEMPLATE_WELCOME, replacements: new RumbleJson
+        {
+            
         }).Wait();
 
     private static string TimestampToText(long expiration)

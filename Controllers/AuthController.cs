@@ -87,6 +87,7 @@ public class AuthController : PlatformController
             {
                 Log.Error(Owner.Will, "DMZ token generation failed.", data: new
                 {
+                    accountId = account.Id,
                     Response = response.AsRumbleJson
                 });
             })

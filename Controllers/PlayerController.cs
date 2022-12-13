@@ -112,6 +112,16 @@ public class PlayerController : DmzController
         return Ok();
     }
 
+    [HttpPost, Route("account/welcome")]
+    public ActionResult SendWelcomeEmail()
+    {
+        string email = Require<string>("email");
+
+        PlayerServiceEmail.SendWelcome(email);
+
+        return Ok();
+    }
+
     [HttpPost, Route("account/reset")]
     public ActionResult SendPasswordResetEmail()
     {
