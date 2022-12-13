@@ -129,7 +129,7 @@ public static class AmazonSes
     private static string Replace(string target, RumbleJson replacements)
     {
         if (replacements == null || !replacements.Any())
-            return null;
+            return target;
 
         foreach (string replacement in replacements.Keys)
         {
