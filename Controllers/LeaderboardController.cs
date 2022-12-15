@@ -33,7 +33,7 @@ public class LeaderboardController : DmzController
     {
         Require(Permissions.Leaderboard.View_Page);
 
-        return Forward("/leaderboard");
+        return Forward("leaderboard");
     }
 
     [HttpGet, Route("enrollments")]
