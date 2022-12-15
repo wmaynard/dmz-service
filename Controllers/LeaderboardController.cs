@@ -27,8 +27,7 @@ public class LeaderboardController : DmzController
         return Forward("/leaderboard/admin/archive");
     }
 
-    [HttpGet, Route("abc")]
-    [HttpGet, Route("")]
+    [HttpGet]
     public ActionResult FetchLeaderboard()
     {
         Require(Permissions.Leaderboard.View_Page);
