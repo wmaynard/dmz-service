@@ -27,6 +27,7 @@ public class LeaderboardController : DmzController
         return Forward("/leaderboard/admin/archive");
     }
 
+    [HttpGet, Route("abc")]
     [HttpGet, Route("")]
     public ActionResult FetchLeaderboard()
     {
