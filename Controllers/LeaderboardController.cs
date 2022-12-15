@@ -1,11 +1,15 @@
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Utilities;
+using Rumble.Platform.Common.Web;
+
 // ReSharper disable ArrangeAttributes
 
 namespace Dmz.Controllers;
 
 [Route("/dmz/leaderboard"), RequireAuth(AuthType.ADMIN_TOKEN)]
+[EnableCors(PlatformStartup.CORS_SETTINGS_NAME)]
 public class LeaderboardController : DmzController
 {
     #region Leaderboards
