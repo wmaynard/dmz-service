@@ -4,8 +4,13 @@ using Dmz.Interop;
 using Dmz.Services;
 using Dmz.Utilities;
 using Microsoft.AspNetCore.Mvc;
+using RCL.Logging;
 using Rumble.Platform.Common.Attributes;
+using Rumble.Platform.Common.Enums;
+using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
+using Rumble.Platform.Data;
+
 // ReSharper disable ArrangeAttributes
 
 namespace Dmz.Controllers;
@@ -13,6 +18,10 @@ namespace Dmz.Controllers;
 [Route("dmz/player"), RequireAuth(AuthType.ADMIN_TOKEN)]
 public class PlayerController : DmzController
 {
+    #pragma warning disable
+    private readonly DynamicConfig _config;
+    #pragma warning restore
+    
     #region Player lookup
     // Search for a player
     [HttpGet, Route("search")]
@@ -157,8 +166,43 @@ public class PlayerController : DmzController
         return Ok();
     }
 
+    /// <summary>
+    /// Sends the player email click data to player-service.
+    /// The response from player-service includes a redirect URL to send users from DMZ -> public website.
+    /// </summary>
     [HttpGet, Route("account/confirm"), NoAuth]
-    public ActionResult AcceptConfirmation() => Forward("/player/v2/account/confirm");
+    public ActionResult AcceptConfirmation()
+    {
+        Forward("/player/v2/account/confirm", out RumbleJson response);
+
+        try
+        {
+            string url = response.Require<RumbleJson>("loginRedirect").Require<string>("url");
+            return Redirect(url);
+        }
+        catch (Exception e)
+        {
+            Log.Error(Owner.Will, "Unable to redirect user by instruction from player-service.", data: new
+            {
+                Response = response
+            }, exception: e);
+        }
+
+        try
+        {
+            string url = _config
+                .GetValuesFor(Audience.PlayerService)
+                .Require<string>("confirmationFailurePage")
+                .Replace("{reason}", "noResponse");
+            return Redirect(url);
+        }
+        catch (Exception e)
+        {
+            Log.Error(Owner.Will, "Unable to redirect user from dynamic config as backup.", exception: e);
+        }
+        
+        return Problem();
+    }
 
     #endregion Rumble Account Login
 }
