@@ -1,5 +1,6 @@
 using Dmz.Models;
 using Dmz.Services;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Utilities;
@@ -9,6 +10,7 @@ using Rumble.Platform.Data;
 namespace Dmz.Controllers;
 
 [Route("dmz/otp"), RequireAuth]
+[EnableCors(PlatformStartup.CORS_SETTINGS_NAME)]
 public class OtpController : PlatformController
 {
 #pragma warning disable
