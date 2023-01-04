@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using Amazon.Runtime;
 using Amazon.SimpleEmailV2;
 using Amazon.SimpleEmailV2.Model;
+using Dmz.Models;
+using Dmz.Services;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Extensions;
@@ -21,6 +23,7 @@ namespace Dmz.Interop;
 public static class AmazonSes
 {
     private const string FROM_EMAIL = "Rumble Entertainment <noreply@rumbleentertainment.com>";
+    private const string CHARSET = "UTF-8";
     
     private static AmazonSimpleEmailServiceV2Client _client;
     
@@ -66,37 +69,66 @@ public static class AmazonSes
         string text = Replace(content.Text, replacements);
         string subject = Replace(content.Subject, replacements);
 
-        EmailContent _email = new EmailContent
-        {
-            Simple = new Message
-            {
-                Body = new Body
-                {
-                    Html = new Content
-                    {
-                        Charset = charset,
-                        Data = html
-                    },
-                    Text = new Content
-                    {
-                        Charset = charset,
-                        Data = text
-                    }
-                },
-                Subject = new Content
-                {
-                    Charset = charset,
-                    Data = subject
-                }
-            }
-        };
+        await SendEmail(subject, html, text, email);
+    }
 
+    /// <summary>
+    /// Creates an email that's scheduled to be sent out at a later time.  The template is loaded and crafted immediately
+    /// during this call. 
+    /// </summary>
+    /// <param name="address">The email address to send this email to.</param>
+    /// <param name="delay">The duration, in seconds, to wait before the email will send.</param>
+    /// <param name="templateName">The template to use for the email.</param>
+    /// <param name="replacements">The replacements to make in the template.</param>
+    /// <returns></returns>
+    public static ScheduledEmail CraftScheduledEmail(string address, long delay, string templateName, RumbleJson replacements = null)
+    {
+        Task<EmailTemplateContent> task = GetTemplate(templateName);
+        task.Wait();
+        EmailTemplateContent content = task.Result;
+        // EmailTemplateContent content = await GetTemplate(templateName);
+
+        return new ScheduledEmail
+        {
+            Address = address,
+            SendAfter = Timestamp.UnixTime + delay,
+            Subject = Replace(content.Subject, replacements),
+            Html = Replace(content.Html, replacements),
+            Text = Replace(content.Text, replacements)
+        };
+    }
+
+    public static async Task<SendEmailResponse> SendEmail(string subject, string html, string text, params string[] emails)
+    {
         SendEmailResponse response = await Client.SendEmailAsync(new SendEmailRequest
         {
-            Content = _email,
+            Content = new EmailContent
+            {
+                Simple = new Message
+                {
+                    Body = new Body
+                    {
+                        Html = new Content
+                        {
+                            Charset = CHARSET,
+                            Data = html
+                        },
+                        Text = new Content
+                        {
+                            Charset = CHARSET,
+                            Data = text
+                        }
+                    },
+                    Subject = new Content
+                    {
+                        Charset = CHARSET,
+                        Data = subject
+                    }
+                }
+            },
             Destination = new Destination
             {
-                ToAddresses = new List<string> { email }
+                ToAddresses = emails.ToList()
             },
             ConfigurationSetName = null,
             EmailTags = null,
@@ -107,8 +139,10 @@ public static class AmazonSes
             ListManagementOptions = null,
             ReplyToAddresses = null
         });
-        if (!((int)response.HttpStatusCode).Between(200, 299))
-            throw new PlatformException("Unable to send email.");
+
+        return ((int)response.HttpStatusCode).Between(200, 299)
+            ? response
+            : throw new PlatformException("Unable to send email.");
     }
 
     public static string[] TemplateNames

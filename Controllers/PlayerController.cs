@@ -1,6 +1,7 @@
 using System;
 using Dmz.Extensions;
 using Dmz.Interop;
+using Dmz.Models;
 using Dmz.Services;
 using Dmz.Utilities;
 using Microsoft.AspNetCore.Mvc;
@@ -18,9 +19,10 @@ namespace Dmz.Controllers;
 [Route("dmz/player"), RequireAuth(AuthType.ADMIN_TOKEN)]
 public class PlayerController : DmzController
 {
-    #pragma warning disable
+#pragma warning disable
     private readonly DynamicConfig _config;
-    #pragma warning restore
+    private readonly ScheduledEmailService _emailService;
+#pragma warning restore
     
     #region Player lookup
     // Search for a player
@@ -126,7 +128,7 @@ public class PlayerController : DmzController
     {
         string email = Require<string>("email");
 
-        PlayerServiceEmail.SendWelcome(email);
+        _emailService.Create(PlayerServiceEmail.ScheduleWelcome(email));
 
         return Ok();
     }

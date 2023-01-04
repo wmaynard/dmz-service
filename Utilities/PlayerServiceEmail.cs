@@ -1,5 +1,9 @@
 using System;
 using Dmz.Interop;
+using Dmz.Models;
+using Dmz.Services;
+using Rumble.Platform.Common.Enums;
+using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Data;
 
@@ -7,6 +11,8 @@ namespace Dmz.Utilities;
 
 public static class PlayerServiceEmail
 {
+    public const long DELAY_WELCOME_EMAIL_DEFAULT = 24 * 60 * 60; // one day in seconds
+    public const string CONFIG_WELCOME_DELAY = "delayWelcomeEmail";
     public static readonly string TEMPLATE_CONFIRMATION = $"{PlatformEnvironment.Deployment}-tower-account-confirmation";
     
     // public const string TEMPLATE_CONFIRMATION = "107-tower-account-confirmation";
@@ -52,6 +58,17 @@ public static class PlayerServiceEmail
         {
             
         }).Wait();
+
+    public static ScheduledEmail ScheduleWelcome(string email)
+    {
+        long delay = DynamicConfig
+             .Instance
+             ?.GetValuesFor(Audience.PlayerService)
+             ?.Optional<long?>(CONFIG_WELCOME_DELAY)
+            ?? DELAY_WELCOME_EMAIL_DEFAULT;
+        
+        return AmazonSes.CraftScheduledEmail(address: email, delay, templateName: TEMPLATE_WELCOME);
+    }
 
     private static string TimestampToText(long expiration)
     {
