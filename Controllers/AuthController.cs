@@ -41,6 +41,7 @@ public class AuthController : PlatformController
 
         return Ok(new RumbleJson
         {
+            { "account", account },
             { "platformToken", platformToken },
             { "permissions", account.Permissions },
             { "gameSecret", PlatformEnvironment.GameSecret },

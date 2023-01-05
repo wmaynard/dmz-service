@@ -37,37 +37,11 @@ public class Account : PlatformCollectionDocument
 
     [BsonIgnore]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_GIVEN_NAME), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public string FirstName
-    {
-        get
-        {
-            try
-            {
-                return Name.Split(separator: ' ').First();
-            }
-            catch
-            {
-                return null;
-            }
-        }
-    }
+    public string FirstName => Name?.Split(separator: ' ').First();
     
     [BsonIgnore]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_FAMILY_NAME), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public string FamilyName
-    {
-        get
-        {
-            try
-            {
-                return Name.Split(separator: ' ').Last();
-            }
-            catch
-            {
-                return null;
-            }
-        }
-    }
+    public string FamilyName => Name?.Split(separator: ' ').Last();
 
     [BsonElement(DB_KEY_EMAIL)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_EMAIL)]
@@ -84,15 +58,12 @@ public class Account : PlatformCollectionDocument
     public Account() => Permissions = new Passport();
 
     public static Account FromSsoData(SsoData data) => new Account
-                                                       {
-                                                           Name = data.Name,
-                                                           Email = data.Email,
-                                                           Permissions = Passport.GetDefaultPermissions(data)
-                                                       };
+   {
+       Name = data.Name,
+       Email = data.Email,
+       Permissions = Passport.GetDefaultPermissions(data)
+   };
 
     // Temporary to add in missing properties
-    public void InitPropertyRole()
-    {
-        Roles = new List<Role>();
-    }
+    public void InitPropertyRole() => Roles = new List<Role>();
 }
