@@ -17,14 +17,21 @@ public static class ApiServiceExtension
     /// <param name="apiService">The ApiService singleton.</param>
     /// <param name="url">The url to forward the request to.</param>
     /// <param name="parameters">The query string, translated to a RumbleJson object.</param>
+    /// <param name="asAdmin">If set to true, DMZ will attach its own admin token to the request for authorization.</param>
     /// <param name="payload">The request body, translated to a RumbleJson object.  This is accessible in controllers via the Body property.</param>
     /// <returns>RumbleJson representing the request response.</returns>
     /// <exception cref="PlatformException"></exception>
-    public static RumbleJson Forward(this ApiService apiService, string url, RumbleJson parameters = null, RumbleJson payload = null)
+    public static RumbleJson Forward(this ApiService apiService, string url, RumbleJson parameters = null, bool asAdmin = false, RumbleJson payload = null)
     {
         ApiRequest request = apiService.Request(PlatformEnvironment.Url(url.TrimStart('/')));
 
-        if (ContextHelper.Fetch(out TokenInfo token))
+        if (asAdmin)
+        {
+            string adminToken = DynamicConfig.Instance?.AdminToken;
+            if (adminToken != null)
+                request.AddAuthorization(adminToken);
+        }
+        else if (ContextHelper.Fetch(out TokenInfo token))
             request.AddAuthorization(token.Authorization);
         
         if (parameters != null || ContextHelper.Fetch(out parameters))

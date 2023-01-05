@@ -27,7 +27,7 @@ public abstract class DmzController : PlatformController
         ? true
         : throw new PermissionInvalidException();
 
-    protected ActionResult Forward(string url) => Ok(data: _apiService.Forward(url));
+    protected ActionResult Forward(string url, bool asAdmin = false) => Ok(data: _apiService.Forward(url, asAdmin: asAdmin));
     
     protected ActionResult Forward(string url, out RumbleJson response)
     {

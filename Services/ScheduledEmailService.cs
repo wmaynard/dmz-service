@@ -14,6 +14,7 @@ namespace Dmz.Services;
 public class ScheduledEmailService : PlatformMongoTimerService<ScheduledEmail>
 {
     private const long SENT_RETENTION_SECONDS = 30 * 24 * 60 * 60;
+    private const int MAX_ATTEMPTS = 5;
     public ScheduledEmailService() : base(collection: "outbox", intervalMs: 30_000, startImmediately: true) { }
 
     protected override void OnElapsed()
@@ -41,7 +42,7 @@ public class ScheduledEmailService : PlatformMongoTimerService<ScheduledEmail>
             filter: Builders<ScheduledEmail>.Filter.And(
                 Builders<ScheduledEmail>.Filter.Eq(email => email.Sent, false),
                 Builders<ScheduledEmail>.Filter.Lt(email => email.SendAfter, Timestamp.UnixTime),
-                Builders<ScheduledEmail>.Filter.Lt(email => email.Attempts, 5)
+                Builders<ScheduledEmail>.Filter.Lt(email => email.Attempts, MAX_ATTEMPTS)
             ),
             update: Builders<ScheduledEmail>.Update
                 .Set(email => email.Sent, true)
@@ -70,11 +71,16 @@ public class ScheduledEmailService : PlatformMongoTimerService<ScheduledEmail>
                 filter: Builders<ScheduledEmail>.Filter.Eq(email => email.Id, toSend.Id),
                 update: Builders<ScheduledEmail>.Update.Set(email => email.Sent, false)
             );
-            
-            Log.Warn(Owner.Will, "Failed to send a scheduled email.", data: new
-            {
-                ScheduledEmail = toSend
-            });
+            if (toSend.Attempts == MAX_ATTEMPTS - 1)
+                Log.Error(Owner.Will, "Failed to send a scheduled email.  It will not be retried.", data: new
+                {
+                    ScheduledEmail = toSend
+                }, e);
+            else
+                Log.Warn(Owner.Will, "Failed to send a scheduled email.", data: new
+                {
+                    ScheduledEmail = toSend
+                }, e);
             return false;
         }
     }

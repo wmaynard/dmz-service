@@ -206,5 +206,11 @@ public class PlayerController : DmzController
         return Problem();
     }
 
+    [HttpPost, Route("account/login"), NoAuth]
+    public ActionResult LoginWithGoogle() => Forward("player/v2/account/login");
+
+    [HttpGet, Route("account/salt"), NoAuth]
+    public ActionResult GetRumbleSalt() => Forward("player/v2/account/salt", asAdmin: true);
+
     #endregion Rumble Account Login
 }
