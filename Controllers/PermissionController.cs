@@ -49,11 +49,11 @@ public class PermissionController : DmzController
     
     // Search by permission
     [HttpGet, Route("search/permission")]
-    public ActionResult SearchPermission(string perm)
+    public ActionResult SearchPermission(string name)
     {
         Require(Permissions.Portal.ManagePermissions);
 
-        List<Account> accounts = _accountService.FindByPermission(perm);
+        List<Account> accounts = _accountService.FindByPermission(name);
         
         return Ok(accounts);
     }
