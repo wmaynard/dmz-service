@@ -77,14 +77,14 @@ public class AuthController : PlatformController
             .Request("/secured/token/generate")
             .SetPayload(new RumbleJson
             {
-                { "aid", account.Id },
+                { "accountId", account.Id },
                 { "screenname", account.Name },
                 { "origin", PlatformEnvironment.ServiceName },
                 { "days", PlatformEnvironment.IsProd ? 1 : 4 },
                 { "email", account.Email },
                 { "key", PlatformEnvironment.RumbleSecret }
             })
-            .OnFailure((_, response) =>
+            .OnFailure(response =>
             {
                 Log.Error(Owner.Will, "DMZ token generation failed.", data: new
                 {
@@ -95,9 +95,7 @@ public class AuthController : PlatformController
             .Post(out RumbleJson json, out int code);
 
         if (!code.Between(200, 299))
-        {
             throw new PlatformException("DMZ token generation failed.");
-        }
 
         return json.Require<RumbleJson>("authorization").Require<string>("token");
     }
