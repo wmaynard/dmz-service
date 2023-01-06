@@ -9,7 +9,6 @@ using RCL.Logging;
 using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Utilities;
-using Rumble.Platform.Data;
 
 // ReSharper disable ArrangeAttributes
 
@@ -34,8 +33,31 @@ public class PermissionController : DmzController
       
         IEnumerable<Account> accounts = _accountService.List();
 
-        return Ok(new {Accounts = accounts});
+        return Ok(accounts);
     }
+    
+    // Search by role
+    [HttpGet, Route("search/role")]
+    public ActionResult SearchRole(string name)
+    {
+        Require(Permissions.Portal.ManagePermissions);
+
+        List<Account> accounts = _accountService.FindByRole(name);
+
+        return Ok(accounts);
+    }
+    
+    // Search by permission
+    [HttpGet, Route("search/permission")]
+    public ActionResult SearchPermission(string perm)
+    {
+        Require(Permissions.Portal.ManagePermissions);
+
+        List<Account> accounts = _accountService.FindByPermission(perm);
+        
+        return Ok(accounts);
+    }
+    
     #endregion
     
     #region Account page
