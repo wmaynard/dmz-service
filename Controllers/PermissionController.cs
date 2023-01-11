@@ -33,7 +33,7 @@ public class PermissionController : DmzController
       
         IEnumerable<Account> accounts = _accountService.List();
 
-        return Ok(accounts);
+        return Ok(new {Accounts = accounts});
     }
     
     // Search by role
@@ -44,7 +44,7 @@ public class PermissionController : DmzController
 
         List<Account> accounts = _accountService.FindByRole(name);
 
-        return Ok(accounts);
+        return Ok(new {Accounts = accounts});
     }
     
     // Search by permission
@@ -55,7 +55,7 @@ public class PermissionController : DmzController
 
         List<Account> accounts = _accountService.FindByPermission(name);
         
-        return Ok(accounts);
+        return Ok(new {Accounts = accounts});
     }
     
     #endregion
