@@ -70,5 +70,13 @@ public class LeaderboardController : DmzController
 
         return Forward("leaderboard/admin/rollover");
     }
+
+    [HttpGet, Route("shardStats")]
+    public ActionResult GetShardStats()
+    {
+        Require(Permissions.Leaderboard.View_Page);
+
+        return Forward("leaderboard/admin/shardStats");
+    }
     #endregion
 }
