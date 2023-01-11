@@ -59,7 +59,7 @@ public class PlayerController : DmzController
     [HttpPost, Route("login"), NoAuth]
     public ActionResult Login()
     {
-        return Forward("/player/v2/login");
+        return Forward("/player/v2/account/login");
     }
     #endregion
 
