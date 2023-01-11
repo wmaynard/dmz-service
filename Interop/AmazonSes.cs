@@ -3,6 +3,7 @@ global using AwsLogin = Amazon.Runtime.BasicAWSCredentials;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading;
@@ -160,8 +161,14 @@ public static class AmazonSes
         }
     }
 
-    private static string Replace(string target, RumbleJson replacements)
+    private static string Replace([NotNull] string target, RumbleJson replacements)
     {
+        // TODO: These replacements are a kluge for the sed command issues in the CI script
+        target = target
+            .Replace("__name__", "&")
+            .Replace("__subject", "&")
+            .Replace("__html__", "&")
+            .Replace("__text__", "&");
         if (replacements == null || !replacements.Any())
             return target;
 
@@ -174,12 +181,7 @@ public static class AmazonSes
             } while (target.Contains($"{{{replacement}}}") && --depth > 0);
         }
 
-        // TODO: These replacements are a kluge for the sed command issues in the CI script
-        return target
-            .Replace("__name__", "&")
-            .Replace("__subject", "&")
-            .Replace("__html__", "&")
-            .Replace("__text__", "&");
+        return target;
     }
 
     private static async Task<EmailTemplateContent> GetTemplate(string name)
