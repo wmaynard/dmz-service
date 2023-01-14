@@ -12,4 +12,5 @@ public class PortalPermissions : PermissionGroup
     
     public bool SuperUser         { get; set; }
     public bool ManagePermissions { get; set; }
+    public bool ViewActivityLogs { get; set; }
 }

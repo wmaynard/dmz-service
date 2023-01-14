@@ -13,7 +13,8 @@ using Rumble.Platform.Common.Services;
 namespace Dmz.Services;
 public class AccountService : PlatformMongoService<Account>
 {
-    public AccountService() : base(collection: "accounts") { }
+    internal static AccountService Instance { get; private set; }
+    public AccountService() : base(collection: "accounts") => Instance = this;
 
     public Account FindById(string id) => FindOne(filter: account => account.Id == id);
 
@@ -103,4 +104,36 @@ public class AccountService : PlatformMongoService<Account>
         listWrites.Add(new UpdateManyModel<Account>(filter, update));
         _collection.BulkWrite(listWrites);
     }
+
+    /// <summary>
+    /// Records a logging event to the responsible account.  Capped by Account.MAX_ACTIVITY_LOG_STORAGE.
+    /// </summary>
+    /// <param name="log"></param>
+    /// <returns></returns>
+    public Account AddLog(AuditLog log) => _collection
+        .FindOneAndUpdate(
+            filter: Builders<Account>.Filter.Eq(account => account.Id, log.PortalAccountId),
+            update: Builders<Account>.Update.PushEach(
+                field: account => account.Activity, 
+                values: new[] { log }, 
+                slice: Account.MAX_ACTIVITY_LOG_STORAGE * -1
+            ),
+            options: new FindOneAndUpdateOptions<Account>
+            {
+                ReturnDocument = ReturnDocument.After
+            }
+        );
+
+    /// <summary>
+    /// Fetches recent activity logs; max 1,000 records at a time.
+    /// </summary>
+    /// <param name="limit"></param>
+    /// <returns></returns>
+    public AuditLog[] GetActivityLogs(int? limit = null) => _collection
+        .AsQueryable()
+        .Where(account => account.Activity != null)
+        .SelectMany(account => account.Activity)
+        .OrderByDescending(log => log.Time)
+        .Take(Math.Max(limit ?? 100, Account.MAX_ACTIVITY_LOG_STORAGE))
+        .ToArray();
 }

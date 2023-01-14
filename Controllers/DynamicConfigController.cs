@@ -1,6 +1,13 @@
+using System;
+using System.Linq;
+using Dmz.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Attributes;
+using Rumble.Platform.Common.Enums;
+using Rumble.Platform.Common.Extensions;
 using Rumble.Platform.Common.Utilities;
+using Rumble.Platform.Data;
+
 // ReSharper disable ArrangeAttributes
 
 namespace Dmz.Controllers;
@@ -26,7 +33,11 @@ public class DynamicConfigController : DmzController
     {
         Require(Permissions.Config.Manage);
 
-        return Forward("/config/settings/new");
+        ActionResult output = Forward("/config/settings/new");
+        
+        AuditFilter.UpdateLog(message: $"{Token.Email} created a new dynamic config section: {Optional<string>("name")}");
+
+        return output;
     }
   
     // Update a section
@@ -36,7 +47,57 @@ public class DynamicConfigController : DmzController
     {
         Require(Permissions.Config.Manage);
 
-        return Forward("/config/settings/update");
+        const string PREVIOUS = "previousValue";
+        const string PREVIOUS_COMMENT = "previousComment";
+        string name = Optional<string>("name");
+        string key = Optional<string>("key");
+        object value = Optional<object>("value");
+        object comment = Optional<object>("comment");
+        
+        
+        RumbleJson data = Body.Copy();
+        string[] names = Enum
+            .GetValues<Audience>()
+            .Select(aud => aud.GetDisplayName())
+            .ToArray();
+        Audience audience = Enum
+            .GetValues<Audience>()
+            .Where(aud => aud.GetDisplayName() != null)
+            .FirstOrDefault(aud => aud.GetDisplayName() == Optional<string>("name"));
+
+        RumbleJson previous = new RumbleJson();
+        if (audience != default)
+            previous = DynamicConfig.GetValuesFor(audience) ?? new RumbleJson();
+
+        ActionResult output = Forward("/config/settings/update");
+
+        if (!previous.ContainsKey(key))
+        {
+            string fallback = DynamicConfig.Optional<string>(key);
+            data[PREVIOUS] = fallback;
+            AuditFilter.UpdateLog(
+                message: $"{Token.Email} updated DynamicConfig: {name}.{key}",
+                data: data
+            );
+        }
+        else if (!value.Equals(previous[key]))
+        {
+            data[PREVIOUS] = previous[key];
+            AuditFilter.UpdateLog(
+                message: $"{Token.Email} changed a value in DynamicConfig: {name}.{key}",
+                data: data
+            );
+        }
+        else
+        {
+            data[PREVIOUS_COMMENT] = comment;
+            AuditFilter.UpdateLog(
+                message: $"{Token.Email} changed a comment in DynamicConfig: {name}.{key}",
+                data: data
+            );
+        }
+
+        return output;
     }
   
     // Delete a variable
@@ -45,7 +106,16 @@ public class DynamicConfigController : DmzController
     {
         Require(Permissions.Config.Delete);
 
-        return Forward("/config/settings/value");
+        ActionResult output = Forward("/config/settings/value");
+        
+        string name = Optional<string>("name");
+        string key = Optional<string>("key");
+        AuditFilter.UpdateLog(
+            message: $"{Token.Email} deleted a value in DynamicConfig: {name}.{key}",
+            data: Body
+        );
+        
+        return output;
     }
     #endregion
 }

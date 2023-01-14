@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
 using Dmz.Models.Permissions;
+using Dmz.Services;
 using MongoDB.Bson.Serialization.Attributes;
+using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Models;
 using Rumble.Platform.Data;
 
@@ -17,6 +19,10 @@ namespace Dmz.Models.Portal;
 [BsonIgnoreExtraElements]
 public class Account : PlatformCollectionDocument
 {
+    internal const int MAX_ACTIVITY_LOG_STORAGE = 1_000;
+    internal const string INDEX_ACTIVITY = "activityLog";
+    
+    internal const string DB_KEY_ACTIVITY    = "log";
     internal const string DB_KEY_NAME        = "name";
     internal const string DB_KEY_EMAIL       = "email";
     internal const string DB_KEY_ROLES       = "roles";
@@ -24,6 +30,7 @@ public class Account : PlatformCollectionDocument
     internal const string DB_KEY_FIRST_NAME  = "fn";
     internal const string DB_KEY_LAST_NAME   = "ln";
 
+    public const string FRIENDLY_KEY_ACTIVITY    = "activity";
     public const string FRIENDLY_KEY_NAME        = "name";
     public const string FRIENDLY_KEY_EMAIL       = "email";
     public const string FRIENDLY_KEY_ROLES       = "roles";
@@ -54,6 +61,11 @@ public class Account : PlatformCollectionDocument
     [BsonElement(DB_KEY_PERMISSIONS)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_PERMISSIONS)]
     public Passport Permissions { get; set; } // TODO: private set
+    
+    [BsonElement(DB_KEY_ACTIVITY)]
+    [JsonInclude, JsonPropertyName(FRIENDLY_KEY_ACTIVITY)]
+    [CompoundIndex(group: INDEX_ACTIVITY, priority: 1)]
+    public AuditLog[] Activity { get; set; }
 
     public Account() => Permissions = new Passport();
 

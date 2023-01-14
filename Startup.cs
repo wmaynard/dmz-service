@@ -21,5 +21,6 @@ public class Startup : PlatformStartup
         .SetPerformanceThresholds(warnMS: 30_000, errorMS: 60_000, criticalMS: 90_000)
         .DisableFeatures(CommonFeature.ConsoleObjectPrinting)
         .DisableFilters(CommonFilter.Performance)
-        .AddFilter<PermissionsFilter>();
+        .AddFilter<PermissionsFilter>()
+        .AddFilter<AuditFilter>();
 }
