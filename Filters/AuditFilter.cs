@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Net.Http;
 using Dmz.Models.Portal;
@@ -21,19 +22,27 @@ public class AuditFilter : PlatformFilter, IActionFilter
     
     public void OnActionExecuting(ActionExecutingContext context)
     {
-        string[] monitored =
+        try
         {
-            HttpMethod.Delete.ToString(),
-            HttpMethod.Patch.ToString(),
-            HttpMethod.Post.ToString(),
-            HttpMethod.Put.ToString(),
-        };
-        string method = context.HttpContext.Request.Method;
+            string[] monitored =
+            {
+                HttpMethod.Delete.ToString(),
+                HttpMethod.Patch.ToString(),
+                HttpMethod.Post.ToString(),
+                HttpMethod.Put.ToString(),
+            };
+            string method = context.HttpContext.Request.Method;
 
-        if (!monitored.Contains(method))
-            return;
+            if (!monitored.Contains(method))
+                return;
         
-        CreateLog(context);
+            CreateLog(context);
+        }
+        catch (Exception e)
+        {
+            Log.Error(Owner.Will, "Failed to created activity log.", exception: e);
+        }
+
     }
 
     public void OnActionExecuted(ActionExecutedContext context)
@@ -42,9 +51,17 @@ public class AuditFilter : PlatformFilter, IActionFilter
 
         if (log == null)
             return;
-        
-        if (AccountService.Instance?.AddLog(log.SetCode(context.HttpContext.Response.StatusCode)) == null)
-            Log.Warn(Owner.Will, "Failed to commit activity log.");
+
+        try
+        {
+            if (AccountService.Instance?.AddLog(log.SetCode(context.HttpContext.Response.StatusCode)) == null)
+                Log.Warn(Owner.Will, "Failed to commit activity log.");
+        }
+        catch (Exception e)
+        {
+            Log.Error(Owner.Will, "Failed to commit activity log.", exception: e);
+        }
+
     }
 
     private static void CreateLog(ActionContext context = null)
