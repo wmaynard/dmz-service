@@ -107,6 +107,19 @@ public class PlayerController : DmzController
 
         return Forward("/player/v2/admin/currency");
     }
+
+    [HttpPatch, Route("account/link")]
+    public ActionResult LinkAccounts()
+    {
+        Require(Permissions.Player.Update);
+
+        bool force = Optional<bool>("force");
+
+        if (force)
+            Require(Permissions.Player.ForceAccountLink);
+
+        return Forward("/player/v2/admin/accountLink");
+    }
     #endregion
     
 #region Rumble Account Login

@@ -14,4 +14,5 @@ public class PlayerPermissions : PermissionGroup
     public bool Screenname      { get; set; }
     public bool Unlink_Accounts { get; set; }
     public bool Update          { get; set; }
+    public bool ForceAccountLink { get; set; }
 }
