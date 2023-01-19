@@ -225,5 +225,15 @@ public class PlayerController : DmzController
     [HttpGet, Route("account/salt"), NoAuth]
     public ActionResult GetRumbleSalt() => Forward("player/v2/account/salt", asAdmin: true);
 
+    [HttpPatch, Route("account/recover"), NoAuth]
+    public ActionResult RecoverAccount() => Forward("player/v2/account/recover");
+
+    [HttpPatch, Route("account/reset"), NoAuth]
+    public ActionResult Reset() => Forward("player/v2/account/reset");
+
+    [HttpPatch, Route("account/password"), NoAuth]
+    public ActionResult ChangePassword() => Forward("player/v2/account/password");
+    
+
     #endregion Rumble Account Login
 }
