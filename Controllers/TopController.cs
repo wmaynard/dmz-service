@@ -1,6 +1,7 @@
 using System.Linq;
 using Dmz.Models.Portal;
 using Dmz.Services;
+using Dmz.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Utilities;
@@ -29,5 +30,24 @@ public class TopController : DmzController
         return Optional<bool>("messageOnly")
             ? Ok(new RumbleJson { { "messages", logs.Select(log => $"{log.Time} | {log.Who.PadLeft(totalWidth: 40, paddingChar: ' ')} | {log.Message ?? $"{log.Method} {log.Endpoint} {log.ResultCode}"}") } })
             : Ok(new RumbleJson { { "logs", logs } });
+    }
+
+    [HttpPost, Route("alert"), RequireAuth(AuthType.ADMIN_TOKEN)]
+    public ActionResult SendEmailAlert()
+    {
+        PlatformAlertEmail.SendAlert(
+            email: Require<string>("email"),
+            title: Require<string>("title"),
+            message: Require<string>("message"),
+            id: Require<string>("id"),
+            audience: Require<string>("audience"),
+            owner: Require<string>("owner"),
+            timestamp: Require<long>("timestamp"),
+            status: Require<string>("status"),
+            impact: Require<string>("impact")
+        );
+        
+
+        return Ok();
     }
 }
