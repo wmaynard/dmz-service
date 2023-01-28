@@ -4,6 +4,7 @@ using Dmz.Services;
 using Dmz.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Attributes;
+using Rumble.Platform.Common.Models.Alerting;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
 using Rumble.Platform.Data;
@@ -35,17 +36,10 @@ public class TopController : DmzController
     [HttpPost, Route("alert"), RequireAuth(AuthType.ADMIN_TOKEN)]
     public ActionResult SendEmailAlert()
     {
-        PlatformAlertEmail.SendAlert(
-            email: Require<string>("email"),
-            title: Require<string>("title"),
-            message: Require<string>("message"),
-            id: Require<string>("id"),
-            audience: Require<string>("audience"),
-            owner: Require<string>("owner"),
-            timestamp: Require<long>("timestamp"),
-            status: Require<string>("status"),
-            impact: Require<string>("impact")
-        );
+        string email = Require<string>("email");
+        Alert alert = Require<Alert>("alert");
+
+        PlatformAlertEmail.SendAlert(email, alert);
         
 
         return Ok();
