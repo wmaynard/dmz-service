@@ -45,7 +45,8 @@ public class AuthController : PlatformController
             { "platformToken", platformToken },
             { "permissions", account.Permissions },
             { "gameSecret", PlatformEnvironment.GameSecret },
-            { "rumbleSecret", PlatformEnvironment.RumbleSecret }
+            { "rumbleSecret", PlatformEnvironment.RumbleSecret },
+            { "gitlabPat", PlatformEnvironment.Optional<string>("GITLAB_PAT") ?? "not found" }
         });
     }
 
