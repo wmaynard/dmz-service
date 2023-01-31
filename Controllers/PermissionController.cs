@@ -89,7 +89,7 @@ public class PermissionController : DmzController
         // Nothing was changed; no reason to do anything further.
         if (sum == 0)
         {
-            return Ok();
+            return Ok(new {Message = $"Updated {sum} values."});
         }
 
         try
@@ -105,7 +105,7 @@ public class PermissionController : DmzController
             Log.Error(owner: Owner.Nathan, message: "Failed to update permissions for portal user.", data: e.Message);
         }
 
-        return Ok();
+        return Ok(new {Message = $"Updated {sum} values."});
     }
     
     // Modify roles
@@ -139,7 +139,7 @@ public class PermissionController : DmzController
 
         _accountService.Update(account);
 
-        return Ok();
+        return Ok(account.Roles);
     }
     #endregion
     
