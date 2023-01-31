@@ -52,7 +52,7 @@ public class PermissionsFilter : PlatformFilter, IActionFilter
         {
             if (!GetService(out AccountService accountService))
             {
-                Log.Local(Owner.Will, "Account Service was null, returning.", emphasis: Log.LogType.ERROR);
+                Log.Local(Owner.Will, "Account Service was null; returning.", emphasis: Log.LogType.ERROR);
                 return;
             }
 
