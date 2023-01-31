@@ -96,7 +96,7 @@ public class PermissionsFilter : PlatformFilter, IActionFilter
             }
         }
         else
-            Log.Local(Owner.Default, message: "Token is not an admin; it must be a player, so permissions are not relevant.");
+            Log.Local(Owner.Default, message: "Token is not an admin; it must be a player so permissions are not relevant.");
     }
 
     public void OnActionExecuted(ActionExecutedContext context) { }
