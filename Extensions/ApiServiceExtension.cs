@@ -75,8 +75,8 @@ public static class ApiServiceExtension
 
         if (!code.Between(200, 299))
         {
-            RumbleJson errorJson = json.Require<RumbleJson>(key: "platformData");
-            Log.Error(owner: Owner.Nathan, message: "DMZ did not receive a 2xx response from a service.", data: errorJson);
+            RumbleJson errorJson = json.Optional<RumbleJson>(key: "platformData");
+            Log.Error(owner: Owner.Nathan, message: "DMZ did not receive a 2xx response from a service.", data: errorJson ?? json);
         }
         
         return json;
