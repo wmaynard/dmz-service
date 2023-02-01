@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Dmz.Controllers;
 
-[Route("game")]
+[Route("dmz/game")]
 public class GameServerController : DmzController
 {
     [HttpPost, Route("offersForUser")]
