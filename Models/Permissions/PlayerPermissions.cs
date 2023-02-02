@@ -15,4 +15,5 @@ public class PlayerPermissions : PermissionGroup
     public bool Unlink_Accounts { get; set; }
     public bool Update          { get; set; }
     public bool ForceAccountLink { get; set; }
+    public bool ViewStoreOffers { get; set; }
 }

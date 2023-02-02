@@ -48,7 +48,7 @@ public class PermissionsFilter : PlatformFilter, IActionFilter
         }
 
         // If the token is an admin token, it needs to load permissions.  Permissions are not applicable to player tokens.
-        if (ContextHelper.Token.IsAdmin)
+        if (ContextHelper.Token != null && ContextHelper.Token.IsAdmin)
         {
             if (!GetService(out AccountService accountService))
             {
