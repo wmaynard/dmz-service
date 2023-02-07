@@ -117,5 +117,14 @@ public class DynamicConfigController : DmzController
         
         return output;
     }
+
+    [HttpPatch, Route("diff")]
+    public ActionResult Diff()
+    {
+        Require(Permissions.Config.ShowDiffs);
+
+        return Forward("/config/diff");
+    }
+    
     #endregion
 }

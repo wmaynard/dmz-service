@@ -12,4 +12,6 @@ public class ConfigPermissions : PermissionGroup
     
     public bool Manage { get; set; }
     public bool Delete { get; set; }
+    
+    public bool ShowDiffs { get; set; }
 }
