@@ -69,6 +69,10 @@ public class AuditFilter : PlatformFilter, IActionFilter
     {
         HttpContext _context = context?.HttpContext ?? new HttpContextAccessor().HttpContext;
         TokenInfo token = ContextHelper.Token;
+
+        if (token.IsNotAdmin)
+            return;
+        
         Account account = AccountService.Instance?.FindByToken(token);
 
         if (_context == null || token == null || account == null)
