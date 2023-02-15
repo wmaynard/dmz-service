@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using RCL.Logging;
+using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Extensions;
 using Rumble.Platform.Common.Filters;
 using Rumble.Platform.Common.Models;
@@ -38,11 +39,11 @@ public class AuditFilter : PlatformFilter, IActionFilter
         
             CreateLog(context);
         }
+        catch (InvalidTokenException) { }
         catch (Exception e)
         {
-            Log.Error(Owner.Will, "Failed to created activity log.", exception: e);
+            Log.Error(Owner.Will, "Failed to create activity log.", exception: e);
         }
-
     }
 
     public void OnActionExecuted(ActionExecutedContext context)
