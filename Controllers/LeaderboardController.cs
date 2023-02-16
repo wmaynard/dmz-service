@@ -17,7 +17,7 @@ public class LeaderboardController : DmzController
     [HttpGet, Route("list")]
     public ActionResult List()
     {
-        Require(Permissions.Leaderboard.View_Page);
+        Require(Permissions.Leaderboard.View);
 
         return Forward("/leaderboard/admin/list");
     }
@@ -26,7 +26,7 @@ public class LeaderboardController : DmzController
     [HttpGet, Route("archive")]
     public ActionResult FetchArchive()
     {
-        Require(Permissions.Leaderboard.View_Page);
+        Require(Permissions.Leaderboard.View);
 
         return Forward("/leaderboard/admin/archive");
     }
@@ -34,7 +34,7 @@ public class LeaderboardController : DmzController
     [HttpGet]
     public ActionResult FetchLeaderboard()
     {
-        Require(Permissions.Leaderboard.View_Page);
+        Require(Permissions.Leaderboard.View);
 
         return Forward("leaderboard");
     }
@@ -42,7 +42,7 @@ public class LeaderboardController : DmzController
     [HttpGet, Route("enrollments")]
     public ActionResult GetPlayerEnrollments()
     {
-        Require(Permissions.Leaderboard.View_Page);
+        Require(Permissions.Leaderboard.View);
 
         return Forward("leaderboard/admin/enrollments");
     }
@@ -50,7 +50,7 @@ public class LeaderboardController : DmzController
     [HttpPatch, Route("season")]
     public ActionResult UpdateSeason()
     {
-        Require(Permissions.Leaderboard.View_Page);
+        Require(Permissions.Leaderboard.View);
 
         return Forward("leaderboard/admin/season");
     }
@@ -58,7 +58,7 @@ public class LeaderboardController : DmzController
     [HttpPost, Route("mockScores"), IgnorePerformance]
     public ActionResult AddMockLeaderboardScores()
     {
-        Require(Permissions.Leaderboard.View_Page);
+        Require(Permissions.Leaderboard.View);
 
         return Forward("leaderboard/admin/mockScores");
     }
@@ -66,7 +66,7 @@ public class LeaderboardController : DmzController
     [HttpPost, Route("rollover"), IgnorePerformance]
     public ActionResult ManualRollover()
     {
-        Require(Permissions.Leaderboard.View_Page);
+        Require(Permissions.Leaderboard.View);
 
         return Forward("leaderboard/admin/rollover");
     }
@@ -74,7 +74,7 @@ public class LeaderboardController : DmzController
     [HttpGet, Route("shardStats")]
     public ActionResult GetShardStats()
     {
-        Require(Permissions.Leaderboard.View_Page);
+        Require(Permissions.Leaderboard.View);
 
         return Forward("leaderboard/admin/shardStats");
     }

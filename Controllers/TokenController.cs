@@ -13,7 +13,7 @@ public class TokenController : DmzController
     [HttpGet, Route("status")]
     public ActionResult BanStatus()
     {
-        Require(Permissions.Token.View_Page);
+        Require(Permissions.Token.View);
 
         return Forward("/token/admin/status");
     }

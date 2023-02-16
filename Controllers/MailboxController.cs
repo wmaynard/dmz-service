@@ -13,7 +13,7 @@ public class MailboxController : DmzController
     [HttpGet, Route("global")]
     public ActionResult Global()
     {
-        Require(Permissions.Mail.View_Page);
+        Require(Permissions.Mail.View);
 
         return Forward("/mail/admin/global/messages");
     }
@@ -62,7 +62,7 @@ public class MailboxController : DmzController
     [HttpGet, Route("inbox")]
     public ActionResult Inbox()
     {
-        Require(Permissions.Mail.View_Page);
+        Require(Permissions.Mail.View);
 
         return Forward("/mail/admin/inbox");
     }

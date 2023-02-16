@@ -14,7 +14,7 @@ public class ChatController : DmzController
     [HttpGet, Route("announcements")]
     public ActionResult Announcements()
     {
-        Require(Permissions.Chat.View_Page);
+        Require(Permissions.Chat.View);
 
         return Forward("/chat/admin/messages/sticky");
     }
@@ -53,7 +53,7 @@ public class ChatController : DmzController
     [HttpGet, Route("player")]
     public ActionResult Player()
     {
-        Require(Permissions.Chat.View_Page);
+        Require(Permissions.Chat.View);
 
         return Forward("/chat/admin/playerDetails");
     }
@@ -64,7 +64,7 @@ public class ChatController : DmzController
     [HttpGet, Route("reports")]
     public ActionResult Reports()
     {
-        Require(Permissions.Chat.View_Page);
+        Require(Permissions.Chat.View);
 
         return Forward("/chat/admin/reports/list");
     }
@@ -115,7 +115,7 @@ public class ChatController : DmzController
     [HttpGet, Route("bans")]
     public ActionResult Bans()
     {
-        Require(Permissions.Chat.View_Page);
+        Require(Permissions.Chat.View);
 
         return Forward("/chat/admin/ban/list");
     }

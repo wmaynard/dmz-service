@@ -20,7 +20,7 @@ public class DynamicConfigController : DmzController
     [HttpGet, Route("settings")]
     public ActionResult Settings()
     {
-        Require(Permissions.Config.View_Page);
+        Require(Permissions.Config.View);
 
         return Forward("/config/settings/all");
     }

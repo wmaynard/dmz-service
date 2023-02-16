@@ -28,18 +28,10 @@ public abstract class PermissionGroup : PlatformDataModel
     public abstract string Name { get; }
 
     /// <summary>
-    /// Able to view the tab / button to access the page.
-    /// </summary>
-    public bool View_Navbar { get; init; }
-    
-    /// <summary>
     /// Able to view the actual landing page itself.  If false, the user should be redirected to a 403 Forbidden page.
     /// </summary>
-    public bool View_Page { get; set; }
-    
-    [Obsolete("Anything relying on the Edit permission needs to be transitioned to more specific values.")]
-    public bool Edit { get; set; }
-    
+    public bool View { get; set; }
+
     [BsonIgnore, JsonIgnore]
     internal string Key
     {

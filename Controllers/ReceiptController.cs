@@ -13,7 +13,7 @@ public class ReceiptController : DmzController
     [HttpGet, Route("all")]
     public ActionResult All()
     {
-        Require(Permissions.Receipt.View_Page);
+        Require(Permissions.Receipt.View);
 
         return Forward("/commerce/admin/all");
     }
@@ -22,7 +22,7 @@ public class ReceiptController : DmzController
     [HttpGet, Route("player")]
     public ActionResult Player(string accountId)
     {
-        Require(Permissions.Receipt.View_Page);
+        Require(Permissions.Receipt.View);
 
         return Forward("/commerce/admin/player");
     }

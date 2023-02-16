@@ -38,7 +38,7 @@ public class PlayerController : DmzController
     [HttpGet, Route("details")]
     public ActionResult Details()
     {
-        Require(Permissions.Player.View_Page);
+        Require(Permissions.Player.View);
 
         return Forward("/player/v2/admin/details");
     }

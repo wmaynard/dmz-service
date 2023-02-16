@@ -10,7 +10,7 @@ public class CalendarController : DmzController
 	[HttpGet, Route("events")]
 	public ActionResult Events()
 	{
-		Require(Permissions.Calendar.View_Page);
+		Require(Permissions.Calendar.View);
 
 		return Forward("/calendar/events");
 	}
