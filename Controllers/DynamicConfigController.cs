@@ -53,8 +53,7 @@ public class DynamicConfigController : DmzController
         string key = Optional<string>("key");
         object value = Optional<object>("value");
         object comment = Optional<object>("comment");
-        
-        
+
         RumbleJson data = Body.Copy();
         string[] names = Enum
             .GetValues<Audience>()

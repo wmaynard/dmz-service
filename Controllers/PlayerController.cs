@@ -44,10 +44,11 @@ public class PlayerController : DmzController
     }
     
     // Returns found information for a csv's accountIds
-    [HttpGet, Route("lookup")]
+    [HttpGet, Route("lookup"), NoAuth]
     public ActionResult Lookup()
     {
-        Require(Permissions.Player.Search);
+        if (Token.IsAdmin)
+            Require(Permissions.Player.Search);
 
         return Forward("/player/v2/lookup");
     }
