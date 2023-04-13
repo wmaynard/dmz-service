@@ -1,10 +1,15 @@
+using System;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Text;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
 using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Enums;
 using Rumble.Platform.Common.Exceptions;
+using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
@@ -90,76 +95,115 @@ public class LeaderboardController : DmzController
         return Forward("leaderboard/admin/shardStats");
     }
 
+    // Unlike all other endpoints, community needed raw text to come back for a Discord embed.
+    // There's a limit of 4kb, so as little text as possible needs to be returned.
     [HttpGet, Route("topShard"), NoAuth]
-    public ActionResult GetTopShardScores()
+    public ContentResult GetTopShardScores()
     {
         const string CACHED_RESPONSE = "cachedLeaderboard";
         const string CACHE_UPDATED = "lastShardUpdate";
-        
-        long lastUpdated = _config.Value<long>(CACHE_UPDATED);
-
-        RumbleJson config = _dynamicConfig.GetValuesFor(Audience.LeaderboardService);
-
-        if (config == null)
-            return BadRequest();
-        
-        // Fields supplied by DynamicConfig
-        string type = config.Require<string>("discordLeaderboardId");
-        long cacheLifetime = config.Require<long>("discordRefreshRate");
-        int limit = config.Require<int>("discordReturnCount");
-
-        if (lastUpdated > Timestamp.UnixTime - cacheLifetime)
-            return Ok(_config.Value<RumbleJson>(CACHED_RESPONSE));
-
-        bool success = true;
-        RumbleJson leaderboard = null;
-        RumbleJson[] playerInfo = null;
-        _apiService
-            .Request("/leaderboard/admin/topShard")
-            .AddAuthorization(_dynamicConfig.AdminToken)
-            .AddParameter("leaderboardId", type)
-            .AddParameter("limit", limit.ToString())
-            .OnSuccess(response => leaderboard = response.Require<string>("leaderboard"))
-            .OnFailure(response =>
-            {
-                Log.Warn(Owner.Will, "Unable to fetch leaderboard shard.", data: response.AsRumbleJson);
-                success = false;
-            })
-            .Get();
-
-        if (!success || leaderboard == null)
-            return BadRequest();
-
-        string[] playerIds = leaderboard
-            .Require<RumbleJson[]>("scores")
-            .Select(json => json.Require<string>("accountId"))
-            .ToArray();
-
-        _apiService
-            .Request("/player/v2/lookup")
-            .AddAuthorization(_dynamicConfig.AdminToken)
-            .AddParameter("accountIds", string.Join(',', playerIds))
-            .OnSuccess(response => playerInfo = response.Require<RumbleJson[]>("results"))
-            .OnFailure(response =>
-            {
-                Log.Warn(Owner.Will, "Unable to look up players from a leaderboard shard.", data: response.AsRumbleJson);
-                success = false;
-            })
-            .Get();
-
-        if (!success || playerInfo == null)
-            return BadRequest();
-
-        RumbleJson response = new RumbleJson
+            
+        ContentResult badResult = new ContentResult
         {
-            { "leaderboard", leaderboard },
-            { "players", playerInfo }
+            Content = "",
+            ContentType = "text/plain",
+            StatusCode = 400
         };
         
-        _config.Update(CACHED_RESPONSE, response);
-        _config.Update(CACHE_UPDATED, Timestamp.UnixTime);
+        try
+        {
+            _dynamicConfig.GetValuesFor(Audience.DmzService).Optional<string>("falafelophagus");
 
-        return Ok(response);
+            long lastUpdated = _config.Value<long>(CACHE_UPDATED);
+
+            RumbleJson config = _dynamicConfig.GetValuesFor(Audience.LeaderboardService);
+
+            if (config == null)
+                return badResult;
+            
+            // Fields supplied by DynamicConfig
+            string type = config.Require<string>("discordLeaderboardId");
+            long cacheLifetime = config.Require<long>("discordRefreshRate");
+            int limit = config.Require<int>("discordReturnCount");
+
+            if (lastUpdated > Timestamp.UnixTime - cacheLifetime)
+                return Content(_config.Value<string>(CACHED_RESPONSE));
+
+            bool success = true;
+            RumbleJson leaderboard = null;
+            RumbleJson[] playerInfo = null;
+            
+            // Pull the top leaderboard shard out; in global leaderboards, currently, there's only one shard.
+            // This will need to be revisited once global leaderboards are restructured.
+            _apiService
+                .Request("/leaderboard/admin/topShard")
+                .AddAuthorization(_dynamicConfig.AdminToken)
+                .AddParameter("leaderboardId", type)
+                .AddParameter("limit", limit.ToString())
+                .OnSuccess(response => leaderboard = response.Require<string>("leaderboard"))
+                .OnFailure(response =>
+                {
+                    Log.Warn(Owner.Will, "Unable to fetch leaderboard shard.", data: response.AsRumbleJson);
+                    success = false;
+                })
+                .Get();
+
+            if (!success || leaderboard == null)
+                return badResult;
+
+            string[] playerIds = leaderboard
+                .Require<RumbleJson[]>("scores")
+                .Select(json => json.Require<string>("accountId"))
+                .ToArray();
+
+            // Pull the player info for account level and screenname
+            _apiService
+                .Request("/player/v2/lookup")
+                .AddAuthorization(_dynamicConfig.AdminToken)
+                .AddParameter("accountIds", string.Join(',', playerIds))
+                .OnSuccess(response => playerInfo = response.Require<RumbleJson[]>("results"))
+                .OnFailure(response =>
+                {
+                    Log.Warn(Owner.Will, "Unable to look up players from a leaderboard shard.", data: response.AsRumbleJson);
+                    success = false;
+                })
+                .Get();
+
+            if (!success || playerInfo == null)
+                return null;
+            
+            // Combine the data into the requested CSV format
+            string output = $"rank,score,level,name{Environment.NewLine}";
+            foreach (RumbleJson scoreData in leaderboard.Require<RumbleJson[]>("scores"))
+                try
+                {
+                    string id = scoreData.Require<string>(TokenInfo.FRIENDLY_KEY_ACCOUNT_ID);
+                    int rank = scoreData.Require<int>("rank");
+                    int score = scoreData.Require<int>("score");
+
+                    RumbleJson account = playerInfo.First(json => json.Require<string>(TokenInfo.FRIENDLY_KEY_ACCOUNT_ID) == id);
+                    int level = account.Require<int>("accountLevel");
+                    string screenname = account.Require<string>("screenname");
+                    output += $"{rank},{score},{level},{screenname}{Environment.NewLine}";
+                }
+                catch (Exception e)
+                {
+                    Log.Warn(Owner.Will, "Unable to parse leaderboard topShard data", exception: e);
+                }
+
+            output = output.Trim();
+            
+            _config.Update(CACHED_RESPONSE, output);
+            _config.Update(CACHE_UPDATED, Timestamp.UnixTime);
+
+            return Content(output);
+        }
+        catch (Exception e)
+        {
+            Log.Warn(Owner.Will, "Unable to create Discord CSV from leaderboard data", exception: e);
+            return badResult;
+        }
+        
     }
     #endregion
 }
