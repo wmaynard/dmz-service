@@ -14,6 +14,7 @@ using Amazon.SimpleEmailV2.Model;
 using Dmz.Models;
 using Dmz.Services;
 using MongoDB.Bson.Serialization.Attributes;
+using RCL.Logging;
 using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Extensions;
 using Rumble.Platform.Common.Utilities;
@@ -101,49 +102,57 @@ public static class AmazonSes
 
     public static async Task<SendEmailResponse> SendEmail(string subject, string html, string text, params string[] emails)
     {
-        SendEmailResponse response = await Client.SendEmailAsync(new SendEmailRequest
+        try
         {
-            Content = new EmailContent
+            SendEmailResponse response = await Client.SendEmailAsync(new SendEmailRequest
             {
-                Simple = new Message
+                Content = new EmailContent
                 {
-                    Body = new Body
+                    Simple = new Message
                     {
-                        Html = new Content
+                        Body = new Body
                         {
-                            Charset = CHARSET,
-                            Data = html
+                            Html = new Content
+                            {
+                                Charset = CHARSET,
+                                Data = html
+                            },
+                            Text = new Content
+                            {
+                                Charset = CHARSET,
+                                Data = text
+                            }
                         },
-                        Text = new Content
+                        Subject = new Content
                         {
                             Charset = CHARSET,
-                            Data = text
+                            Data = subject
                         }
-                    },
-                    Subject = new Content
-                    {
-                        Charset = CHARSET,
-                        Data = subject
                     }
-                }
-            },
-            Destination = new Destination
-            {
-                ToAddresses = emails.ToList()
-            },
-            ConfigurationSetName = null,
-            EmailTags = null,
-            FeedbackForwardingEmailAddress = null,
-            FeedbackForwardingEmailAddressIdentityArn = null,
-            FromEmailAddress = FROM_EMAIL,
-            FromEmailAddressIdentityArn = null,
-            ListManagementOptions = null,
-            ReplyToAddresses = null
-        });
+                },
+                Destination = new Destination
+                {
+                    ToAddresses = emails.ToList()
+                },
+                ConfigurationSetName = null,
+                EmailTags = null,
+                FeedbackForwardingEmailAddress = null,
+                FeedbackForwardingEmailAddressIdentityArn = null,
+                FromEmailAddress = FROM_EMAIL,
+                FromEmailAddressIdentityArn = null,
+                ListManagementOptions = null,
+                ReplyToAddresses = null
+            });
 
-        return ((int)response.HttpStatusCode).Between(200, 299)
-            ? response
-            : throw new PlatformException("Unable to send email.");
+            return ((int)response.HttpStatusCode).Between(200, 299)
+                ? response
+                : throw new PlatformException("Unable to send email");
+        }
+        catch (Exception e)
+        {
+            Log.Error(Owner.Will, "There was a problem in sending mail with SES", exception: e);
+            throw new PlatformException("Unable to send email");
+        }
     }
 
     public static string[] TemplateNames
