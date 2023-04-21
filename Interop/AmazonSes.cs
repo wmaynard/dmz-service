@@ -27,8 +27,8 @@ public static class AmazonSes
 {
     private const string FROM_EMAIL = "Rumble Entertainment <noreply@rumbleentertainment.com>";
     private const string CHARSET = "UTF-8";
-    private const string CONFIG_SET_FALLBACK = "rumble_config_set";
-    private const string FEEDBACK_EMAIL_FALLBACK = "william.maynard+awsses@rumbleentertainment.com";
+    private const string CONFIG_SET_FALLBACK = "rumble_config_set";                                     // PLATF-6315: Used for bounce collection
+    private const string FEEDBACK_EMAIL_FALLBACK = "william.maynard+awsses@rumbleentertainment.com";    // PLATF-6315: Used for bounce collection
     
     private static AmazonSimpleEmailServiceV2Client _client;
     
@@ -137,6 +137,9 @@ public static class AmazonSes
                 {
                     ToAddresses = emails.ToList()
                 },
+                // PLATF-6315: We were notified in 4/2023 that we had a 13% bounce rate and were placed under review.
+                // We need a strategy to manage bounces, but we currently have no idea why our emails are bouncing in the first place.
+                // This is the first attempt to collect that information, along with the FeedbackForwardingEmailAddress.
                 ConfigurationSetName = DynamicConfig.Instance?.Optional<string>("AwsSesConfigSet") ?? CONFIG_SET_FALLBACK,
                 EmailTags = null,
                 FeedbackForwardingEmailAddress = DynamicConfig.Instance?.Optional<string>("AwsSesFeedbackEmail") ?? FEEDBACK_EMAIL_FALLBACK,
