@@ -17,6 +17,7 @@ using MongoDB.Bson.Serialization.Attributes;
 using RCL.Logging;
 using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Extensions;
+using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Data;
 
@@ -26,12 +27,14 @@ public static class AmazonSes
 {
     private const string FROM_EMAIL = "Rumble Entertainment <noreply@rumbleentertainment.com>";
     private const string CHARSET = "UTF-8";
+    private const string CONFIG_SET_FALLBACK = "rumble_config_set";
+    private const string FEEDBACK_EMAIL_FALLBACK = "william.maynard+awsses@rumbleentertainment.com";
     
     private static AmazonSimpleEmailServiceV2Client _client;
     
     public static AmazonSimpleEmailServiceV2Client Client => GetOrInitializeClient();
 
-    private static AmazonSimpleEmailServiceV2Client GetOrInitializeClient() =>_client ??= new AmazonSimpleEmailServiceV2Client(new BasicAWSCredentials(
+    private static AmazonSimpleEmailServiceV2Client GetOrInitializeClient() => _client ??= new AmazonSimpleEmailServiceV2Client(new BasicAWSCredentials(
         accessKey: PlatformEnvironment.Require<string>("AWS_SES_ACCESS_KEY"), 
         secretKey: PlatformEnvironment.Require<string>("AWS_SES_SECRET_KEY"))
     );
@@ -134,9 +137,9 @@ public static class AmazonSes
                 {
                     ToAddresses = emails.ToList()
                 },
-                ConfigurationSetName = null,
+                ConfigurationSetName = DynamicConfig.Instance?.Optional<string>("AwsSesConfigSet") ?? CONFIG_SET_FALLBACK,
                 EmailTags = null,
-                FeedbackForwardingEmailAddress = null,
+                FeedbackForwardingEmailAddress = DynamicConfig.Instance?.Optional<string>("AwsSesFeedbackEmail") ?? FEEDBACK_EMAIL_FALLBACK,
                 FeedbackForwardingEmailAddressIdentityArn = null,
                 FromEmailAddress = FROM_EMAIL,
                 FromEmailAddressIdentityArn = null,
