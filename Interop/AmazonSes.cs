@@ -13,8 +13,10 @@ using Amazon.SimpleEmailV2;
 using Amazon.SimpleEmailV2.Model;
 using Dmz.Models;
 using Dmz.Services;
+using Dmz.Utilities;
 using MongoDB.Bson.Serialization.Attributes;
 using RCL.Logging;
+using Rumble.Platform.Common.Enums;
 using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Extensions;
 using Rumble.Platform.Common.Services;
@@ -65,6 +67,25 @@ public static class AmazonSes
 
     public static async Task SendEmail(string email, string templateName, RumbleJson replacements)
     {
+        if (BounceHandlerService.Instance == null)
+            Log.Error(Owner.Will, "Bounce handler instance was null; bans cannot be checked");
+        else
+        {
+            // If the email is from anything other than the confirmation, we know we've successfully delivered email
+            // to the user before, but they're banned now.  Send an alert, because this almost certainly will correspond
+            // with a CS ticket.
+            if (templateName != PlayerServiceEmail.TEMPLATE_CONFIRMATION)
+                ApiService.Instance.Alert(
+                    title: "Confirmed account unable to receive email",
+                    message: "A confirmed email address is no longer able to receive email.  It saw a hard bounce in the past and was banned.",
+                    countRequired: 1,
+                    timeframe: 3_000,
+                    owner: Owner.Will,
+                    impact: ImpactType.IndividualPlayer
+                );
+            BounceHandlerService.Instance.EnsureNotBanned(email);
+        }
+            
         Cleanse(ref templateName);
 
         EmailTemplateContent content = await GetTemplate(templateName);

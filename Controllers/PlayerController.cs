@@ -22,6 +22,7 @@ public class PlayerController : DmzController
 #pragma warning disable
     private readonly DynamicConfig _config;
     private readonly ScheduledEmailService _emailService;
+    private readonly BounceHandlerService _bounceHandler;
 #pragma warning restore
     
     #region Player lookup
@@ -124,6 +125,7 @@ public class PlayerController : DmzController
     #endregion
     
 #region Rumble Account Login
+#region Emails
     [HttpPost, Route("account/confirmation")]
     public ActionResult SendConfirmationEmail()
     {
@@ -172,7 +174,7 @@ public class PlayerController : DmzController
     }
 
     [HttpPost, Route("account/2fa")]
-    public ActionResult SendTwoFactorCoe()
+    public ActionResult SendTwoFactorCode()
     {
         string email = Require<string>("email");
         string code = Require<string>("code");
@@ -181,6 +183,7 @@ public class PlayerController : DmzController
         PlayerServiceEmail.SendTwoFactorCode(email, code, expiration);
         return Ok();
     }
+#endregion Emails
 
     /// <summary>
     /// Sends the player email click data to player-service.
