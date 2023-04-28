@@ -30,7 +30,7 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
     private readonly IMongoCollection<BounceDataPoint> _dataPoints;
     private string BounceQueueUrl { get; init; }
     
-    public BounceHandlerService(DynamicConfig config) : base(collection: "temp", intervalMs: 1_000)
+    public BounceHandlerService(DynamicConfig config) : base(collection: "temp", intervalMs: 30_000)
     {
         Instance = this;
         
@@ -45,16 +45,27 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
             throw new PlatformException($"Unable to start {GetType().FullName}; missing DC var {KEY_DYNAMIC_CONFIG_QUEUE_URL}");
         
         string connectionString = PlatformEnvironment.Require<string>("MONGODB_GLOBAL_URI");
-        // MongoClientSettings settings = MongoClientSettings.FromConnectionString(connectionString);
-        // settings.MaxConnectionPoolSize = PlatformMongoService<BounceData>.DEFAULT_MONGO_MAX_POOL_CONNECTION_SIZE;
 
         _mongoClient ??= CreateClient(connectionString);
         _bounces = _mongoClient.GetDatabase("globals").GetCollection<BounceData>("bounces");
         _dataPoints = _mongoClient.GetDatabase("globals").GetCollection<BounceDataPoint>("bounceData");
-
-        Console.WriteLine(EmailRegex.IsValid("foo@g.mail.com"));
-        EmailRegex.IsValid("sflancer06@47.com");
     }
+
+    public BounceData GetBounceSummary(string email) => _bounces
+        .Find(Builders<BounceData>.Filter.Eq(data => data.Email, email))
+        .FirstOrDefault();
+
+    public string[] GetBannedList(long timestamp) => _bounces
+        .Find(Builders<BounceData>.Filter.And(
+            Builders<BounceData>.Filter.Eq(data => data.Banned, true),
+            Builders<BounceData>.Filter.Lte(data => data.LastBounce, timestamp)
+        ))
+        .SortByDescending(data => data.LastBounce)
+        .Limit(1_000)
+        .Project(Builders<BounceData>.Projection.Expression(data => data.Email))
+        .ToList()
+        .OrderBy(_ => _)
+        .ToArray();
 
     protected override void OnElapsed()
     {
