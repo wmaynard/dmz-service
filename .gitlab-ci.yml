@@ -12,6 +12,7 @@ variables:
   K8S_SECRET_RUMBLE_DEPLOYMENT: "$RUMBLE_DEPLOYMENT"
   K8S_SECRET_MONGODB_URI: "$MONGODB_URI"
   K8S_SECRET_GITLAB_PAT: "$GITLAB_PAT"
+  K8S_SECRET_MONGODB_GLOBAL_URI: "$MONGODB_GLOBAL_URI"
   
   # Common Platform CI variables - contains information for several environments,
   # parsed by PlatformEnvironment.
