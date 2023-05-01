@@ -23,11 +23,11 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
 {
     public const string KEY_DYNAMIC_CONFIG_QUEUE_URL = "sqsBounceUrl";
     public static BounceHandlerService Instance { get; set; }
-    private static MongoClient _mongoClient;
     private static AmazonSQSClient _sqsClient;
-    
+
     private readonly IMongoCollection<BounceData> _bounces;
     private readonly IMongoCollection<BounceDataPoint> _dataPoints;
+    private readonly DynamicConfig _config;
     private string BounceQueueUrl { get; init; }
     
     public BounceHandlerService(DynamicConfig config) : base(collection: "temp", intervalMs: 30_000)
@@ -39,16 +39,22 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
             secretKey: PlatformEnvironment.Require<string>("AWS_SES_SECRET_KEY"))
         );
 
-        BounceQueueUrl = config.Require<string>(KEY_DYNAMIC_CONFIG_QUEUE_URL);
+        _config = config;
+        BounceQueueUrl = _config.Require<string>(KEY_DYNAMIC_CONFIG_QUEUE_URL);
 
         if (string.IsNullOrWhiteSpace(BounceQueueUrl))
             throw new PlatformException($"Unable to start {GetType().FullName}; missing DC var {KEY_DYNAMIC_CONFIG_QUEUE_URL}");
         
-        string connectionString = PlatformEnvironment.Require<string>("MONGODB_GLOBAL_URI");
+        _bounces = GetCollection<BounceData>("bounces");
+        _dataPoints = GetCollection<BounceDataPoint>("bounceData");
 
-        _mongoClient ??= CreateClient(connectionString);
-        _bounces = _mongoClient.GetDatabase("globals").GetCollection<BounceData>("bounces");
-        _dataPoints = _mongoClient.GetDatabase("globals").GetCollection<BounceDataPoint>("bounceData");
+        if (PlatformEnvironment.IsProd)
+            return;
+        Log.Info(Owner.Will, "Email bans are only supported on production environments", data: new
+        {
+            Detail = "The timer that checks the email bounce queue is disabled for this environment."
+        });
+        Pause();
     }
 
     public BounceData GetBounceSummary(string email) => _bounces
@@ -69,6 +75,8 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
 
     protected override void OnElapsed()
     {
+        if (!PlatformEnvironment.IsProd)
+            return;
         BounceNotification[] notifs = Array.Empty<BounceNotification>();
         do
         {
@@ -133,6 +141,21 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
     
     public void EnsureNotBanned(string email)
     {
+        if (!PlatformEnvironment.IsProd)
+        {
+            string[] whitelist = _config
+                ?.GetValuesFor(Audience.PlayerService)
+                .Optional<string>("allowedSignupDomains")
+                .Split(',')
+                .Select(str => str.Trim())
+                .ToArray()
+                ?? Array.Empty<string>();
+
+            if (!whitelist.Any(email.EndsWith))
+                throw new EmailNotWhitelistedException(email);
+            return;
+        }
+        
         bool banned = false;
         bool emailInvalid = !EmailRegex.IsValid(email);
         
@@ -151,7 +174,10 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
 
     public void RegisterValidationBan(string email)
     {
-        Log.Local(Owner.Will, $"Registering validation hard bounce for {email}");
+        Log.Info(Owner.Will, $"Registering validation hard bounce", data: new
+        {
+            Email = email
+        });
         BounceData data = _bounces
             .FindOneAndUpdate(
                 filter: Builders<BounceData>.Filter.Eq(data => data.Email, email),
@@ -177,7 +203,10 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
     
     public void RegisterBounce(BounceRecipient recipient, long timestamp, bool isHardBounce)
     {
-        Log.Local(Owner.Will, $"Registering {(isHardBounce ? "hard" : "soft")} bounce for {recipient.Address}");
+        Log.Info(Owner.Will, $"Registering {(isHardBounce ? "hard" : "soft")} bounce", new
+        {
+            Email = recipient.Address
+        });
         BounceData data = _bounces
             .FindOneAndUpdate(
                 filter: Builders<BounceData>.Filter.Eq(data => data.Email, recipient.Address),

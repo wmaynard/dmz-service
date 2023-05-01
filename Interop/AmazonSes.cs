@@ -65,7 +65,7 @@ public static class AmazonSes
             });
     }
 
-    public static async Task SendEmail(string email, string templateName, RumbleJson replacements)
+    public static void SendEmail(string email, string templateName, RumbleJson replacements)
     {
         if (BounceHandlerService.Instance == null)
             Log.Error(Owner.Will, "Bounce handler instance was null; bans cannot be checked");
@@ -88,14 +88,17 @@ public static class AmazonSes
             
         Cleanse(ref templateName);
 
-        EmailTemplateContent content = await GetTemplate(templateName);
+        Task<EmailTemplateContent> task = GetTemplate(templateName);
+        task.Wait();
+        EmailTemplateContent content = task.Result;
+        
         string charset = "UTF-8";
 
         string html = Replace(content.Html, replacements);
         string text = Replace(content.Text, replacements);
         string subject = Replace(content.Subject, replacements);
 
-        await SendEmail(subject, html, text, email);
+        SendEmail(subject, html, text, email).Wait();
     }
 
     /// <summary>

@@ -26,6 +26,5 @@ public static class PlatformAlertEmail
             { "acknowledge", PlatformEnvironment.Url("alert/acknowledge") },
             { "resolve", PlatformEnvironment.Url("alert/resolve") },
             { "cancel", PlatformEnvironment.Url("alert/cancel") }
-            
-        }).Wait();
+        });
 }

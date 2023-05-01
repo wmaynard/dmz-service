@@ -28,7 +28,7 @@ public static class PlayerServiceEmail
             { "accountId", accountId },
             { "code", code },
             { "duration", TimestampToText(expiration) }
-        }).Wait();
+        });
 
     public static void SendPasswordReset(string email, string accountId, string code,  long expiration) =>
         AmazonSes.SendEmail(email, TEMPLATE_PASSWORD_RESET, replacements: new RumbleJson
@@ -37,27 +37,27 @@ public static class PlayerServiceEmail
             { "accountId", accountId },
             { "code", code },
             { "duration", TimestampToText(expiration) }
-        }).Wait();
+        });
 
     public static void SendNewDeviceLogin(string email, string device) =>
         AmazonSes.SendEmail(email, TEMPLATE_NEW_DEVICE_NOTIFICATION, replacements: new RumbleJson
         {
             { "device", device },
             { "timestamp", TimestampToDate() }
-        }).Wait();
+        });
     
     public static void SendTwoFactorCode(string email, string code, long expiration) =>
         AmazonSes.SendEmail(email, TEMPLATE_2FA, replacements: new RumbleJson
         {
             { "code", code },
             { "duration", TimestampToText(expiration) }
-        }).Wait();
+        });
 
     public static void SendWelcome(string email) =>
         AmazonSes.SendEmail(email, TEMPLATE_WELCOME, replacements: new RumbleJson
         {
             
-        }).Wait();
+        });
 
     public static ScheduledEmail ScheduleWelcome(string email)
     {
