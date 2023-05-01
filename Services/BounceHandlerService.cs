@@ -48,9 +48,9 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
         _bounces = GetCollection<BounceData>("bounces");
         _dataPoints = GetCollection<BounceDataPoint>("bounceData");
 
-        if (PlatformEnvironment.IsProd)
+        if (PlatformEnvironment.IsProd && PlatformEnvironment.Region == "US")
             return;
-        Log.Info(Owner.Will, "Email bans are only supported on production environments", data: new
+        Log.Info(Owner.Will, "Email ban processing is only supported on US production environments", data: new
         {
             Detail = "The timer that checks the email bounce queue is disabled for this environment."
         });
@@ -77,6 +77,7 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
     {
         if (!PlatformEnvironment.IsProd)
             return;
+        Log.Info(Owner.Will, "Checking SQS bounce notifications");
         BounceNotification[] notifs = Array.Empty<BounceNotification>();
         do
         {

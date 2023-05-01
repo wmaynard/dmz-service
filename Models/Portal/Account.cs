@@ -62,7 +62,7 @@ public class Account : PlatformCollectionDocument
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_PERMISSIONS)]
     public Passport Permissions { get; set; } // TODO: private set
     
-    [BsonElement(DB_KEY_ACTIVITY)]
+    [BsonElement(DB_KEY_ACTIVITY), BsonIgnoreIfNull]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_ACTIVITY)]
     [CompoundIndex(group: INDEX_ACTIVITY, priority: 1)]
     public AuditLog[] Activity { get; set; }
