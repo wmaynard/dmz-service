@@ -77,7 +77,6 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
     {
         if (!PlatformEnvironment.IsProd)
             return;
-        Log.Info(Owner.Will, "Checking SQS bounce notifications");
         BounceNotification[] notifs = Array.Empty<BounceNotification>();
         do
         {
