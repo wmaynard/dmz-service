@@ -1,4 +1,5 @@
 using System;
+using Dmz.Models.Bounces;
 using Dmz.Services;
 using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Attributes;
@@ -25,20 +26,27 @@ public class BouncedEmailController : DmzController
         return Ok();
     }
 
-    [HttpGet, Route("status")]
+    [HttpGet, Route("stats")]
     public ActionResult GetEmailBounceStatus()
     {
+        #if RELEASE
         Require(Permissions.Portal.ViewBouncedEmails);
+        #endif
         
         string email = Require<string>("email");
 
-        return Ok(_bouncer.GetBounceSummary(email));
+        return Ok(_bouncer.GetBounceSummary(email) ?? new BounceData
+        {
+            Email = email
+        });
     }
     
     [HttpGet, Route("banList")]
     public ActionResult GetBannedEmailList()
     {
+        #if RELEASE
         Require(Permissions.Portal.ViewBouncedEmails);
+        #endif
 
         long timestamp = Optional<long?>("lastBounceTime") ?? Timestamp.UnixTime;
 
