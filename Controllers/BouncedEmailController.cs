@@ -3,6 +3,7 @@ using Dmz.Models.Bounces;
 using Dmz.Services;
 using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Attributes;
+using Rumble.Platform.Common.Exceptions.Mongo;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
 using Rumble.Platform.Data;
@@ -54,5 +55,22 @@ public class BouncedEmailController : DmzController
         {
             { "banList", _bouncer.GetBannedList(timestamp) }
         });
+    }
+
+    [HttpPatch, Route("unban")]
+    public ActionResult Unban()
+    {
+        #if RELEASE
+        Require(Permissions.Portal.UnbanBouncedAddress);
+        #endif
+
+        string email = Require<string>("email");
+
+        return _bouncer.Unban(email)
+            ? Ok()
+            : throw new RecordNotFoundException(_bouncer.CollectionName, "Banned email address not found", data: new RumbleJson
+            {
+                { "address", email }
+            });
     }
 }

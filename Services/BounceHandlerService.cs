@@ -236,4 +236,16 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
             Timestamp = timestamp
         });
     }
+
+    public bool Unban(string email) => _bounces
+        .FindOneAndUpdate(
+            filter: Builders<BounceData>.Filter.Eq(data => data.Email, email),
+            update: Builders<BounceData>.Update.Set(data => data.Banned, false),
+            options: new FindOneAndUpdateOptions<BounceData>
+            {
+                IsUpsert = false,
+                ReturnDocument = ReturnDocument.After
+            }
+        ) != null;
+
 }

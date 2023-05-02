@@ -100,3 +100,7 @@ As a future improvement, this could implement paging.
     ]
 }
 ```
+
+## Repealing a Ban
+
+TODO

@@ -15,4 +15,5 @@ public class PortalPermissions : PermissionGroup
     public bool ViewActivityLogs { get; set; }
     
     public bool ViewBouncedEmails { get; set; }
+    public bool UnbanBouncedAddress { get; set; }
 }
