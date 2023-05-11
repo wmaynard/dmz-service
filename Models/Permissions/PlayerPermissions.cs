@@ -16,4 +16,5 @@ public class PlayerPermissions : PermissionGroup
     public bool Update          { get; set; }
     public bool ForceAccountLink { get; set; }
     public bool ViewStoreOffers { get; set; }
+    public bool GeneratePlayerTokens { get; set; }
 }

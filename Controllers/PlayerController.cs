@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Dmz.Extensions;
 using Dmz.Interop;
 using Dmz.Models;
@@ -8,6 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
 using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Enums;
+using Rumble.Platform.Common.Exceptions;
+using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Data;
@@ -237,6 +240,61 @@ public class PlayerController : DmzController
 
     [HttpPatch, Route("account/password"), NoAuth]
     public ActionResult ChangePassword() => Forward("player/v2/account/password");
+    
+    [HttpGet, Route("token")]
+    public ActionResult GetPlayerToken()
+    {
+        Require(Permissions.Player.GeneratePlayerTokens);
+        
+        string account = Require<string>(TokenInfo.FRIENDLY_KEY_ACCOUNT_ID);
+
+        string screenname = null;
+        int discriminator = -1;
+
+        _apiService
+            .Request("/player/v2/lookup")
+            .AddAuthorization(Token)
+            .AddParameter("accountIds", account)
+            .OnSuccess(response =>
+            {
+                try
+                {
+                    RumbleJson[] results = response.Require<RumbleJson[]>("results");
+                    RumbleJson player = results.First(result => result.Require<string>(TokenInfo.FRIENDLY_KEY_ACCOUNT_ID) == account);
+                    screenname = player.Require<string>(TokenInfo.FRIENDLY_KEY_SCREENNAME);
+                    discriminator = player.Require<int>(TokenInfo.FRIENDLY_KEY_DISCRIMINATOR);
+                }
+                catch (Exception e)
+                {
+                    Log.Error(Owner.Will, "Unable to lookup account for mock player token generation", data: new
+                    {
+                        AccountId = account
+                    }, exception: e);
+                }
+            })
+            .OnFailure(response => Log.Error(Owner.Will, "Request to player/lookup is invalid for mock token generation", data: new
+            {
+                Response = response
+            }))
+            .Get();
+
+        if (screenname == null)
+            throw new PlatformException("Mock player token generation failed", code: ErrorCode.MongoRecordNotFound);
+
+        string token = _apiService
+            .GenerateToken(
+                accountId: account,
+                screenname: screenname,
+                email: $"{Token.Email} (as player)",
+                discriminator: discriminator,
+                audiences: Audience.All
+            );
+
+        return Ok(new RumbleJson
+        {
+            { "token", token }
+        });
+    }
     
 
     #endregion Rumble Account Login
