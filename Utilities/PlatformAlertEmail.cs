@@ -23,6 +23,7 @@ public static class PlatformAlertEmail
             { "impact", alert.Impact.GetDisplayName() },
             { "count", alert.Trigger.Count },
             { "period", alert.Trigger.Timeframe.ToFriendlyTime() },
+            { "data", alert.Data.Json },
             { "acknowledge", PlatformEnvironment.Url("alert/acknowledge") },
             { "resolve", PlatformEnvironment.Url("alert/resolve") },
             { "cancel", PlatformEnvironment.Url("alert/cancel") }

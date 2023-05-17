@@ -81,7 +81,12 @@ public static class AmazonSes
                     countRequired: 1,
                     timeframe: 3_000,
                     owner: Owner.Will,
-                    impact: ImpactType.IndividualPlayer
+                    impact: ImpactType.IndividualPlayer,
+                    data: new RumbleJson
+                    {
+                        { "address", email },
+                        { "template", templateName }
+                    }
                 );
             BounceHandlerService.Instance.EnsureNotBanned(email);
         }
