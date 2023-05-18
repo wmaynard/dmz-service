@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Amazon.Runtime;
 using Amazon.SimpleEmailV2;
 using Amazon.SimpleEmailV2.Model;
+using Dmz.Exceptions;
 using Dmz.Models;
 using Dmz.Services;
 using Dmz.Utilities;
@@ -70,26 +71,31 @@ public static class AmazonSes
         if (BounceHandlerService.Instance == null)
             Log.Error(Owner.Will, "Bounce handler instance was null; bans cannot be checked");
         else
-        {
-            // If the email is from anything other than the confirmation, we know we've successfully delivered email
-            // to the user before, but they're banned now.  Send an alert, because this almost certainly will correspond
-            // with a CS ticket.
-            if (templateName != PlayerServiceEmail.TEMPLATE_CONFIRMATION)
-                ApiService.Instance.Alert(
-                    title: "Confirmed account unable to receive email",
-                    message: "A confirmed email address is no longer able to receive email.  It saw a hard bounce in the past and was banned.",
-                    countRequired: 1,
-                    timeframe: 3_000,
-                    owner: Owner.Will,
-                    impact: ImpactType.IndividualPlayer,
-                    data: new RumbleJson
-                    {
-                        { "address", email },
-                        { "template", templateName }
-                    }
-                );
-            BounceHandlerService.Instance.EnsureNotBanned(email);
-        }
+            try
+            {
+                BounceHandlerService.Instance.EnsureNotBanned(email);
+            }
+            catch (EmailBannedException)
+            {
+                // If the email is from anything other than the confirmation, we know we've successfully delivered email
+                // to the user before, but they're banned now.  Send an alert, because this almost certainly will correspond
+                // with a CS ticket.
+                if (templateName != PlayerServiceEmail.TEMPLATE_CONFIRMATION)
+                    ApiService.Instance.Alert(
+                        title: "Confirmed account unable to receive email",
+                        message: "A confirmed email address is no longer able to receive email.  It saw a hard bounce in the past and was banned.",
+                        countRequired: 1,
+                        timeframe: 3_000,
+                        owner: Owner.Will,
+                        impact: ImpactType.IndividualPlayer,
+                        data: new RumbleJson
+                        {
+                            { "address", email },
+                            { "template", templateName }
+                        }
+                    );
+                throw;
+            }
             
         Cleanse(ref templateName);
 
