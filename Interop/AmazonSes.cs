@@ -110,6 +110,7 @@ public static class AmazonSes
         string subject = Replace(content.Subject, replacements);
 
         SendEmail(subject, html, text, email).Wait();
+        SentEmailService.Instance.Register(email, templateName);
     }
 
     /// <summary>
