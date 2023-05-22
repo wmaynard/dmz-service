@@ -6,6 +6,7 @@ using Dmz.Models;
 using Dmz.Services;
 using Dmz.Utilities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using RCL.Logging;
 using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Enums;
@@ -298,4 +299,32 @@ public class PlayerController : DmzController
     
 
     #endregion Rumble Account Login
+    
+    #region SSO Creation / Deletion
+
+    [HttpPatch, Route("account/sso/apple"), NoAuth]
+    public ActionResult AddApple() => Forward("/player/v2/account/apple");
+
+    [HttpDelete, Route("account/sso/appleAccount"), NoAuth]
+    public ActionResult DeleteApple() => Forward("/player/v2/account/appleAccount");
+
+    [HttpPatch, Route("account/sso/google"), NoAuth]
+    public ActionResult AddGoogle() => Forward("/player/v2/account/google");
+
+    [HttpDelete, Route("account/sso/googleAccount"), NoAuth]
+    public ActionResult DeleteGoogle() => Forward("/player/v2/account/googleAccount");
+
+    [HttpPatch, Route("account/sso/plarium"), NoAuth]
+    public ActionResult AddPlarium() => Forward("/player/v2/account/plarium");
+
+    [HttpDelete, Route("account/sso/plariumAccount"), NoAuth]
+    public ActionResult DeletePlarium() => Forward("/player/v2/account/plariumAccount");
+
+    [HttpPatch, Route("account/sso/rumble"), NoAuth]
+    public ActionResult AddRumble() => Forward("/player/v2/account/rumble");
+
+    [HttpDelete, Route("account/sso/rumbleAccount"), NoAuth]
+    public ActionResult DeleteRumble() => Forward("/player/v2/account/rumbleAccount");
+
+    #endregion
 }
