@@ -219,6 +219,15 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
     
     public void EnsureNotBanned(string email)
     {
+        string domain = email[(email.IndexOf('@') + 1)..];
+        bool noMxRecord = !DomainLookup.HasMxRecord(domain);
+
+        if (noMxRecord)
+        {
+            RegisterValidationBan(email, BanReason.NoMxRecord);
+            throw new EmailBannedException(email);
+        }
+
         if (!PlatformEnvironment.IsProd)
         {
             string[] whitelist = _config
@@ -234,16 +243,12 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
             return;
         }
         
-        string domain = email[(email.IndexOf('@') + 1)..];
         bool banned = false;
         bool emailInvalid = !EmailRegex.IsValid(email);
-        bool noMxRecord = !DomainLookup.HasMxRecord(domain);
         
         
         if (emailInvalid)
             RegisterValidationBan(email, BanReason.FailedValidation);
-        else if (noMxRecord)
-            RegisterValidationBan(email, BanReason.NoMxRecord);
         else
             banned = _bounces
             .Find(Builders<BounceData>.Filter.Eq(bounce => bounce.Email, email))
