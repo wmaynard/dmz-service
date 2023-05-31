@@ -1,3 +1,5 @@
+using System;
+using Dmz.Exceptions;
 using Dmz.Utilities;
 using RCL.Logging;
 using Rumble.Platform.Common.Enums;
@@ -24,7 +26,7 @@ public static class ApiServiceExtension
     /// <exception cref="PlatformException"></exception>
     public static RumbleJson Forward(this ApiService apiService, string url, RumbleJson parameters = null, bool asAdmin = false, RumbleJson payload = null)
     {
-        ApiRequest request = apiService.Request(PlatformEnvironment.Url(url.TrimStart('/')));
+        ApiRequest request = apiService.Request(url.TrimStart('/'));
 
         if (asAdmin)
         {
@@ -73,13 +75,9 @@ public static class ApiServiceExtension
                 throw new PlatformException("Unknown HTTP method.");
         }
 
-        if (!code.Between(200, 299))
-        {
-            RumbleJson errorJson = json.Optional<RumbleJson>(key: "platformData");
-            Log.Error(owner: Owner.Nathan, message: "DMZ did not receive a 2xx response from a service.", data: errorJson ?? json);
-        }
-        
-        return json;
+        return code.Between(200, 299)
+            ? json
+            : throw new ForwardingException(request.Url, code, json.Optional<RumbleJson>(key: "platformData") ?? json);
     }
     
     public static void ForceRefresh(this ApiService apiService, string aid)

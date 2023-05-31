@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Dmz.Exceptions;
 using Dmz.Extensions;
 using Dmz.Interop;
 using Dmz.Models;
@@ -27,6 +28,7 @@ public class PlayerController : DmzController
     private readonly DynamicConfig _config;
     private readonly ScheduledEmailService _emailService;
     private readonly BounceHandlerService _bounceHandler;
+    private readonly AccountInitializationService _initService;
 #pragma warning restore
     
     #region Player lookup
@@ -62,11 +64,11 @@ public class PlayerController : DmzController
     /// This is used to log player into their player-service accounts, and return a corresponding token.
     /// Permissions are not necessary, since they are not site admins.
     /// </summary>
-    [HttpPost, Route("login"), NoAuth]
-    public ActionResult Login()
-    {
-        return Forward("/player/v2/account/login");
-    }
+    // [HttpPost, Route("login"), NoAuth]
+    // public ActionResult Login()
+    // {
+    //     return Forward("/player/v2/account/login");
+    // }
     #endregion
 
     #region Modifying data
@@ -228,7 +230,70 @@ public class PlayerController : DmzController
     }
 
     [HttpPost, Route("account/login"), NoAuth]
-    public ActionResult LoginWithGoogle() => Forward("player/v2/account/login");
+    [Route("login")]
+    public ActionResult LoginWithGoogle()
+    {
+        ActionResult output = Forward("player/v2/account/login", out RumbleJson loginResponse);
+
+        if (output is not OkObjectResult)
+            return output;
+
+        // Only accounts with SSO are allowed to hit the game server's initialization endpoint.
+        RumbleJson player = loginResponse.Require<RumbleJson>("player");
+        bool hasSSO = (player.Optional<RumbleJson>("appleAccount")
+            ?? player.Optional<RumbleJson>("googleAccount")
+            ?? player.Optional<RumbleJson>("plariumAccount")) != null;
+        bool hasConfirmedRumble = player
+            .Optional<RumbleJson>("rumbleAccount")
+            ?.Optional<int>("status") > 1; 
+
+        if (!(hasSSO || hasConfirmedRumble))
+            return output;
+
+        string accountId = player.Require<string>("id");
+        string token = player.Require<string>("token");
+        string error = null;
+
+        if (!_initService.IsInitialized(accountId))
+            _apiService
+                .Request("/game/initAccount")
+                .AddHeader("Authorization", token) // TODO: Switch to .AddAuthorization after game server doesn't break on "Bearer " headers
+                .OnSuccess(response =>
+                {
+                    if (response.Require<bool>("success"))
+                    {
+                        Log.Info(Owner.Will, "Account initialized through DMZ successfully.", data: new
+                        {
+                            AccountId = accountId
+                        });
+                        _initService.MarkAsInitialized(accountId);
+                    }
+                    else
+                    {
+                        error = response.Optional<string>("error") ?? "There was an unknown problem initializing the account.";
+                        Log.Error(Owner.Will, "Unable to initialize account.", data: new
+                        {
+                            Player = player,
+                            Response = response,
+                            Error = error
+                        });
+                    }
+                })
+                .OnFailure(response =>
+                {
+                    error = "Unable to initialize account.";
+                    Log.Error(Owner.Will, "Unable to initialize account.", data: new
+                    {
+                        Player = player,
+                        Response = response
+                    });
+                })
+                .Get();
+
+        return error == null
+            ? output
+            : Problem(error);
+    }
 
     [HttpGet, Route("account/salt"), NoAuth]
     public ActionResult GetRumbleSalt() => Forward("player/v2/account/salt", asAdmin: true);
@@ -321,7 +386,18 @@ public class PlayerController : DmzController
     public ActionResult DeletePlarium() => Forward("/player/v2/account/plariumAccount");
 
     [HttpPatch, Route("account/sso/rumble"), NoAuth]
-    public ActionResult AddRumble() => Forward("/player/v2/account/rumble");
+    public ActionResult AddRumble()
+    {
+        RumbleJson response = null;
+        try
+        {
+            return Forward("/player/v2/account/rumble", out response);
+        }
+        catch (ForwardingException e)
+        {
+            return Problem(e.Data);
+        }
+    }
 
     [HttpDelete, Route("account/sso/rumbleAccount"), NoAuth]
     public ActionResult DeleteRumble() => Forward("/player/v2/account/rumbleAccount");
