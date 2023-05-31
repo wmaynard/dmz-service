@@ -250,45 +250,7 @@ public class PlayerController : DmzController
         if (!(hasSSO || hasConfirmedRumble))
             return output;
 
-        string accountId = player.Require<string>("id");
-        string token = player.Require<string>("token");
-        string error = null;
-
-        if (!_initService.IsInitialized(accountId))
-            _apiService
-                .Request("/game/initAccount")
-                .AddHeader("Authorization", token) // TODO: Switch to .AddAuthorization after game server doesn't break on "Bearer " headers
-                .OnSuccess(response =>
-                {
-                    if (response.Require<bool>("success"))
-                    {
-                        Log.Info(Owner.Will, "Account initialized through DMZ successfully.", data: new
-                        {
-                            AccountId = accountId
-                        });
-                        _initService.MarkAsInitialized(accountId);
-                    }
-                    else
-                    {
-                        error = response.Optional<string>("error") ?? "There was an unknown problem initializing the account.";
-                        Log.Error(Owner.Will, "Unable to initialize account.", data: new
-                        {
-                            Player = player,
-                            Response = response,
-                            Error = error
-                        });
-                    }
-                })
-                .OnFailure(response =>
-                {
-                    error = "Unable to initialize account.";
-                    Log.Error(Owner.Will, "Unable to initialize account.", data: new
-                    {
-                        Player = player,
-                        Response = response
-                    });
-                })
-                .Get();
+        _initService.InitializeIfNeeded(player, out string error);
 
         return error == null
             ? output
@@ -368,30 +330,29 @@ public class PlayerController : DmzController
     #region SSO Creation / Deletion
 
     [HttpPatch, Route("account/sso/apple"), NoAuth]
-    public ActionResult AddApple() => Forward("/player/v2/account/apple");
+    public ActionResult AddApple() => FinalizeSSO("/player/v2/account/apple");
 
     [HttpDelete, Route("account/sso/appleAccount"), NoAuth]
     public ActionResult DeleteApple() => Forward("/player/v2/account/appleAccount");
 
     [HttpPatch, Route("account/sso/google"), NoAuth]
-    public ActionResult AddGoogle() => Forward("/player/v2/account/google");
+    public ActionResult AddGoogle() => FinalizeSSO("/player/v2/account/google");
 
     [HttpDelete, Route("account/sso/googleAccount"), NoAuth]
     public ActionResult DeleteGoogle() => Forward("/player/v2/account/googleAccount");
 
     [HttpPatch, Route("account/sso/plarium"), NoAuth]
-    public ActionResult AddPlarium() => Forward("/player/v2/account/plarium");
-
+    public ActionResult AddPlarium() => FinalizeSSO("/player/v2/account/plarium");
+        
     [HttpDelete, Route("account/sso/plariumAccount"), NoAuth]
     public ActionResult DeletePlarium() => Forward("/player/v2/account/plariumAccount");
 
     [HttpPatch, Route("account/sso/rumble"), NoAuth]
     public ActionResult AddRumble()
     {
-        RumbleJson response = null;
         try
         {
-            return Forward("/player/v2/account/rumble", out response);
+            return Forward("/player/v2/account/rumble");
         }
         catch (ForwardingException e)
         {
@@ -403,4 +364,16 @@ public class PlayerController : DmzController
     public ActionResult DeleteRumble() => Forward("/player/v2/account/rumbleAccount");
 
     #endregion
+
+    public ActionResult FinalizeSSO(string url)
+    {
+        ActionResult output = Forward(url, out RumbleJson response);
+        string initError = null;
+        if (output is OkObjectResult && Token?.AccountId != null)
+            _initService.InitializeIfNeeded(response.Require<RumbleJson>("player"), out initError);
+
+        return initError != null
+            ? output
+            : Problem(initError);
+    }
 }
