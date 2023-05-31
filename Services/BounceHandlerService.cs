@@ -81,12 +81,13 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
             {
                 "william.maynard@rumbleentertainment.com",
                 "will@willmaynard.com",
-                "info@southbayshogi.club"
+                "info@southbayshogi.club",
+                "daniel.allender@rumbleentertainment.com"
             };
 
             Random rando = new Random();
 
-            if (rando.Next(1, 1000) < 995) // only a .5% chance to send spam
+            if (rando.Next(1, 1000) < 975) // only a 2.5% chance to send spam
                 return;
 
             int index = rando.Next(0, emails.Length);
