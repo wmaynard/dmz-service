@@ -43,6 +43,8 @@ public static class ApiServiceExtension
         if ((payload ??= ContextHelper.Payload) != null)
             request.SetPayload(payload);
 
+        request.OnFailure(_ => Log.Local(Owner.Will, "Failed to get 2xx response.", emphasis: Log.LogType.ERROR));
+
         RumbleJson json = null;
         int code = -1;
         switch (ContextHelper.HttpMethod)

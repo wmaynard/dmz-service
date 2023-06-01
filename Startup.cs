@@ -28,6 +28,7 @@ public class Startup : PlatformStartup
         .DisableFeatures(CommonFeature.ConsoleObjectPrinting)
         .DisableFilters(CommonFilter.Performance)
         .AddFilter<PermissionsFilter>()
-        .AddFilter<AuditFilter>();
+        .AddFilter<AuditFilter>()
+        .AddFilter<ForwardingExceptionFilter>();
 }
 
