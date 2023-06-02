@@ -43,10 +43,7 @@ public abstract class DmzController : PlatformController
             }, exception: e);
             throw;
         }
-        catch (Exception e)
-        {
-            throw;
-        }
+        
         return Ok(data: response);
     }
 }

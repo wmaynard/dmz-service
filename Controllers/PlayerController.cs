@@ -231,12 +231,9 @@ public class PlayerController : DmzController
 
     [HttpPost, Route("account/login"), NoAuth]
     [Route("login")]
-    public ActionResult LoginWithGoogle()
+    public ActionResult Login()
     {
         ActionResult output = Forward("player/v2/account/login", out RumbleJson loginResponse);
-
-        if (output is not OkObjectResult)
-            return output;
 
         // Only accounts with SSO are allowed to hit the game server's initialization endpoint.
         RumbleJson player = loginResponse.Require<RumbleJson>("player");
