@@ -43,7 +43,7 @@ public class PermissionsFilter : PlatformFilter, IActionFilter
         
         if (context.GetControllerAttributes<NoAuth>().Any())
         {
-            Log.Local(Owner.Default, message: "NoAuth attribute found on endpoint; Permissions cannot be loaded.", emphasis: Log.LogType.WARN);
+            Log.Verbose(Owner.Default, message: "NoAuth attribute found on endpoint; Permissions cannot be loaded.");
             return;
         }
 
