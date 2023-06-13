@@ -57,7 +57,7 @@ public static class PlayerServiceEmail
         AmazonSes.SendEmail(email, TEMPLATE_WELCOME, replacements: new RumbleJson
         {
             
-        });
+        }, canUnsub: true);
 
     public static ScheduledEmail ScheduleWelcome(string email)
     {

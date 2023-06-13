@@ -29,6 +29,7 @@ public class PlayerController : DmzController
     private readonly ScheduledEmailService _emailService;
     private readonly BounceHandlerService _bounceHandler;
     private readonly AccountInitializationService _initService;
+    private readonly SubscriptionService _subService;
 #pragma warning restore
     
     #region Player lookup
@@ -191,6 +192,56 @@ public class PlayerController : DmzController
     }
 #endregion Emails
 
+    [HttpGet, Route("account/unsubscribe"), NoAuth]
+    public ActionResult Unsubscribe()
+    {
+        string success = _config.GetValuesFor(Audience.PlayerService).Require<string>("unsubscribeSuccessPage");
+        string failure = _config.GetValuesFor(Audience.PlayerService).Require<string>("unsubscribeFailurePage");
+
+        string email = null;
+        
+        try
+        {
+            email = Require<string>("email");
+
+            _subService.Unsubscribe(email);
+            return Redirect(success);
+        }
+        catch (Exception e)
+        {
+            Log.Error(Owner.Will, "Unable to unsubscribe a user from email.", data: new
+            {
+                Email = email
+            }, exception: e);
+            return Redirect(failure);
+        }
+    }
+    
+    [HttpGet, Route("account/resubscribe"), NoAuth]
+    public ActionResult Resubscribe()
+    {
+        string success = _config.GetValuesFor(Audience.PlayerService).Require<string>("unsubscribeSuccessPage");
+        string failure = _config.GetValuesFor(Audience.PlayerService).Require<string>("unsubscribeFailurePage");
+
+        string email = null;
+        
+        try
+        {
+            email = Require<string>("email");
+
+            _subService.Resubscribe(email);
+            return Redirect(success);
+        }
+        catch (Exception e)
+        {
+            Log.Error(Owner.Will, "Unable to resubscribe a user from email.", data: new
+            {
+                Email = email
+            }, exception: e);
+            return Redirect(failure);
+        }
+    }
+    
     /// <summary>
     /// Sends the player email click data to player-service.
     /// The response from player-service includes a redirect URL to send users from DMZ -> public website.

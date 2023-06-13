@@ -66,8 +66,10 @@ public static class AmazonSes
             });
     }
 
-    public static void SendEmail(string email, string templateName, RumbleJson replacements)
+    public static void SendEmail(string email, string templateName, RumbleJson replacements, bool canUnsub = false)
     {
+        if (canUnsub && (SubscriptionService.Instance?.IsUnsubscribed(email) ?? false))
+            return;
         if (BounceHandlerService.Instance == null)
             Log.Error(Owner.Will, "Bounce handler instance was null; bans cannot be checked");
         else
@@ -96,7 +98,7 @@ public static class AmazonSes
                     );
                 throw;
             }
-            
+
         Cleanse(ref templateName);
 
         Task<EmailTemplateContent> task = GetTemplate(templateName);
@@ -104,7 +106,9 @@ public static class AmazonSes
         EmailTemplateContent content = task.Result;
         
         string charset = "UTF-8";
-
+        
+        replacements ??= new RumbleJson();
+        replacements["unsubscribeLink"] = PlatformEnvironment.Url($"/dmz/player/account/unsubscribe?email={Uri.EscapeDataString(email)}");
         string html = Replace(content.Html, replacements);
         string text = Replace(content.Text, replacements);
         string subject = Replace(content.Subject, replacements);
