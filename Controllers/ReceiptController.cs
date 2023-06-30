@@ -27,4 +27,24 @@ public class ReceiptController : DmzController
         return Forward("/commerce/admin/player");
     }
     #endregion
+    
+    #region Chargebacks
+    // Gets chargebacks
+    [HttpGet, Route("chargebacks")]
+    public ActionResult Chargebacks()
+    {
+        Require(Permissions.Receipt.View);
+
+        return Forward("/commerce/admin/chargebacks");
+    }
+    
+    // Unban a player through receipt to update chargeback logs
+    [HttpPatch, Route("chargebacks/unban")]
+    public ActionResult ChargebacksUnban()
+    {
+        Require(Permissions.Receipt.View, Permissions.Token.Unban);
+
+        return Forward("/commerce/admin/chargebacks/unban");
+    }
+    #endregion
 }
