@@ -1,6 +1,12 @@
+using System;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Attributes;
+using Rumble.Platform.Common.Enums;
+using Rumble.Platform.Common.Extensions;
 using Rumble.Platform.Common.Utilities;
+using Rumble.Platform.Data;
+
 // ReSharper disable ArrangeAttributes
 
 namespace Dmz.Controllers;
@@ -19,7 +25,7 @@ public class TokenController : DmzController
     }
 
     // Bans a player
-    [HttpPatch, Route("ban")]
+    [HttpPost, Route("ban")]
     public ActionResult Ban()
     {
         Require(Permissions.Token.Ban);
@@ -34,6 +40,20 @@ public class TokenController : DmzController
         Require(Permissions.Token.Unban);
 
         return Forward("/token/admin/unban");
+    }
+
+    [HttpGet, Route("audienceList")]
+    public ActionResult GetAudiences()
+    {
+        Require(Permissions.Token.View);
+        
+        RumbleJson output = RumbleJson.FromDictionary(Enum
+            .GetValues<Audience>()
+            .ToDictionary(
+                keySelector: audience => audience.GetDisplayName(),
+                elementSelector: audience => (int)audience
+        ));
+        return Ok(output);
     }
     #endregion
 
