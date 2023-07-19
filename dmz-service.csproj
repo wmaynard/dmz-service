@@ -20,18 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <_ContentIncludedByDefault Remove="Views\User\Create.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\User\CreateRole.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Secured\Index.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Account\AccessDenied.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Account\Login.cshtml" />
-      <_ContentIncludedByDefault Remove="wwwroot\js\site.js" />
-      <_ContentIncludedByDefault Remove="wwwroot\css\site.css" />
-    </ItemGroup>
-
-    <ItemGroup>
       <Folder Include="Settings" />
-      <Folder Include="wwwroot\css" />
     </ItemGroup>
 
     <ItemGroup>

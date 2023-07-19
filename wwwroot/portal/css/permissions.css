@@ -1,7 +1,0 @@
-.invisible {
-    display: none
-}
-
-button:disabled {
-    cursor: not-allowed;
-}
