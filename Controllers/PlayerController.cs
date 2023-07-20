@@ -421,7 +421,6 @@ public class PlayerController : DmzController
         {
             _initService.InitializeIfNeeded(response.Require<RumbleJson>("player"), out initError);
         }
-        Log.Info(owner: Owner.Nathan, message: "Test log for FinalizeSSO", data: initError);
         return initError == null
             ? output
             : Problem(initError);
