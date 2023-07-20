@@ -417,8 +417,15 @@ public class PlayerController : DmzController
     {
         ActionResult output = Forward(url, out RumbleJson response);
         string initError = null;
+        Log.Info(owner: Owner.Nathan, message: "Test log for FinalizeSSO step 1", data: response);
+        Log.Info(owner: Owner.Nathan, message: "Test log for FinalizeSSO step 2", data: output);
+        Log.Info(owner: Owner.Nathan, message: "Test log for FinalizeSSO step 3", data: Token?.AccountId);
         if (output is OkObjectResult && Token?.AccountId != null)
+        {
+            Log.Info(owner: Owner.Nathan, message: "Test log for FinalizeSSO step 4");
             _initService.InitializeIfNeeded(response.Require<RumbleJson>("player"), out initError);
+            Log.Info(owner: Owner.Nathan, message: "Test log for FinalizeSSO step 5", data: initError);
+        }
 
         return initError != null
             ? output
