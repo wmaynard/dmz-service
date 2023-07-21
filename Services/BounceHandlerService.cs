@@ -41,11 +41,27 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
     public BounceHandlerService(DynamicConfig config) : base(collection: "temp", intervalMs: 30_000)
     {
         Instance = this;
-        
-        _sqsClient ??= new AmazonSQSClient(new AwsLogin(
-            accessKey: PlatformEnvironment.Require<string>("AWS_SES_ACCESS_KEY"),
-            secretKey: PlatformEnvironment.Require<string>("AWS_SES_SECRET_KEY"))
-        );
+        string accessKey = null;
+        string secretKey = null;
+        try
+        {
+            accessKey = PlatformEnvironment.Require<string>("AWS_SES_ACCESS_KEY");
+            secretKey = PlatformEnvironment.Require<string>("AWS_SES_SECRET_KEY");
+            _sqsClient ??= new AmazonSQSClient(new AwsLogin(accessKey, secretKey));
+        }
+        catch (Exception e)
+        {
+            RumbleJson data = new RumbleJson
+            {
+                { "accessKeyEmpty", string.IsNullOrWhiteSpace(accessKey) },
+                { "secretKeyEmpty", string.IsNullOrWhiteSpace(secretKey) },
+            };
+            if (PlatformEnvironment.IsProd)
+                Log.Error(Owner.Will, "SqsClient is unable to initialize.  Bounce notifications are disabled.", data, exception: e);
+            else
+                Log.Warn(Owner.Will, "SqsClient is unable to initialize.", data, exception: e);
+        }
+
 
         _config = config;
         BounceQueueUrl = _config.Require<string>(KEY_DYNAMIC_CONFIG_QUEUE_URL);
@@ -81,7 +97,6 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
             {
                 "william.maynard@rumbleentertainment.com",
                 "will@willmaynard.com",
-                "info@southbayshogi.club",
                 "daniel.allender@rumbleentertainment.com"
             };
 
@@ -142,7 +157,7 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
         if (PlatformEnvironment.IsLocal || PlatformEnvironment.IsDev)
             PadBounceRate();
 #if RELEASE
-        if (!PlatformEnvironment.IsProd)
+        if (!PlatformEnvironment.IsProd || _sqsClient == null)
             return;
         BounceNotification[] notifs = Array.Empty<BounceNotification>();
         do
@@ -207,7 +222,7 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
                     break;
             }
 
-            _sqsClient.DeleteMessageAsync(BounceQueueUrl, notif.ReceiptHandle).Wait();
+            _sqsClient?.DeleteMessageAsync(BounceQueueUrl, notif.ReceiptHandle).Wait();
         }
         catch (Exception e)
         {
