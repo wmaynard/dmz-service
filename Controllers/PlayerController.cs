@@ -417,10 +417,11 @@ public class PlayerController : DmzController
     {
         ActionResult output = Forward(url, out RumbleJson response);
         string initError = null;
-        if (output is OkObjectResult && Token?.AccountId != null)
-        {
-            _initService.InitializeIfNeeded(response.Require<RumbleJson>("player"), out initError);
-        }
+
+        RumbleJson player = response.Require<RumbleJson>("player");
+        if (output is OkObjectResult)
+            _initService.InitializeIfNeeded(player, out initError);
+        
         return initError == null
             ? output
             : Problem(initError);
