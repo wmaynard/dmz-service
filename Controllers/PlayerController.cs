@@ -55,10 +55,10 @@ public class PlayerController : DmzController
     [HttpGet, Route("lookup"), NoAuth]
     public ActionResult Lookup()
     {
-        if (Token.IsAdmin)
+        if (Token?.IsAdmin ?? false)
             Require(Permissions.Player.Search);
 
-        return Forward("/player/v2/lookup");
+        return Forward("/player/v2/lookup", asAdmin: true);
     }
 
     /// <summary>
@@ -400,7 +400,7 @@ public class PlayerController : DmzController
     {
         try
         {
-            return Forward("/player/v2/account/rumble");
+            return FinalizeSSO("/player/v2/account/rumble");
         }
         catch (ForwardingException e)
         {
