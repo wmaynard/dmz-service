@@ -288,6 +288,11 @@ public class PlayerController : DmzController
 
         // Only accounts with SSO are allowed to hit the game server's initialization endpoint.
         RumbleJson player = loginResponse.Require<RumbleJson>("player");
+        string encryptedToken = player.Require<string>("token");
+        TokenInfo token = ApiService.Instance.ValidateToken(encryptedToken, "/dmz/account/login");
+        if (!token.IsValidFor(Audience.DmzService))
+            throw new InvalidTokenException(encryptedToken, token, "/dmz/account/login");
+        
         bool hasSSO = (player.Optional<RumbleJson>("appleAccount")
             ?? player.Optional<RumbleJson>("googleAccount")
             ?? player.Optional<RumbleJson>("plariumAccount")) != null;
