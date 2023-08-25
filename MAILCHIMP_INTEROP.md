@@ -49,6 +49,13 @@ Be sure to bring over all necessary values to each environment as DMZ / the mail
   * You can specify multiple rewards in the package by repeating the last three fields.
 * For the note, you can leave it blank, but it's a good idea to fill it out to describe it.
 
+Example Reward:
+```
+key:     mailchimpReward_FreeGoldTest
+value:   Test,This is a test from DC mailchimp rewards,,,mailchimp test reward,currency,soft_currency,1000
+comment: 1000 free gold to players in a test group
+```
+
 **IMPORTANT**: if your reward CSV does not pass validation, players will see errors.  Take care to add the appropriate number of fields - you can't just omit them, but you can leave empty strings by still adding more commas.  Similarly, don't use commas anywhere in text as values; in other words, don't provide a message of "Sweet, free gold!" - that will break the rewards parsing, as `Sweet` and ` free gold!` will be considered separate items.
 
 ### Claiming a Reward from an Email
@@ -108,7 +115,7 @@ PATCH /dmz/mailchimp/subscription
 HTTP 204 (No Content)
 ```
 
-Use `/status` to check the player's current subscription status, and `PATCH /subscription` to change it.  Be sure to include their player token in the request; this is how Platform will populate the necessary details.
+Use `GET /status` to check the player's current subscription status, and `PATCH /subscription` to change it.  Be sure to include their player token in the request; this is how Platform will populate the necessary details.
 
 ## Important Notes
 
