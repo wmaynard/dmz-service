@@ -70,19 +70,19 @@ https://{environment}/dmz/mailchimp/claim?accountId={Account ID}&emailId={claim 
 * Account ID: Use the Phone Number from mailchimp here.  It should be a 24-digit hex string.
 * Claim Code: This can be anything you want.  It can just be a template name, a coupon-style code, or just completely random - **as long as it's unique**, and as long as Dynamic Config has a corresponding entry.
 
-Craft this link in your Mailchimp templates and it will be ready to send out.  Since we base our rewards on Account ID and not email address, no one account will be able to claim the same code twice.  When a user clicks the link, Platform will:
+Craft this link in your Mailchimp templates and it will be ready to send out.  Since we base our rewards on Account ID and not email address, no one account will be able to claim the same code twice.  When a player clicks the link, Platform will:
 
 1. Grab the relevant URLs for success / failure from Dynamic Config
 2. Parse the reward package from the CSV specified in Dynamic Config.
-3. Tentatively marks the claim code as used on the player's account.
-4. If this has already been used, or the account not found, the player will be redirected to the failure page.
+3. Tentatively mark the claim code as used on the player's account.
+4. If this has already been used, or the account not found, redirect the player to the failure page.
 5. Send the reward to mail-service.
-6. If sending the reward fails, the claim code is restored and marked as unused, and the player will be redirected to the failure page.
+6. If sending the reward fails, the claim code is restored and marked as unused, redirect the player to the failure page.
 7. Redirect the player to the success page.
 
 ## Step 3: Implementation via API
 
-For frontend implementation, there are only two endpoints that need to be used.  Both of these endpoints require the player's token to be sent as an authorization, as is standard for Platform services.  These endpoints are:
+There are only two endpoints that need to be used for game client integration.  Both of these endpoints require the player's token to be sent as an authorization, as is standard for Platform services.  These endpoints are:
 
 ```
 GET /dmz/mailchimp/status
@@ -115,11 +115,11 @@ PATCH /dmz/mailchimp/subscription
 HTTP 204 (No Content)
 ```
 
-Use `GET /status` to check the player's current subscription status, and `PATCH /subscription` to change it.  Be sure to include their player token in the request; this is how Platform will populate the necessary details.
+Use `GET /status` to check the player's current subscription status and `PATCH /subscription` to change it.  Be sure to include their player token in the request; this is how Platform will populate the necessary details.
 
 ## Important Notes
 
-* Since this is a third-party integration, there's no way for us to know exactly when a player unsubscribes from our mailing list.  However, DMZ will check, on a timer, to update all of its player records against the information Mailchimp stores.  So, if a player clicks "unsubscribe" from their email, we'll find out about it in a reasonable time window - just not instantly.  Consequently, it is possible for the client to show some stale information for a brief amount of time.  At the time of this writing, the time is set to 1 hour.  Consider the following:
+* Since this is a third-party integration, there's no way for us to know exactly when a player unsubscribes from our mailing list.  However, DMZ uses a timer to update all of its player records against the information Mailchimp stores.  So, if a player clicks "unsubscribe" from their email, we'll find out about it in a reasonable time window - just not instantly.  Consequently it is possible for the client to show some stale information for a brief amount of time.  At the time of this writing, the time is set to 1 hour.  Consider the following:
   * Player clicks `unsubscribe` from their email.
   * Player immediately opens the game and checks their subscription status.
   * The client may take anywhere from approximately 0-60 minutes to reflect the change, depending on where the timer is.
