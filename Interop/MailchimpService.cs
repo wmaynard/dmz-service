@@ -16,7 +16,8 @@ namespace Dmz.Interop;
 public class MailchimpService : MinqTimerService<MailchimpMember>
 {
     private readonly DynamicConfig _config;
-    public MailchimpService(DynamicConfig config) : base("subscribers", 30_000) => _config = config;
+    // TODO: Move this updating functionality to a QueueService so that only one node per environment is running it.  Then lower the interval.
+    public MailchimpService(DynamicConfig config) : base("subscribers", 360_000) => _config = config;
 
     protected override void OnElapsed()
     {
@@ -172,4 +173,9 @@ public class MailchimpService : MinqTimerService<MailchimpMember>
     private bool EnforceEmailExists(TokenInfo token) => EmailRegex.IsValid(token.Email)
         ? true
         : throw new PlatformException("Email unavailable in token; Mailchimp requires an email to unsubscribe via API", code: ErrorCode.InvalidRequestData);
+
+    public override long ProcessGdprRequest(TokenInfo token, string dummyText) => mongo
+        .Where(query => query.EqualTo(member => member.AccountId, token?.AccountId))
+        .Or(query => query.EqualTo(member => member.Email, token?.Email))
+        .Update(query => query.Set(member => member.Email, dummyText));
 }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
+using Rumble.Platform.Common.Models;
 using Rumble.Platform.Data;
 
 namespace Dmz.Interop;
@@ -11,7 +12,6 @@ public class MailchimpMember : PlatformCollectionDocument
     public const string KEY_EMAIL_ADDRESS = "email_address";
     public const string KEY_SUBSCRIPTION_STATUS = "status";
     public const string KEY_MEMBER_ID = "id";
-    public const string KEY_ACCOUNT_ID = "address";
     public const string KEY_ADDITIONAL_DATA = "merge_fields";
     
     [BsonElement("email")]
@@ -25,8 +25,8 @@ public class MailchimpMember : PlatformCollectionDocument
     [BsonElement("created")]
     public long CreatedOn { get; set; }
     
-    [BsonElement("aid")]
-    [JsonPropertyName(KEY_ACCOUNT_ID)]
+    [BsonElement(TokenInfo.DB_KEY_ACCOUNT_ID)]
+    [JsonPropertyName(TokenInfo.FRIENDLY_KEY_ACCOUNT_ID)]
     public string AccountId { get; set; }
     
     [BsonElement("sn")]
