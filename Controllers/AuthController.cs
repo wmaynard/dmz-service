@@ -40,6 +40,7 @@ public class AuthController : PlatformController
         Account account = _accountService.GoogleLogin(data);
 
         bool whitelisted = false;
+        bool whitelistUpdateFailed = false;
 
         // If we're in nonprod environments, try to whitelist the user as they log in for MongoDB network access.
         // Note that this does not grant them connection strings but merely lets them connect to our dev database
@@ -77,6 +78,7 @@ public class AuthController : PlatformController
             catch (Exception e)
             {
                 Log.Error(Owner.Will, "Something went wrong checking or updating the Mongo IP whitelist", exception: e);
+                whitelistUpdateFailed = true;
             }
 
         string platformToken = GenerateToken(account);
@@ -89,7 +91,8 @@ public class AuthController : PlatformController
             { "gameSecret", PlatformEnvironment.GameSecret },
             { "rumbleSecret", PlatformEnvironment.RumbleSecret },
             { "gitlabPat", PlatformEnvironment.Optional<string>("GITLAB_PAT") ?? "not found" },
-            { "whitelistUpdated", whitelisted }
+            { "whitelistUpdated", whitelisted },
+            { "whitelistUpdateFailed", whitelistUpdateFailed }
         });
     }
 
