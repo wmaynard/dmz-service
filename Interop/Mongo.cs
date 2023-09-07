@@ -91,6 +91,8 @@ public static class Mongo
         return entries != null && entries.Any();
     }
 
+    public static string GenerateComment(string name) => $"{name} (via DMZ)";
+
     /// <summary>
     /// Creates or updates an IP whitelist entry in Mongo.  Uses a comment like "Will Maynard (via DMZ)".
     /// </summary>
@@ -105,7 +107,7 @@ public static class Mongo
             .EncapsulatePayload("[", "]")
             .SetPayload(new RumbleJson
             {
-                { "comment", $"{name} (via DMZ)" },
+                { "comment", GenerateComment(name) },
                 { "ipAddress", ip }
             })
             .OnSuccess(_ => Log.Local(Owner.Will, $"Successfully updated Mongo whitelist for {name}"))
@@ -128,5 +130,24 @@ public static class Mongo
                 .Wait();
 
         return output;
+    }
+
+    public static bool DeleteWhitelistEntry(MongoWhitelistEntry entry)
+    {
+        Request(entry.SelfReferenceUrl)
+            .AddDigestAuth(UrlList, Username, ApiKey)
+            .AddHeader("Accept", AcceptHeader)
+            .OnSuccess(_ => Log.Info(Owner.Will, "Deleted a Mongo whitelist entry", data: new
+            {
+                MongoWhitelistEntry = entry
+            }))
+            .OnFailure(response => Log.Error(Owner.Will, "Unable to delete Mongo whitelist entry", data: new
+            {
+                Response = response,
+                MongoWhitelistEntry = entry
+            }))
+            .Delete(out _, out int code);
+
+        return code.Between(200, 299);
     }
 }

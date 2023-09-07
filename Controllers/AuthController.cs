@@ -58,9 +58,15 @@ public class AuthController : PlatformController
                     throw new PlatformException("User is not allowed to signup for internal tools.");
                 
                 Mongo.GetCurrentWhitelist(out MongoWhitelistEntry[] existing);
-                
+
                 if (existing.All(entry => entry.IpAddress != IpAddress))
+                {
+                    bool deleted = existing
+                        .Where(entry => entry.Comment == Mongo.GenerateComment(account.Name))
+                        .Select(Mongo.DeleteWhitelistEntry)
+                        .Any();
                     whitelisted = Mongo.AddWhitelistEntry(account.Name, IpAddress);
+                }
                 else
                     Log.Info(Owner.Will, "Whitelist entry already exists for user", data: new
                     {
