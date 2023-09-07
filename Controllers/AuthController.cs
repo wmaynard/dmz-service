@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Dmz.Interop;
 using Dmz.Models.Portal;
 using Dmz.Services;
 using Google.Apis.Auth;
@@ -32,11 +34,31 @@ public class AuthController : PlatformController
         SsoData data = await ValidateGoogleToken(token);
         
         if (string.IsNullOrWhiteSpace(data.Email))
-        {
             throw new PlatformException(message: "Email address not provided from Google token.", code: ErrorCode.Unauthorized);
-        }
 
         Account account = _accountService.GoogleLogin(data);
+
+        bool whitelisted = false;
+
+        if (!PlatformEnvironment.IsProd)
+            try
+            {
+                Mongo.GetCurrentWhitelist(out MongoWhitelistEntry[] existing);
+                
+                if (existing.All(entry => entry.IpAddress != IpAddress))
+                    whitelisted = Mongo.AddWhitelistEntry(account.Name, IpAddress);
+                else
+                    Log.Info(Owner.Will, "Whitelist entry already exists for user", data: new
+                    {
+                        PortalAccount = account,
+                        IpAddress = IpAddress
+                    });
+            }
+            catch (Exception e)
+            {
+                Log.Error(Owner.Will, "Something went wrong checking or updating the Mongo IP whitelist", exception: e);
+            }
+
         string platformToken = GenerateToken(account);
 
         return Ok(new RumbleJson
@@ -46,7 +68,8 @@ public class AuthController : PlatformController
             { "permissions", account.Permissions },
             { "gameSecret", PlatformEnvironment.GameSecret },
             { "rumbleSecret", PlatformEnvironment.RumbleSecret },
-            { "gitlabPat", PlatformEnvironment.Optional<string>("GITLAB_PAT") ?? "not found" }
+            { "gitlabPat", PlatformEnvironment.Optional<string>("GITLAB_PAT") ?? "not found" },
+            { "whitelistUpdated", whitelisted }
         });
     }
 

@@ -2,3 +2,4 @@ environment.json
 appsettings.Development.json
 obj
 bin
+.DS_Store
