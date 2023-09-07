@@ -11,6 +11,7 @@ using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Enums;
 using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Extensions;
+using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
 using Rumble.Platform.Data;
@@ -43,6 +44,16 @@ public class AuthController : PlatformController
         if (!PlatformEnvironment.IsProd)
             try
             {
+                bool internalUser = PlatformService
+                    .Require<DynamicConfig>()
+                    .GetValuesFor(Audience.PlayerService)
+                    .Require<string>("allowedSignupDomains")
+                    .Split(',')
+                    .Any(account.Email.Contains);
+
+                if (!internalUser)
+                    throw new PlatformException("User is not allowed to signup for internal tools.");
+                
                 Mongo.GetCurrentWhitelist(out MongoWhitelistEntry[] existing);
                 
                 if (existing.All(entry => entry.IpAddress != IpAddress))
