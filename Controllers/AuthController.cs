@@ -41,6 +41,9 @@ public class AuthController : PlatformController
 
         bool whitelisted = false;
 
+        // If we're in nonprod environments, try to whitelist the user as they log in for MongoDB network access.
+        // Note that this does not grant them connection strings but merely lets them connect to our dev database
+        // using other connection strings - e.g. for the game server in Unity.
         if (!PlatformEnvironment.IsProd)
             try
             {

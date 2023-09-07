@@ -13,6 +13,8 @@ variables:
   K8S_SECRET_MONGODB_URI: "$MONGODB_URI"
   K8S_SECRET_GITLAB_PAT: "$GITLAB_PAT"
   K8S_SECRET_MONGODB_GLOBAL_URI: "$MONGODB_GLOBAL_URI"
+  K8S_SECRET_MONGO_API_USERNAME: "$MONGO_API_USERNAME"
+  K8S_SECRET_MONGO_API_PRIVATE_KEY: "$MONGO_API_PRIVATE_KEY"
   
   # Common Platform CI variables - contains information for several environments,
   # parsed by PlatformEnvironment.

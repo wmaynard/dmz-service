@@ -20,8 +20,8 @@ public static class Mongo
     private static ApiService _apiService;
     
     // Sensitive CI Values
-    private static string Username => PlatformEnvironment.Optional<string>($"{API_PREFIX}Username");
-    private static string ApiKey => PlatformEnvironment.Optional<string>($"{API_PREFIX}PrivateKey");
+    private static string Username => PlatformEnvironment.Optional<string>("MONGO_API_USERNAME");
+    private static string ApiKey => PlatformEnvironment.Optional<string>($"MONGO_API_PRIVATE_KEY");
     
     // DC Values
     private static string UrlLogin => DynamicConfig.Instance?.Optional<string>($"{URL_PREFIX}Login");
