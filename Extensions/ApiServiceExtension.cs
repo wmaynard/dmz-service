@@ -36,7 +36,10 @@ public static class ApiServiceExtension
         }
         else if (ContextHelper.Fetch(out TokenInfo token))
             request.AddAuthorization(token.Authorization);
-        
+
+        // This will be overwritten if another parameter exists with the key of 'origin'.
+        // This origin is helpful for end services finding out where the request came from.
+        request.AddParameter("origin", PlatformEnvironment.ServiceName);
         if (parameters != null || ContextHelper.Fetch(out parameters))
             request.AddParameters(parameters);
 
@@ -92,7 +95,7 @@ public static class ApiServiceExtension
         request
             .SetPayload(new RumbleJson
             {
-                { "aid", aid }
+                { TokenInfo.FRIENDLY_KEY_ACCOUNT_ID, aid }
             })
             .OnSuccess(response =>
             {
