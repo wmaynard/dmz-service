@@ -121,14 +121,20 @@ public class Passport : List<PermissionGroup>
 
         if (!PlatformEnvironment.IsProd && DEV_SUPERUSERS.Contains(data.Email))
             return new Passport(PassportType.Superuser);
-
+        
+        if (READONLY_DOMAINS.Contains(data.Domain))
+            return new Passport(PassportType.Readonly);
+        
+        if (PlatformEnvironment.IsProd)
+            throw new PlatformException("Unauthorized.");
+        
         string[] dcDomains = DynamicConfig.Instance
             ?.GetValuesFor(Audience.PlayerService)
             .Optional<string>("allowedSignupDomains")
             ?.Split(',')
             ?? Array.Empty<string>();
         
-        if (data.Domain != null && (READONLY_DOMAINS.Contains(data.Domain) || dcDomains.Any(domain => data.Domain.Contains(domain))))
+        if (dcDomains.Any(domain => data.Domain.Contains(domain)))
             return new Passport(PassportType.Readonly);
 
         throw new PlatformException("Unauthorized.");
