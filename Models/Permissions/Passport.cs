@@ -5,7 +5,9 @@ using System.Reflection;
 using Dmz.Exceptions;
 using Dmz.Models.Portal;
 using MongoDB.Bson.Serialization.Attributes;
+using Rumble.Platform.Common.Enums;
 using Rumble.Platform.Common.Exceptions;
+using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable InconsistentNaming
@@ -38,8 +40,6 @@ public class Passport : List<PermissionGroup>
     {
         "rumbleentertainment.com",
         "rumblegames.com",
-        "willmaynard.com"
-        // TODO: Testronic
     };
 
     public CalendarPermissions     Calendar    => Fetch<CalendarPermissions>();
@@ -117,21 +117,20 @@ public class Passport : List<PermissionGroup>
     public static Passport GetDefaultPermissions(SsoData data)
     {
         if (PlatformEnvironment.IsProd && PROD_SUPERUSERS.Contains(data.Email))
-        {
             return new Passport(PassportType.Superuser);
-        }
 
         if (!PlatformEnvironment.IsProd && DEV_SUPERUSERS.Contains(data.Email))
-        {
             return new Passport(PassportType.Superuser);
-        }
 
-        if (READONLY_DOMAINS.Contains(data.Domain))
-        {
+        string[] dcDomains = DynamicConfig.Instance
+            ?.GetValuesFor(Audience.PlayerService)
+            .Optional<string>("allowedSignupDomains")
+            ?.Split(',')
+            ?? Array.Empty<string>();
+        
+        if (data.Domain != null && (READONLY_DOMAINS.Contains(data.Domain) || dcDomains.Any(domain => data.Domain.Contains(domain))))
             return new Passport(PassportType.Readonly);
-        }
 
-        // return new Passport(PassportType.Unauthorized);
         throw new PlatformException("Unauthorized.");
     }
 }
