@@ -97,14 +97,8 @@ public static class ApiServiceExtension
             {
                 { TokenInfo.FRIENDLY_KEY_ACCOUNT_ID, aid }
             })
-            .OnSuccess(response =>
-            {
-                Log.Info(owner: Owner.Nathan, message: "Invalidating token to force user refresh due to a portal request.");
-            })
-            .OnFailure(response =>
-            {
-                Log.Error(owner: Owner.Nathan, message: "Failed to invalidate token when attempting to force user refresh due to a portal request.");
-            })
+            .OnSuccess(_ => Log.Info(Owner.Will, "Invalidating token to force user refresh due to a portal request."))
+            .OnFailure(_ => Log.Error(Owner.Will, "Failed to invalidate token when attempting to force user refresh due to a portal request."))
            .Patch();
     }
 }

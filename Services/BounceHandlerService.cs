@@ -210,7 +210,7 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
                     catch { }
                     SlackDiagnostics
                         .Log("Complaint received.", $"Someone reported a message as spam ({who}).")
-                        .Attach("data", notif.JSON)
+                        .Attach("data", notif.ToJson())
                         .DirectMessage(Owner.Will)
                         .Wait();
                     break;

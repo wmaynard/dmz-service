@@ -123,7 +123,7 @@ public class MailchimpService : MinqTimerService<MailchimpMember>
                         { "subject", title },
                         { "body", body },
                         { "attachments", attachments },
-                        { "expiration", Timestamp.AddDays(7) },
+                        { "expiration", Timestamp.InTheFuture(days: 7) },
                         { "visibleFrom", Timestamp.UnixTime },
                         { "icon", icon },
                         { "banner", banner },

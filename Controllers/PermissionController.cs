@@ -88,22 +88,10 @@ public class PermissionController : DmzController
 
         // Nothing was changed; no reason to do anything further.
         if (sum == 0)
-        {
-            return Ok(new {Message = $"Updated {sum} values."});
-        }
+            return Ok();
 
-        try
-        {
-            Log.Local(Owner.Will, $"Updated {sum} values.");
-            if (_accountService.UpdatePassport(id, displayedUserPermissions) != 1)
-            {
-                throw new PlatformException(message: "Unable to update permissions.");
-            }
-        }
-        catch (Exception e)
-        {
-            Log.Error(owner: Owner.Nathan, message: "Failed to update permissions for portal user.", data: e.Message);
-        }
+        if (_accountService.UpdatePassport(id, displayedUserPermissions) != 1)
+            throw new PlatformException(message: "Unable to update permissions.");
 
         return Ok(new {Message = $"Updated {sum} values."});
     }
@@ -114,28 +102,25 @@ public class PermissionController : DmzController
     {
         Require(Permissions.Portal.ManagePermissions);
 
-        string id = Require<string>(key: "id");
-        List<string> roleNames = Require<List<string>>(key: "roles");
+        string id = Require<string>("id");
+        List<string> roleNames = Require<List<string>>("roles");
 
         Account account = _accountService.FindById(id);
 
-        List<Role> newRoles = new List<Role>();
-
-        foreach (string roleName in roleNames)
+        try
         {
-            try
-            {
-                Role role = _roleService.FindByName(roleName);
-                newRoles.Add(role);
-            }
-            catch (Exception)
-            {
-                Log.Error(owner: Owner.Nathan, message: "Attempted to add an unidentified role.", data: $"Role name: {roleName}.");
-                throw new PlatformException(message: $"An attempt was made to add a non-existent role {roleName}.");
-            }
+            // TODO: This really needs to be a single mongo query
+            account.Roles = roleNames
+                .Select(role => _roleService.FindByName(role))
+                .ToList();
         }
-
-        account.Roles = newRoles;
+        catch (Exception e)
+        {
+            throw new PlatformException(message: $"An attempt was made to add a non-existent role.", inner: e)
+            {
+                Data = { {"roles", roleNames } }
+            };
+        }
 
         _accountService.Update(account);
 
