@@ -27,7 +27,7 @@ public static class Mailchimp
         {
             string url = CleanUrl($"{MailchimpUrl}/lists/{MailchimpListId}/members");
             
-            RumbleJson payload = new RumbleJson
+            RumbleJson payload = new()
             {
                 { "count", RECORDS_PER_BATCH },
                 { "offset", processed },

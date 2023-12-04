@@ -72,7 +72,7 @@ public static class PlayerServiceEmail
 
     private static string TimestampToText(long expiration)
     {
-        TimeSpan time = new TimeSpan(days: 0, hours: 0, minutes: 0, seconds: (int)(expiration - Timestamp.UnixTime));
+        TimeSpan time = new TimeSpan(days: 0, hours: 0, minutes: 0, seconds: (int)(expiration - Timestamp.Now));
 
         int hours = (int)time.TotalDays * 24 + time.Hours;
         int minutes = time.Minutes + (time.Seconds > 0 ? 1 : 0); // round seconds up
@@ -94,7 +94,7 @@ public static class PlayerServiceEmail
     }
 
     private static string TimestampToDate(long? timestamp = null) => DateTimeOffset
-        .FromUnixTimeSeconds(timestamp ?? Timestamp.UnixTime)
+        .FromUnixTimeSeconds(timestamp ?? Timestamp.Now)
         .DateTime
         .ToString(format: "MM/dd/yyyy HH:mm (UTC)");
 }

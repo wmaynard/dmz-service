@@ -18,7 +18,7 @@ public static class PlatformAlertEmail
             { "id", alert.Id },
             { "audience", $"{alert.Origin} ({PlatformEnvironment.Deployment})" },
             { "owner", alert.Owner.GetDisplayName() },
-            { "timeActive", (Timestamp.UnixTime - alert.CreatedOn).ToFriendlyTime() },
+            { "timeActive", (Timestamp.Now - alert.CreatedOn).ToFriendlyTime() },
             { "status", alert.Status.GetDisplayName() },
             { "impact", alert.Impact.GetDisplayName() },
             { "count", alert.Trigger.Count },

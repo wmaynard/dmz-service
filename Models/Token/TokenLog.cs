@@ -54,7 +54,7 @@ public class TokenLog : PlatformCollectionDocument
         Actor = actor;
         Action = action;
         UnbanTime = unbanTime;
-        Timestamp = Rumble.Platform.Common.Utilities.Timestamp.UnixTime;
+        Timestamp = Rumble.Platform.Common.Utilities.Timestamp.Now;
         Target = target;
         Note = note;
     }

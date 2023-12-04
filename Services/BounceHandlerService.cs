@@ -290,7 +290,7 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
                 update: Builders<BounceData>.Update
                         .Inc(data => data.LifetimeHardBounces, 1)
                         .Set(data => data.Banned, true)
-                .Set(data => data.LastBounce, Timestamp.UnixTime),
+                .Set(data => data.LastBounce, Timestamp.Now),
                 options: new FindOneAndUpdateOptions<BounceData>
                 {
                     IsUpsert = true,
@@ -302,8 +302,8 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
             Code = code,
             Detail = "Email address failed Rumble's regex and/or System.Net.MailAddress validation.",
             Email = email,
-            TimeProcessed = Timestamp.UnixTime,
-            Timestamp = Timestamp.UnixTime
+            TimeProcessed = Timestamp.Now,
+            Timestamp = Timestamp.Now
         });
     }
     
@@ -321,7 +321,7 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
                         .Inc(data => data.LifetimeHardBounces, 1)
                         .Set(data => data.Banned, true)
                     : Builders<BounceData>.Update.Inc(data => data.LifetimeSoftBounces, 1))
-                .Set(data => data.LastBounce, Timestamp.UnixTime),
+                .Set(data => data.LastBounce, Timestamp.Now),
                 options: new FindOneAndUpdateOptions<BounceData>
                 {
                     IsUpsert = true,
@@ -338,7 +338,7 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
             Code = recipient.Code,
             Detail = recipient.Detail,
             Email = recipient.Address,
-            TimeProcessed = Timestamp.UnixTime,
+            TimeProcessed = Timestamp.Now,
             Timestamp = timestamp
         });
     }

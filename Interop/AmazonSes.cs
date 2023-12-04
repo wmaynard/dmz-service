@@ -136,7 +136,7 @@ public static class AmazonSes
         return new ScheduledEmail
         {
             Address = address,
-            SendAfter = Timestamp.UnixTime + delay,
+            SendAfter = Timestamp.Now + delay,
             Subject = Replace(content.Subject, replacements),
             Html = Replace(content.Html, replacements),
             Text = Replace(content.Text, replacements)

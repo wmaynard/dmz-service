@@ -25,7 +25,7 @@ public class ScheduledEmailService : PlatformMongoTimerService<ScheduledEmail>
         _collection.DeleteMany(
             filter: Builders<ScheduledEmail>.Filter.And(
                 Builders<ScheduledEmail>.Filter.Eq(email => email.Sent, true),
-                Builders<ScheduledEmail>.Filter.Lt(email => email.SentOn, Timestamp.UnixTime - SENT_RETENTION_SECONDS)
+                Builders<ScheduledEmail>.Filter.Lt(email => email.SentOn, Timestamp.Now - SENT_RETENTION_SECONDS)
             )
         );
     }
@@ -41,12 +41,12 @@ public class ScheduledEmailService : PlatformMongoTimerService<ScheduledEmail>
         ScheduledEmail toSend = _collection.FindOneAndUpdate(
             filter: Builders<ScheduledEmail>.Filter.And(
                 Builders<ScheduledEmail>.Filter.Eq(email => email.Sent, false),
-                Builders<ScheduledEmail>.Filter.Lt(email => email.SendAfter, Timestamp.UnixTime),
+                Builders<ScheduledEmail>.Filter.Lt(email => email.SendAfter, Timestamp.Now),
                 Builders<ScheduledEmail>.Filter.Lt(email => email.Attempts, MAX_ATTEMPTS)
             ),
             update: Builders<ScheduledEmail>.Update
                 .Set(email => email.Sent, true)
-                .Set(email => email.SentOn, Timestamp.UnixTime)
+                .Set(email => email.SentOn, Timestamp.Now)
                 .Inc(email => email.Attempts, 1),
             options: new FindOneAndUpdateOptions<ScheduledEmail>
             {

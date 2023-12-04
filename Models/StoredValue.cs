@@ -8,7 +8,7 @@ namespace Dmz.Models;
 
 public class StoredValue : PlatformCollectionDocument
 {
-    public StoredValue() => CreatedOn = Timestamp.UnixTime;
+    public StoredValue() => CreatedOn = Timestamp.Now;
     
     [BsonElement("v")]
     [JsonPropertyName("value")]

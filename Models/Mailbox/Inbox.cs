@@ -42,7 +42,7 @@ public class Inbox : PlatformCollectionDocument
     {
         AccountId = aid;
         Messages = messages;
-        Timestamp = timestamp == 0 ? Rumble.Platform.Common.Utilities.Timestamp.UnixTime : timestamp;
+        Timestamp = timestamp == 0 ? Rumble.Platform.Common.Utilities.Timestamp.Now : timestamp;
         History = history;
         if (id != null)
         {

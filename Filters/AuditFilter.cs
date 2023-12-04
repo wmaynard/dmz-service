@@ -86,7 +86,7 @@ public class AuditFilter : PlatformFilter, IActionFilter
             Method = _context.Request.Method,
             Who = token.Email ?? token.ScreenName ?? token.AccountId ?? "unknown",
             AdditionalData = null,
-            Time = Timestamp.UnixTime
+            Time = Timestamp.Now
         };
     }
 

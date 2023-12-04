@@ -50,7 +50,7 @@ public class BouncedEmailController : DmzController
         Require(Permissions.Portal.ViewBouncedEmails);
         #endif
 
-        long timestamp = Optional<long?>("lastBounceTime") ?? Timestamp.UnixTime;
+        long timestamp = Optional<long?>("lastBounceTime") ?? Timestamp.Now;
 
         return Ok(new RumbleJson
         {

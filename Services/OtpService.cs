@@ -103,6 +103,6 @@ public class OtpService : PlatformMongoService<StoredValue>
     private const int FOUR_DAYS = 4 * 24 * 60 * 60;
 
     public long Cleanup() => _collection.DeleteMany(
-        filter: Builders<StoredValue>.Filter.Lte(stored => stored.CreatedOn, Timestamp.UnixTime - FOUR_DAYS)
+        filter: Builders<StoredValue>.Filter.Lte(stored => stored.CreatedOn, Timestamp.Now - FOUR_DAYS)
     ).DeletedCount;
 }

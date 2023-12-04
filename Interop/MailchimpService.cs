@@ -71,7 +71,7 @@ public class MailchimpService : MinqTimerService<MailchimpMember>
         .Where(query => query.EqualTo(member => member.AccountId, accountId))
         .Upsert(query => query
             .SetOnInsert(member => member.Status, "unsubscribed")
-            .SetOnInsert(member => member.CreatedOn, Timestamp.UnixTime)
+            .SetOnInsert(member => member.CreatedOn, Timestamp.Now)
         );
 
     public void ClaimEmail(string accountId, string templateId)
@@ -124,7 +124,7 @@ public class MailchimpService : MinqTimerService<MailchimpMember>
                         { "body", body },
                         { "attachments", attachments },
                         { "expiration", Timestamp.InTheFuture(days: 7) },
-                        { "visibleFrom", Timestamp.UnixTime },
+                        { "visibleFrom", Timestamp.Now },
                         { "icon", icon },
                         { "banner", banner },
                         { "internalNote", note }
@@ -158,7 +158,7 @@ public class MailchimpService : MinqTimerService<MailchimpMember>
                 .Set(member => member.AccountId, player.AccountId)
                 .Set(member => member.Screenname, player.ScreenName)
                 .Set(member => member.Email, player.Email)
-                .SetOnInsert(member => member.CreatedOn, Timestamp.UnixTime)
+                .SetOnInsert(member => member.CreatedOn, Timestamp.Now)
             );
         
         if (Mailchimp.UpdateExistingMember(player, isSubscribed))

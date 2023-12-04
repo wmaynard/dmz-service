@@ -36,5 +36,5 @@ public class SentEmailData : PlatformCollectionDocument
     [BsonElement("sent")]
     public long SentOn { get; private set; }
 
-    public SentEmailData() => SentOn = Timestamp.UnixTime;
+    public SentEmailData() => SentOn = Timestamp.Now;
 }

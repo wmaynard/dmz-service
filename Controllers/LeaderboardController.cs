@@ -126,7 +126,7 @@ public class LeaderboardController : DmzController
             long cacheLifetime = config.Require<long>("discordRefreshRate");
             int limit = config.Require<int>("discordReturnCount");
 
-            if (lastUpdated > Timestamp.UnixTime - cacheLifetime)
+            if (lastUpdated > Timestamp.Now - cacheLifetime)
                 return Content(_config.Value<string>(CACHED_RESPONSE));
 
             bool success = true;
@@ -194,7 +194,7 @@ public class LeaderboardController : DmzController
             output = output.Trim();
             
             _config.Update(CACHED_RESPONSE, output);
-            _config.Update(CACHE_UPDATED, Timestamp.UnixTime);
+            _config.Update(CACHE_UPDATED, Timestamp.Now);
 
             return Content(output);
         }

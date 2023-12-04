@@ -86,14 +86,14 @@ public class Message : PlatformCollectionDocument
 
     [BsonIgnore]
     [JsonIgnore]
-    public bool IsExpired => Expiration <= Rumble.Platform.Common.Utilities.Timestamp.UnixTime; // no setter, change expiration to UnixTime instead
+    public bool IsExpired => Expiration <= Rumble.Platform.Common.Utilities.Timestamp.Now; // no setter, change expiration to UnixTime instead
 
     public Message(string subject, string body, List<Attachment> attachments, long expiration, long visibleFrom, string icon, string banner, StatusType status, string internalNote)
     {
         Subject = subject;
         Body = body;
         Attachments = attachments;
-        Timestamp = Rumble.Platform.Common.Utilities.Timestamp.UnixTime;
+        Timestamp = Rumble.Platform.Common.Utilities.Timestamp.Now;
         Expiration = expiration;
         VisibleFrom = visibleFrom;
         Icon = icon;
