@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Data;
@@ -17,12 +19,15 @@ public class Role : PlatformCollectionDocument
 	public string Name { get; set; }
 	
 	[BsonElement(DB_KEY_PERMISSIONS)]
-	[JsonInclude, JsonPropertyName(FRIENDLY_KEY_PERMISSIONS)]
+	[JsonIgnore]
 	public Passport Permissions { get; set; }
 	
-	public Role(string name, Passport passport)
-	{
-		Name = name;
-		Permissions = passport;
-	}
+	[BsonIgnore]
+	[JsonInclude, JsonPropertyName(FRIENDLY_KEY_PERMISSIONS)]
+	public Dictionary<string, bool> Perms => Permissions
+		.SelectMany(group => group.Values)
+		.ToDictionary(
+			keySelector: pair => pair.Key,
+			elementSelector: pair => pair.Value
+		);
 }

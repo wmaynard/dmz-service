@@ -8,148 +8,296 @@ This document will walk you through the basics of how the permissions work in Po
 
 ## Glossary
 
-|          Term | Definition                                                                                                                                                                                                                 |
-|--------------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|        Filter | For the purposes of this document, this term refers to, specifically, the piece of code that runs before any endpoint is hit, in the `ViewDataFilter`.  The Filter prepares the Passport for use by controllers and views. |
-|         Group | A full permission set for a Platform project.  Every Platform project has its own group, including Portal.                                                                                                                 |
-|      Passport | A complete collection of all of a user's permissions.                                                                                                                                                                      |
-|    Permission | A boolean value indicating whether or not a user has access to a particular resource.  Permissions should be named in an English-friendly manner such that the code almost reads as if spoken.                             |
-| Readonly User | Someone who can only view data, but not make any direct changes to any aspect of Platform projects.                                                                                                                        |
+|          Term | Definition                                                                                                                                                                                                                    |
+|--------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|        Filter | For the purposes of this document, this term refers to, specifically, the piece of code that runs before any endpoint is hit, in the `PermissionsFilter`.  The Filter prepares the Passport for use by controllers and views. |
+|         Group | A full permission set for a Platform project.  Every Platform project has its own group, including Portal (DMZ).                                                                                                              |
+|      Passport | A complete collection of all of a user's permissions.  A Passport represents the merged values of an account's individual Permissions and the Permissions granted to it by Roles.                                             |
+|    Permission | A boolean value indicating whether or not a user has access to a particular resource.  Permissions should be named in an English-friendly manner such that the code almost reads as if spoken.                                |
+|          Role | A defined set of Permissions.  Roles have all the same keys that a Player's permission set does.                                                                                                                              |
+| Readonly User | Someone who can only view data, but not make any direct changes to any aspect of Platform projects.                                                                                                                           |
 
-## The `PermissionGroup` Class
+## Use in C# Controllers
 
-Every Group is an implementation of the abstract class `PermissionGroup`.  This base class does three things:
+The #1 benefit we get from DMZ is that we can stack an extra, more granular auth layer on every admin function we have in all of Platform.  In most of our codebase, we typically only care about whether or not an access token is an administrator or not.  This is great for Platform developers, but not great when we're opening those same functions to other internal users - **especially** when we're discussing production user data.
 
-1. Guarantee that developers give each group a name.  This name is used when managing permissions to create sections.
-2. Provide a basic permission for viewing the navigation buttons.
-3. Provide a basic permission for viewing the landing page of a service.
-4. Provide a basic permission for edit access for the entirety of the landing page*
+### Use Case: Different Levels of Customer Service
 
-The edit permission is from the first iteration of permissions and will be removed at a future date.  Permissions should be more granular than that.  Say a player changes their name to something offensive and we have a full staff of community managers who are responsible for keeping Chat clean.  We want to allow them to forcibly rename the player, but it may not make sense to allow them to edit other parts of the player record, such as removing currency.
+Consider the needs of CS.  Let's assume that we have a product that's been released at scale.  We have millions of users and dozens of CS reps to support them.  Now think about the following actions:
 
-The real power of the Group is that we can add as many permissions as we need without cluttering a monolithic Permission class (as was the case with V1).  For the above scenario, there could be permissions such as:
+* Force a username change
+* Grant compensation to an individual player
+* Grant compensation to all players
+* Issue in-app announcements
+* Ban users
+* Unban users
+* Merge / link accounts
 
-* `Passport.Player.CanRename`
-* `Passport.Player.CanSubtractCurrency`
-* `Passport.Player.CanAddCurrency`
+This is just a very small sampling of available admin actions, but hopefully it's obvious that some of these actions are more impactful than others.  We don't want a new CS hire - untrained and, for the short term, untrusted - to be able to perform all of these actions.  But, since all of the Portal accounts have admin tokens, there's technically nothing stopping them from using our system by default.
 
-Note that these are just theoretical values, but should be illustrative of how organized we can keep permissions moving forward.
+This is where the Permissions & Roles come in to play.  In this projects `Models/Permissions` directory, we have a bunch of `PermissionGroup` classes.  Each one of these represents a Platform project and the associated permissions for it.  Let's look at one now:
 
-### Naming
-
-* Write Permissions should be named in such a way that they read easily, almost as if someone was speaking them.
-* Read Permissions should always **start** with `View`.  This is a limitation of the way Portal automatically assigns readonly users.
-
-## Controller Usage
-
-As a prerequisite, every controller needs to inherit from `PortalController`.  So long as that's been done, you can access the current user's Passport with one of the three following methods:
-
-1. `Permissions.{Project}.{Permission}`, e.g. `Permissions.Player.View_Page`
-2. **(Preferred)** `Require(Permissions.Player.Edit, Permissions.Player.CanRename);`
-3. `RequireOneOf(Permissions.Player.Edit, Permissions.Player.CanRename);`
-
-This second method will throw a `PermissionInvalidException` if a user is not authorized to access a particular resource.  If **any** boolean passed into the `Require()` method is false, the exception will cause the user to be redirected to a 403 page.
-
-## View Usage
-
-Similar to controllers, views need to inherit from `PortalView`.  Unlike the regular C# inheritance, views are extended by adding the following to the top of the code file:
-
-```
-@inherits TowerPortal.Views.Shared.PortalView
-```
-
-After that, usage is the same as the controller usage, though the preferred usage is situational.
-
-<hr />
-Every page's codefile should begin with a call to `Require()` or `RequireOneOf()`; this will guarantee that users are authenticated and have the permissions necessary to view the page in the first place.  Consider the following example:
-
-```
-@inherits TowerPortal.Views.Shared.PortalView
-@using Microsoft.AspNetCore.Mvc.TagHelpers
-@using TowerPortal.Models.Permissions
-
-@{ Require(Permissions.Portal.ManagePermissions); }
-...
-```
-
-Here we can easily see that to access this page, the current user _must_ have the ability to `ManagePermissions`.  If they lack this permission, they will be redirected to the error page.
-
-<hr />
-
-For conditional rendering, the usage should rely on directly accessing properties instead of the `Require()` methods, since a failed `Require()` will redirect the user to the unauthorized page.
-
-```
-@if (Permissions.Player.CanRename)
+```csharp
+public class ChatPermissions : PermissionGroup
 {
-    <div class="foobar">
-        /* Forms to rename the player go here */
-    </div>
+    public override string Name => "Chat Service";
+  
+    public bool Send_Announcements   { get; set; }
+    public bool Delete_Announcements { get; set; }
+    public bool Ban                  { get; set; }
+    public bool Unban                { get; set; }
+    public bool Ignore_Reports       { get; set; }
+    public bool Delete_Reports       { get; set; }
 }
 ```
 
-## Adding New Groups
+On its face it doesn't seem like this really does much.  It's just a class with some booleans in it, right?  However, we define them this way because we have a system built on reflection in the project that translates these into a permission set for every Portal account.  **There is no need** to use these classes directly.  They just need to be defined, and for any new permission, just add a property to the target `PermissionGroup`.
 
-Whenever Platform embarks on a new project that has any integration with Portal, we will have to implement a new group for that project.
+If you're adding a completely new `PermissionGroup`, you need to add a new model and add a property of that type to the `Passport` model.
 
-To add a new `PermissionGroup`:
-1. Create a new class in `Models.Permissions`.  The naming should be `{ProjectName}Permissions`.
-2. Extend the `PermissionGroup` class.  This will involve implementing required permissions.
-3. In `Models.Permission.Passport.cs`, add a new getter property:
-```
-    public {Name}Permissions {Name} => Fetch<{Name}Permissions>();
-```
+### How Permissions Are Enforced
 
-The group can then be used as any other group.
+DMZ typically has a controller for each Platform project it's used to interface with.  These controllers inherit from a special parent class, `DmzController`.  While you're likely familiar with `Require<T>(string)` already, DMZ Controllers are also equipped with a special `Require(bool[])` method; this allows us to check the current user's Permissions before continuing any further in our code.  They're also granted a special property, `Permissions`, that represents the requesting account's Passport.  **Every endpoint should begin with a permissions check.**
 
-## Default Permission Sets
+#### Example: Sending Chat Announcements
 
-For now, creating default permission sets happens in `Models.Permission.Passport.cs`.  For any custom permission set you want to add, two things need to happen:
-
-1. You expand one of the readonly string arrays at the top of the file, or create a new one to describe the new role.
-2. You modify `Passport.GetDefaultPermissions()` if necessary.
-
-For example, if we want to create a new group that has only readonly permissions by default, but can rename players, we could do:
-
-```
-private static readonly string[] RENAME_PLAYERS_ONLY =
+```csharp
+[HttpPost, Route("announcements/send")]
+public ActionResult AnnouncementsSend()
 {
-    "joemcfugal@domain.com"
+    Require(Permissions.Chat.Send_Announcements);
+
+    return Forward("/chat/admin/messages/sticky");
 }
-...
-public static Passport GetDefaultPermissions(string email)
+```
+
+* You'll notice the Route is different from the actual endpoint.  This is in part security through obscurity.  Portal tokens only have access to DMZ, so the tokens themselves wouldn't be able to access the _real_ endpoint the request gets forwarded to.  However, this also adds another hurdle to someone trying to get around DMZ's permission system.  Especially if a user has access to Dynamic Config, they will have access to full-fledged admin tokens that are valid on other services.
+* You could easily just check `if (Permissions.Chat.Send_Announcements)` and add your own logic for what should happen if a permission is invalid.  `Require()` here is just a shorthand / standard to throw an exception when an account doesn't have access to a resource.  Stick to the standard; don't add your own logic unless you have an explicit reason to.
+* No other logic is necessary in this endpoint.  DMZ is mostly an access layer to other resources; let the target service do the processing in almost all situations.
+
+## Managing Permissions via API (Portal Web Client)
+
+Now we get to the meat of this document: the API calls needed to manage permissions and roles.  We have six endpoints necessary for this:
+
+* Account Level
+  * GET /permissions/accounts
+  * PUT /permissions/update
+* Role Level
+  * GET /permissions/roles
+  * POST /permissions/roles/create
+  * PATCH /permissions/roles/update
+  * DELETE /permissions/roles/delete
+
+<hr />
+
+**Important:** Keep in mind that this document may be outdated.  Postman is the authoritative source for request examples and usage.  This document is primarily for concepts and may be stale by the time you're reading this.  This is particularly important for the actual permission keys themselves; more will be added in time, some may disappear, so they should just be considered simple examples.
+
+<hr />
+
+
+Let's go through them one-by-one.
+
+### Getting an Account / Listing all Accounts
+
+```
+GET /permissions/accounts?id=deadbeefdeadbeefdeadbeef
+
+HTTP 200
 {
-    if (SUPERUSERS.Contains(email))
-        return new Passport(PassportType.Superuser);
-    if (RENAME_PLAYERS_ONLY.Contains(email))
-    {
-        Passport output = new Passport(PassportType.Readonly);
-        output.Player.CanRename = true;
-        return output;
+    "accounts": [
+        {
+            "name": null,
+            "email": "william.maynard@rumbleentertainment.com",
+            "roleIds": [
+                "65824dbd2033ec419bdc9ccd",
+                ...
+            ],
+            "roles": [
+                {
+                    "name": "foobar",
+                    "permissions": {
+                        "Calendar_Service.View": false,             // <----
+                        "Chat_Service.Send_Announcements": true,    // <----
+                        ...
+                    },
+                    "id": "65824dbd2033ec419bdc9ccd",
+                    "createdOn": 1703038397
+                },
+                ...
+            ],
+            "permissions": {
+                "Calendar_Service.View": true,                      // <----
+                "Chat_Service.Send_Announcements": false,           // <----
+                "Chat_Service.Delete_Announcements": true,
+                "Chat_Service.Ban": true,
+                "Chat_Service.Unban": true,
+                "Chat_Service.Ignore_Reports": true,
+                "Chat_Service.Delete_Reports": true,
+                "Chat_Service.View": true,
+                "Config.Manage": true,
+                "Config.Delete": true,
+                "Config.ShowDiffs": true,
+                "Config.View": true,
+                "Leaderboards.View": true,
+                "Mail_Service.Send_Direct_Messages": true,
+                "Mail_Service.Send_Global_Messages": true,
+                "Mail_Service.Expire_Global_Messages": true,
+                "Mail_Service.Modify_Inbox": true,
+                "Mail_Service.View": true,
+                "Matchmaking.View": true,
+                "Multiplayer.View": true,
+                "NFT.View": true,
+                "Player_Service.Search": true,
+                "Player_Service.Screenname": true,
+                "Player_Service.Unlink_Accounts": true,
+                "Player_Service.Update": true,
+                "Player_Service.ForceAccountLink": true,
+                "Player_Service.ViewStoreOffers": true,
+                "Player_Service.GeneratePlayerTokens": true,
+                "Player_Service.View": true,
+                "Portal.SuperUser": true,
+                "Portal.ManagePermissions": true,
+                "Portal.ViewActivityLogs": true,
+                "Portal.ViewBouncedEmails": true,
+                "Portal.UnbanBouncedAddress": true,
+                "Portal.View": true,
+                "PvP.View": true,
+                "Receipt.View": true,
+                "Token_Service.Ban": true,
+                "Token_Service.Unban": true,
+                "Token_Service.Invalidate": true,
+                "Token_Service.View": true
+            },
+            "activity": null,
+            "id": "65823b388be2aefc0e280476",
+            "createdOn": 1703033656
+        }
+    ]
+}
+```
+
+The `id` parameter here is optional.  If you do not specify an ID, **all portal accounts** will appear in the array instead.
+
+Another important thing to note: take a look at the first two permissions in both the roles.  When DMZ checks for permissions, it combines all roles with an individual permission set to create a `Passport`, and the more permissive value is used.  So, in this particular case, both `Calendar_Service.View` and `Chat_Service.Send_Announcements` would evaluate to true.  One is granted by the account and not the role, and the other is granted by the role but not the account.
+
+Realistically, almost every account will be managed by their assigned roles and not individual permissions.  Think of the individual permission set as an override.
+
+### Updating Permissions and/or Roles for an account
+
+```
+PUT /permissions/update
+{
+    "id": "65823b388be2aefc0e280476"
+    "roleIds": [
+        "65824dbd2033ec419bdc9ccd"
+    ],
+    "permissions": {
+        "Calendar_Service.View_Navbar": true,
+        "Calendar_Service.View_Page": true,
+        "Calendar_Service.Edit": false,
+        ...
     }
-    if (READONLY_DOMAINS.Any(email.EndsWith))
-        return new Passport(PassportType.Readonly);
-    return new Passport(PassportType.Unauthorized);
+}
+
+HTTP 204 (No Content)
+```
+
+One or both of either `roleIds` or `permissions` must be provided.  This is a **replace operation**; that is to say that the account will reflect these exact role IDs or permissions.  If you send an empty array for `roleIds`, that's effectively removing all roles from an account.  Similarly, if you only send one value in `permissions`, all other permissions will be `false`.
+
+Only pass the role IDs in, not the role objects themselves.  You cannot use this endpoint to update a role's permission set; just what permissions an individual account has and the roles it has assigned to it.
+
+### Seeing What Roles Are Available
+
+```
+GET /permissions/roles
+
+HTTP 200
+{
+    "roles": [
+        {
+            "name": "foobar",
+            "permissions": {
+                "Calendar_Service.View": false,
+                "Chat_Service.Send_Announcements": true,
+                "Chat_Service.Delete_Announcements": false,
+                ...
+            },
+            "id": "65824dbd2033ec419bdc9ccd",
+            "createdOn": 1703038397
+        },
+        ...
+    ]
 }
 ```
 
-## Managing Allowed Domains
+This endpoint will list all of the roles available to DMZ.  The `id` is the most important field to track since this will be necessary for updating / deleting a role and assigning it to users.
 
-As alluded to above, all default permissions are granted through the `Passport.GetDefaultPermissions()` method.  If a domain appears in one of the default permission set arrays, it will be allowed into the Portal in at least _some_ capacity.  If the email doesn't match any pattern, a `PermissionInvalidException` will be thrown, redirecting the user to the error page.  No data will be inserted into Mongo.
-
-## Dev vs. Prod
-
-Production environments necessitate more restrictive permissions.  We need to be extremely careful with who can interface with our services when user data can be affected.  As permissions expand, keep this in mind.  Leverage boolean properties such as `PlatformEnvironment.IsProd` to create different Passports specifically for prod for custom roles.
-
-## Future Enhancement: Roles
-
-Roles will allow a more easily configurable experience for user management.  Roles will be managed via the Portal.
-
-* A `Role` will be an enum with the `Flags` attribute.  Roles will correspond to a specific Passport.  
-* On startup, a comprehensive `Dictionary<Role, Passport>` will be created.  Every possible combination of `Role` flags will be available in the dictionary.
-* Accounts will be able to be assigned a `Role` via flags, e.g.
+### Creating a New Role
 
 ```
-account.Role = Role.CustomerService | Role.ChatAdmin | Role.DevSuperuser;
+POST /permissions/roles/create
+{
+    "name": "foobar",
+    "permissions": {
+        "Calendar_Service.View": true,
+        "Chat_Service.Send_Announcements": true,
+        "Chat_Service.Delete_Announcements": true,
+        ...
+    }
+}
+
+HTTP 200
+{
+    "role":
+    {
+        "name": "foobar",
+        "permissions": {
+            "Calendar_Service.View": true,
+            "Chat_Service.Send_Announcements": true,
+            "Chat_Service.Delete_Announcements": true,
+            ...
+        },
+        "id": "65824dbd2033ec419bdc9ccd",
+        "createdOn": 1703038397
+    }
+}
 ```
-* Whenever a Passport is read from Mongo, the account will compare the Passport permissions with the Role permissions.  The account Passport will be merged with the corresponding Role's Passport via the dictionary.  If any values are changed, the account Passport will be updated on Mongo.
-    * When merging, the most permissive value is used.  So if the account lacks permission to `Player.CanRename` and contains six roles, of which only one has access to `Player.CanRename`, their resultant Passport will have access to `Player.CanRename`.
+
+Not much to say about this one, other than the fact it returns the newly-created role with its ID.  Role names are forced to be unique; this is a constraint added to MongoDB, so this request will fail if you try to create a new role with a pre-existing name.
+
+### Updating an Existing Role
+
+```
+PUT /permissions/roles/update
+{
+    "id": "65824dbd2033ec419bdc9ccd",
+    "permissions": {
+        "Calendar_Service.View": true,
+        "Chat_Service.Send_Announcements": true,
+        "Chat_Service.Delete_Announcements": false,
+        ...
+    }
+}
+
+HTTP 204 (No Content)
+```
+
+Same as above; the updated model is returned for the output.
+
+### Deleting a Role
+
+```
+DELETE /permissions/roles/delete?id=65824dbd2033ec419bdc9ccd
+
+HTTP 204 (No Content)
+```
+
+This will remove the role entirely after first removing it from all accounts that have been assigned that role.
+
+## Final Notes
+
+There is a `superuser` role that can't be permanently removed.  If deleted, the role will be erased from accounts that previously had it, but DMZ will add it back again on its own.  Similarly, if its permissions are changed to be `false` on anything, DMZ will repair the role.  This is considered a necessary role to have and can not be permanently removed.
+
+These changes can only happen at the manual database-level.  API calls have protections against altering the superuser.
+
+Since permissions can be added at any time from the backend, it's a good idea to build a frontend client in a dynamic way that it draws available values from keys returned by a permissions object, since those will reflect what's actually in the code.  As C# properties are deleted, they'll disappear from the responses; similarly, when one is added, a new property will appear.

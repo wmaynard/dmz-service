@@ -7,8 +7,11 @@ using Dmz.Models.Portal;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Enums;
 using Rumble.Platform.Common.Exceptions;
+using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
+using Rumble.Platform.Data;
+
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable InconsistentNaming
 // ReSharper disable ArrangeAccessorOwnerBody
@@ -60,9 +63,7 @@ public class Passport : List<PermissionGroup>
     {
         T output = this.OfType<T>().FirstOrDefault();
         if (output == null)
-        {
             base.Add(output = Activator.CreateInstance<T>());
-        }
 
         return output;
     }
@@ -84,13 +85,13 @@ public class Passport : List<PermissionGroup>
             switch (userType)
             {
                 case PassportType.Superuser:
-                    group?.ConvertToAdmin();
+                    group?.UpdatePermissions(true);
                     break;
                 case PassportType.Readonly:
-                    group?.ConvertToReadonly();
+                    group?.UpdatePermissions(true, filter: "View_");
                     break;
                 case PassportType.Nonprivileged:
-                    group?.ConvertToNonprivileged();
+                    group?.UpdatePermissions(false);
                     break;
                 case PassportType.Unauthorized:
                 default:
@@ -104,25 +105,24 @@ public class Passport : List<PermissionGroup>
     {
         PermissionGroup current = this.FirstOrDefault(group => group.GetType() == toAdd.GetType());
         if (current == null)
-        {
             base.Add(toAdd);
-        }
         else
-        {
             current.Merge(toAdd);
-        }
     }
     public enum PassportType { Superuser, Readonly, Nonprivileged, Unauthorized }
 
-    public static Passport GetDefaultPermissions(SsoData data)
+    private static Passport GetDefaultPermissions(SsoData data, TokenInfo token)
     {
-        if (PlatformEnvironment.IsProd && PROD_SUPERUSERS.Contains(data.Email))
+        if (data == null && token == null)
+            throw new PlatformException("Unauthorized.");
+        
+        if (PlatformEnvironment.IsProd && PROD_SUPERUSERS.Contains(data?.Email ?? token.Email))
             return new Passport(PassportType.Superuser);
 
-        if (!PlatformEnvironment.IsProd && DEV_SUPERUSERS.Contains(data.Email))
+        if (!PlatformEnvironment.IsProd && DEV_SUPERUSERS.Contains(data?.Email ?? token.Email))
             return new Passport(PassportType.Superuser);
         
-        if (READONLY_DOMAINS.Contains(data.Domain))
+        if (READONLY_DOMAINS.Contains(data?.Domain))
             return new Passport(PassportType.Readonly);
         
         if (PlatformEnvironment.IsProd)
@@ -138,5 +138,26 @@ public class Passport : List<PermissionGroup>
             return new Passport(PassportType.Readonly);
 
         throw new PlatformException("Unauthorized.");
+    }
+
+    public static Passport GetDefaultPermissions(SsoData data) => GetDefaultPermissions(data, null);
+    public static Passport GetDefaultPermissions(TokenInfo token) => GetDefaultPermissions(null, token);
+
+    public void Merge(Passport other)
+    {
+        foreach (PermissionGroup group in this)
+            group.Merge(other.FirstOrDefault(pg => pg.Name == group.Name));
+    }
+
+    public static Passport FromPermissionSet(RumbleJson permissions)
+    {
+        if (permissions == null)
+            return null;
+        Passport output = new(PassportType.Readonly);
+
+        foreach (PermissionGroup group in output)
+            group.UpdateFromValues(permissions);
+
+        return output;
     }
 }

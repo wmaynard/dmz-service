@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using MongoDB.Bson.Serialization.Attributes;
 using RCL.Logging;
 using Rumble.Platform.Common.Models;
@@ -32,103 +33,69 @@ public abstract class PermissionGroup : PlatformDataModel
     /// </summary>
     public bool View { get; set; }
 
+    private PropertyInfo[] BooleanProperties => GetType()
+        .GetProperties(bindingAttr: BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+        .Where(info => info.PropertyType.IsAssignableTo(typeof(bool)))
+        .ToArray();
+
     [BsonIgnore, JsonIgnore]
-    internal string Key
-    {
-        get { return Name.Replace(oldChar: '.', newChar: '-').Replace(oldChar: ' ', newChar: '_'); }
-    }
+    internal string Key => Name
+        .Replace(oldChar: '.', newChar: '-')
+        .Replace(oldChar: ' ', newChar: '_');
 
-    internal string GetPermissionKey(string name)
-    {
-        return $"{Key}.{name}";
-    }
+    internal string GetPermissionKey(string name) => $"{Key}.{name}";
 
-    public Dictionary<string, bool> Values
-    {
-        get
-        {
-            Dictionary<string, bool> output = new Dictionary<string, bool>();
-            foreach (PropertyInfo info in GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(info => info.PropertyType.IsAssignableTo(typeof(bool))))
-            {
-                output[GetPermissionKey(info.Name)] = (bool)(info.GetValue(this) ?? false);
-            }
+    public Dictionary<string, bool> Values => BooleanProperties.ToDictionary(
+        keySelector: prop => GetPermissionKey(prop.Name),
+        elementSelector: prop => (bool)(prop.GetValue(this) ?? false)
+    );
 
-            return output;
-        }
-    }
 
     public int UpdateFromValues(RumbleJson json)
     {
         int valuesChanged = 0;
-        foreach (PropertyInfo info in GetType()
-            .GetProperties(bindingAttr: BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-            .Where(prop => prop.PropertyType == typeof(bool)))
+        foreach (PropertyInfo info in BooleanProperties)
         {
             string key = GetPermissionKey(info.Name);
             bool? value = json.Optional<bool?>(key);
-            if (value != null)
-            {
-                if (info.GetValue(this)?.Equals(value) ?? false)
-                {
-                    continue;
-                }
 
-                info.SetValue(this, (bool)value);
-                valuesChanged++;
-            }
-            else
-            {
-                Log.Warn(Owner.Will, "Unable to update permission from RumbleJson; key not found.", data: new
-                                                                                                           {
-                                                                                                               PermissionKey = key
-                                                                                                           });
-            }
+            if (value == null)                                  // Request didn't specify this value; move on.
+                continue;
+            
+            if (info.GetValue(this)?.Equals(value) ?? false)    // Request value is the same; move on.
+                continue;
+
+            info.SetValue(this, (bool)value);
+            valuesChanged++;
         }
         return valuesChanged;
     }
-    
-    public void ConvertToAdmin()
+
+    public void UpdatePermissions(bool value, string filter = null)
     {
-        foreach (PropertyInfo info in GetType()
-            .GetProperties(bindingAttr: BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-            .Where(info => info.PropertyType.IsAssignableTo(typeof(bool))))
-        {
-            info.SetValue(obj: this, value: true);
-        }
-    }
-    
-    public void ConvertToReadonly()
-    {
-        foreach (PropertyInfo info in GetType()
-            .GetProperties(bindingAttr: BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-            .Where(info => info.PropertyType.IsAssignableTo(typeof(bool)))
-            .Where(info => info.Name.Contains("View_")))
-        {
-            info.SetValue(obj: this, value: true);
-        }
-    }
-    public void ConvertToNonprivileged()
-    {
-        foreach (PropertyInfo info in GetType()
-            .GetProperties(bindingAttr: BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-            .Where(info => info.PropertyType.IsAssignableTo(typeof(bool))))
-        {
-            info.SetValue(obj: this, value: false);
-        }
+        PropertyInfo[] perms = string.IsNullOrWhiteSpace(filter)
+            ? BooleanProperties
+            : BooleanProperties
+                .Where(prop => prop.Name.Contains(filter))
+                .ToArray();
+        
+        foreach(PropertyInfo info in perms)
+            info.SetValue(this, value);
     }
 
     // TODO: Test this
     public void Merge(PermissionGroup group)
     {
-        Dictionary<string, bool> values = group.Values;
-        foreach (PropertyInfo info in GetType()
-            .GetProperties(bindingAttr: BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-            .Where(info => info.PropertyType.IsAssignableTo(typeof(bool))))
-        {
-            if (values.TryGetValue(group.Name + "." + info.Name, out bool permission))
+        if (group == null)
+            return;
+        foreach (PropertyInfo info in BooleanProperties)
+            if (group.Values.TryGetValue(GetPermissionKey(info.Name), out bool permission)) // look up the parameter group's permission
             {
-                info.SetValue(this, (bool)(info.GetValue(this) ?? false) || permission);
+                if (group.Name.Contains("Chat"))
+                {
+                    Console.Write("");
+                }
+                info.SetValue(this, (bool) (info.GetValue(this) ?? false) || permission);
             }
-        }
     }
 }

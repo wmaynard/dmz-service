@@ -8,7 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using RCL.Logging;
 using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Exceptions;
+using Rumble.Platform.Common.Extensions;
 using Rumble.Platform.Common.Utilities;
+using Rumble.Platform.Data;
 
 // ReSharper disable ArrangeAttributes
 
@@ -18,115 +20,48 @@ namespace Dmz.Controllers;
 public class PermissionController : DmzController
 {
     #pragma warning disable
-        private readonly AccountService _accountService;
-        private readonly RoleService    _roleService;
+private readonly AccountService _accounts;
+private readonly RoleService    _roles;
     #pragma warning restore
     
-    #region List
-    // TODO search if user base becomes large
-    
-    // List all accounts
-    [HttpGet, Route("list")]
-    public ActionResult List()
-    {
-        Require(Permissions.Portal.ManagePermissions);
-      
-        IEnumerable<Account> accounts = _accountService.List();
-
-        return Ok(new {Accounts = accounts});
-    }
-    
-    // Search by role
-    [HttpGet, Route("search/role")]
-    public ActionResult SearchRole(string name)
-    {
-        Require(Permissions.Portal.ManagePermissions);
-
-        List<Account> accounts = _accountService.FindByRole(name);
-
-        return Ok(new {Accounts = accounts});
-    }
-    
-    // Search by permission
-    [HttpGet, Route("search/permission")]
-    public ActionResult SearchPermission(string name)
-    {
-        Require(Permissions.Portal.ManagePermissions);
-
-        List<Account> accounts = _accountService.FindByPermission(name);
-        
-        return Ok(new {Accounts = accounts});
-    }
-    
-    #endregion
-    
-    #region Account page
+    #region Accounts
     // Get account info
-    [HttpGet, Route("account")]
-    public ActionResult Account()
+    [HttpGet, Route("accounts")]
+    public ActionResult ListAccounts()
     {
         Require(Permissions.Portal.ManagePermissions);
 
-        string accountId = Require<string>(key: "id");
-        Account account = _accountService.Get(accountId);
+        string accountId = Optional<string>("id");
 
-        return Ok(account);
+        return Ok(new RumbleJson
+        {
+            { "accounts", string.IsNullOrWhiteSpace(accountId)
+                ? _accounts.All()
+                : _accounts.FromId(accountId)
+            }
+        });
     }
     
-    // Update account permissions
+    // Update account permissions & Roles
     // TODO: This method should be accepting permission-related classes as parameters, not a ton of strings. 
-    [HttpPatch, Route("account")]
+    [HttpPut, Route("update")]
     public ActionResult UpdatePermissions()
     {
         Require(Permissions.Portal.ManagePermissions);
 
-        string id = Require<string>(key: "id");
-
-        // Differentiate this from the regular Permissions property, which refers to the current user - not the one displayed on screen.
-        Passport displayedUserPermissions = _accountService.FindById(id).Permissions;
-        int sum = displayedUserPermissions.Sum(group => group.UpdateFromValues(Body));
-
-        // Nothing was changed; no reason to do anything further.
-        if (sum == 0)
-            return Ok();
-
-        if (_accountService.UpdatePassport(id, displayedUserPermissions) != 1)
-            throw new PlatformException(message: "Unable to update permissions.");
-
-        return Ok(new {Message = $"Updated {sum} values."});
-    }
-    
-    // Modify roles
-    [HttpPatch, Route("account/roles")]
-    public ActionResult AccountRoles()
-    {
-        Require(Permissions.Portal.ManagePermissions);
-
         string id = Require<string>("id");
-        List<string> roleNames = Require<List<string>>("roles");
+        string[] roleIds = Optional<string[]>("roleIds");
+        RumbleJson permissions = Optional<RumbleJson>(Account.FRIENDLY_KEY_PERMISSIONS);
+        Passport passport = Passport.FromPermissionSet(permissions);
+        
+        _roles.EnsureAllRolesExist(roleIds);
 
-        Account account = _accountService.FindById(id);
-
-        try
-        {
-            // TODO: This really needs to be a single mongo query
-            account.Roles = roleNames
-                .Select(role => _roleService.FindByName(role))
-                .ToList();
-        }
-        catch (Exception e)
-        {
-            throw new PlatformException(message: $"An attempt was made to add a non-existent role.", inner: e)
-            {
-                Data = { {"roles", roleNames } }
-            };
-        }
-
-        _accountService.Update(account);
-
-        return Ok(account.Roles);
+        if (!_accounts.UpdatePassport(id, roleIds, passport))
+            throw new PlatformException("Could not update account permissions.  Either nothing changed or the account doesn't exist.");
+        
+        return Ok();
     }
-    #endregion
+    #endregion Accounts
     
     #region Roles
     // Get roles
@@ -135,54 +70,47 @@ public class PermissionController : DmzController
     {
         Require(Permissions.Portal.ManagePermissions);
 
-        List<Role> roles = (List<Role>) _roleService.List();
-        return Ok(new {Roles = roles});
+        return Ok(_roles.List());
     }
     
     // New role
-    [HttpPost, Route("roles/add")]
+    [HttpPost, Route("roles/create")]
     public ActionResult AddRole()
     {
         Require(Permissions.Portal.ManagePermissions);
-
-        string name = Require<string>(key: "name");
-
-        if (_roleService.FindByName(name) != null)
-        {
-            throw new PlatformException(message: "Role already exists.");
-        }
-
-        Passport passport = new Passport(Passport.PassportType.Readonly);
         
-        int sum = passport.Sum(group => group.UpdateFromValues(Body));
+        string name = Require<string>("name");
+        RumbleJson permissions = Require<RumbleJson>(Account.FRIENDLY_KEY_PERMISSIONS);
+        Passport passport = Passport.FromPermissionSet(permissions);
+        
+        Role role = new()
+        {
+            Name = name,
+            Permissions = passport
+        };
+        _roles.EnsureNameNotTaken(name);
+        _roles.Insert(role);
 
-        Role role = new Role(name: name, passport: passport);
-        _roleService.Create(role);
-
-        return Ok(message: $"{sum} permissions were added for new role {name}.");
+        return Ok(role);
     }
     
     // Edit role
-    [HttpPatch, Route("roles/edit")]
+    [HttpPut, Route("roles/update")]
     public ActionResult EditRole()
     {
         Require(Permissions.Portal.ManagePermissions);
-        
-        string name = Require<string>(key: "name");
-        
-        Role role = _roleService.FindByName(name);
 
-        if (role == null)
-        {
-            throw new PlatformException(message: "Role does not exist.");
-        }
+        string id = Require<string>("id");
 
-        int sum = role.Permissions.Sum(group => group.UpdateFromValues(Body));
+        if (string.IsNullOrWhiteSpace(id) || !id.CanBeMongoId())
+            throw new PlatformException("Invalid role ID");
         
-        _roleService.Update(role); // role definition in mongo
-        _accountService.UpdateEditedRole(role); // for roles already in accounts
+        _roles.EnforceIdNotSuperuser(id);
+        RumbleJson permissions = Optional<RumbleJson>(Account.FRIENDLY_KEY_PERMISSIONS);
+        Passport passport = Passport.FromPermissionSet(permissions);
+        _roles.UpdatePermissions(id, passport);
 
-        return Ok(message: $"{sum} permissions were edited for role {name}.");
+        return Ok();
     }
     
     // Delete role
@@ -191,19 +119,13 @@ public class PermissionController : DmzController
     {
         Require(Permissions.Portal.ManagePermissions);
 
-        string name = Require<string>(key: "name");
+        string id = Require<string>("id");
 
-        Role role = _roleService.FindByName(name);
-        
-        if (role == null)
-        {
-            throw new PlatformException(message: "Role does not exist.");
-        }
-        
-        _roleService.Delete(role);
-        _accountService.RemoveDeletedRole(role.Name);
+        _roles.EnforceIdNotSuperuser(id);
+        _accounts.RemoveRole(id);
+        _roles.Delete(id);
 
-        return Ok(message: $"Role {name} has been deleted");
+        return Ok();
     }
-    #endregion
+    #endregion Roles
 }

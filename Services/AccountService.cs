@@ -1,139 +1,110 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Dmz.Exceptions;
 using Dmz.Models.Permissions;
 using Dmz.Models.Portal;
-using MongoDB.Driver;
 using Rumble.Platform.Common.Exceptions;
+using Rumble.Platform.Common.Minq;
 using Rumble.Platform.Common.Models;
-using Rumble.Platform.Common.Services;
-// ReSharper disable ArrangeMethodOrOperatorBody
 
 namespace Dmz.Services;
-public class AccountService : PlatformMongoService<Account>
+
+public class AccountService : MinqService<Account>
 {
-    internal static AccountService Instance { get; private set; }
-    public AccountService() : base(collection: "accounts") => Instance = this;
+    private readonly RoleService _roles;
+    public static AccountService Instance { get; private set; }
 
-    public Account FindById(string id) => FindOne(filter: account => account.Id == id);
-
-    public List<Account> FindByRole(string name)
+    public AccountService(RoleService roles) : base("accounts")
     {
-        return _collection.Find(Builders<Account>.Filter.ElemMatch(account => account.Roles, role => role.Name == name)).ToList();
+        Instance = this;
+        _roles = roles;
     }
 
-    public List<Account> FindByPermission(string perm)
+    public Account[] All()
     {
-        List<Account> accounts = _collection.Find(acc => true).ToList();
-        List<Account> matchingAccounts = new List<Account>();
+        Account[] output = mongo
+            .All()
+            .ToArray();
 
-        foreach (Account account in accounts)
-        {
-            bool found = false;
-            foreach (PermissionGroup permissionGroup in account.Permissions)
-            {
-                bool inPermissions;
-                permissionGroup.Values.TryGetValue(perm, out inPermissions);
-                if (inPermissions)
-                {
-                    found = true;
-                }
-            }
+        Role[] roles = _roles.FromIds(output.SelectMany(account => account.RoleIds).ToArray());
 
-            foreach (Role role in account.Roles)
-            {
-                foreach (PermissionGroup permissionGroup in role.Permissions)
-                {
-                    bool inRoles;
-                    permissionGroup.Values.TryGetValue(perm, out inRoles);
-                    if (inRoles)
-                    {
-                        found = true;
-                    }
-                }
-            }
+        foreach (Account account in output)
+            account.Roles = roles
+                .Where(role => account.RoleIds.Contains(role.Id))
+                .ToArray();
 
-            if (found)
-            {
-                matchingAccounts.Add(account);
-            }
-        }
+        return output;
+    }
+
+    public override Account FromId(string id)
+    {
+        Account output = base.FromId(id);
         
-        return matchingAccounts;
+        output.Roles = _roles.FromIds(output.RoleIds).ToArray();
+
+        return output;
     }
 
-    public Account GetByEmail(string email) => _collection
-        .Find(filter: account => account.Email == email)
-        .FirstOrDefault()
-        ?? throw new PlatformException("No account found for specified email address.");
-
-    public long UpdatePassport(string accountId, Passport passport) => _collection.UpdateOne(
-        filter: account => account.Id == accountId,
-        update: Builders<Account>.Update.Set(field: account => account.Permissions, passport)
-    ).ModifiedCount;
-
-    public Account GoogleLogin(SsoData data) => FindOne(filter: account => account.Email == data.Email) 
-        ?? Create(Account.FromSsoData(data));
-    
-    public Account FindByToken(TokenInfo token) => token?.Email != null
-        ? _collection
-            .Find(account => account.Email == token.Email)
-            .FirstOrDefault()
-            ?? throw new AccountNotFoundException(token)
-        : throw new InvalidTokenException(token?.Authorization, HttpContext.Request.Path.ToString());
-    
-    public void UpdateEditedRole(Role role)
+    public bool UpdatePassport(string id, string[] roleIds, Passport passport)
     {
-        List<WriteModel<Account>> listWrites = new List<WriteModel<Account>>();
+        if (roleIds == null && passport == null)
+            throw new PlatformException($"You must provide either '{Account.FRIENDLY_KEY_ROLES}', '{Account.FRIENDLY_KEY_PERMISSIONS}', or both.");
 
-        FilterDefinition<Account> filter = Builders<Account>.Filter.ElemMatch(account => account.Roles,oldRole => oldRole.Name == role.Name);
-        UpdateDefinition<Account> update = Builders<Account>.Update.Set(account => account.Roles[-1], role);
-		
-        listWrites.Add(new UpdateManyModel<Account>(filter, update));
-        _collection.BulkWrite(listWrites);
-    }
-
-    public void RemoveDeletedRole(string roleName)
-    {
-        List<WriteModel<Account>> listWrites = new List<WriteModel<Account>>();
-
-        FilterDefinition<Account> filter = Builders<Account>.Filter.ElemMatch(account => account.Roles, role => role.Name == roleName);
-        UpdateDefinition<Account> update = Builders<Account>.Update.PullFilter(account => account.Roles, role => role.Name == roleName);
-		
-        listWrites.Add(new UpdateManyModel<Account>(filter, update));
-        _collection.BulkWrite(listWrites);
-    }
-
-    /// <summary>
-    /// Records a logging event to the responsible account.  Capped by Account.MAX_ACTIVITY_LOG_STORAGE.
-    /// </summary>
-    /// <param name="log"></param>
-    /// <returns></returns>
-    public Account AddLog(AuditLog log) => _collection
-        .FindOneAndUpdate(
-            filter: Builders<Account>.Filter.Eq(account => account.Id, log.PortalAccountId),
-            update: Builders<Account>.Update.PushEach(
-                field: account => account.Activity, 
-                values: new[] { log }, 
-                slice: Account.MAX_ACTIVITY_LOG_STORAGE * -1
-            ),
-            options: new FindOneAndUpdateOptions<Account>
+        return mongo
+            .ExactId(id)
+            .Update(update =>
             {
-                ReturnDocument = ReturnDocument.After
-            }
-        );
+                if (roleIds != null)
+                    update.Set(account => account.RoleIds, roleIds);
+                if (passport != null)
+                    update.Set(account => account.Permissions, passport);
+            }) == 1;
+    }
 
-    /// <summary>
-    /// Fetches recent activity logs; max 1,000 records at a time.
-    /// </summary>
-    /// <param name="limit"></param>
-    /// <returns></returns>
-    public AuditLog[] GetActivityLogs(int? limit = null) => _collection
-        .AsQueryable()
-        .Where(account => account.Activity != null)
-        .SelectMany(account => account.Activity)
+    public Account GoogleLogin(SsoData data) => mongo
+        .Where(query => query.EqualTo(account => account.Email, data.Email))
+        .Upsert(update => update
+            .SetOnInsert(account => account.Name, data.Name)
+            .SetOnInsert(account => account.Email, data.Email)
+            .SetOnInsert(account => account.Permissions, Passport.GetDefaultPermissions(data))
+            .SetOnInsert(account => account.RoleIds, Array.Empty<string>())
+        );
+    
+    public Account FindByToken(TokenInfo token) => string.IsNullOrWhiteSpace(token?.Email)
+        ? throw new InvalidTokenException(token?.Authorization, "deprecated")
+        : mongo
+            .Where(query => query.EqualTo(account => account.Email, token.Email))
+            .FirstOrDefault()
+            ?? throw new AccountNotFoundException(token);
+
+    public Account FromToken(TokenInfo token, bool loadRoles = false)
+    {
+        Account output = mongo
+            .Where(query => query.EqualTo(account => account.Email, token.Email))
+            .Upsert(update => update
+                .SetOnInsert(account => account.Permissions, Passport.GetDefaultPermissions(token))
+                .SetOnInsert(account => account.RoleIds, Array.Empty<string>())
+            );
+
+        if (output != null && loadRoles)
+            output.LoadPermissionsFrom(_roles.FromIds(output.RoleIds));
+        
+        return output;
+    }
+
+    public long RemoveRole(string roleId) => mongo
+        .All()
+        .Update(query => query.RemoveItems(account => account.RoleIds, roleId));
+
+    public AuditLog[] GetActivityLogs() => mongo
+        .All()
+        .Project(account => account.Activity)
+        .SelectMany(_ => _)
         .OrderByDescending(log => log.Time)
-        .Take(Math.Max(limit ?? 100, Account.MAX_ACTIVITY_LOG_STORAGE))
         .ToArray();
+
+    public bool AddLog(AuditLog log) => mongo
+        .ExactId(log.PortalAccountId)
+        .Update(update => update.AddItems(account => account.Activity, limitToKeep: 1_000, log)) == 1;
+
 }

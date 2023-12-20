@@ -52,30 +52,45 @@ public class Account : PlatformCollectionDocument
 
     [BsonElement(DB_KEY_EMAIL)]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_EMAIL)]
-    public string Email { get; private set; }
+    public string Email { get; set; }
     
     [BsonElement(DB_KEY_ROLES)]
+    [JsonInclude, JsonPropertyName("roleIds")]
+    public string[] RoleIds { get; set; }
+    
+    [BsonIgnore]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_ROLES)]
-    public List<Role> Roles { get; set; }
+    public Role[] Roles { get; set; }
     
     [BsonElement(DB_KEY_PERMISSIONS)]
+    [JsonIgnore]
+    public Passport Permissions { get; set; }
+
+    // Simplify permissions for output; due to a janky way mongo tries to serialize Passports, we have to do some dumb workarounds.
+    [BsonIgnore]
     [JsonInclude, JsonPropertyName(FRIENDLY_KEY_PERMISSIONS)]
-    public Passport Permissions { get; set; } // TODO: private set
+    public Dictionary<string, bool> Perms => Permissions
+        .SelectMany(group => group.Values)
+        .ToDictionary(
+            keySelector: pair => pair.Key,
+            elementSelector: pair => pair.Value
+        );
     
     [BsonElement(DB_KEY_ACTIVITY), BsonIgnoreIfNull]
-    [JsonInclude, JsonPropertyName(FRIENDLY_KEY_ACTIVITY)]
-    [CompoundIndex(group: INDEX_ACTIVITY, priority: 1)]
+    // [JsonInclude, JsonPropertyName(FRIENDLY_KEY_ACTIVITY)]
+    [JsonIgnore]
     public AuditLog[] Activity { get; set; }
 
-    public Account() => Permissions = new Passport();
-
-    public static Account FromSsoData(SsoData data) => new Account
+    public static Account FromSsoData(SsoData data) => new()
    {
        Name = data.Name,
        Email = data.Email,
        Permissions = Passport.GetDefaultPermissions(data)
    };
 
-    // Temporary to add in missing properties
-    public void InitPropertyRole() => Roles = new List<Role>();
+    public void LoadPermissionsFrom(Role[] roles)
+    {
+        foreach (Role role in roles)
+            Permissions.Merge(role.Permissions);
+    }
 }

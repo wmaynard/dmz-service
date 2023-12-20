@@ -23,11 +23,11 @@ public class TopController : DmzController
     });
 
     [HttpGet, Route("activity"), RequireAuth(AuthType.ADMIN_TOKEN)]
-    public ActionResult GetActivityLog()
+    public ActionResult GetActivityLog() // TODO: Fix the performance here
     {
         Require(Permissions.Portal.ViewActivityLogs);
 
-        AuditLog[] logs = AccountService.Instance.GetActivityLogs(limit: Optional<int?>("limit"));
+        AuditLog[] logs = AccountService.Instance.GetActivityLogs();
 
         return Optional<bool>("messageOnly")
             ? Ok(new RumbleJson { { "messages", logs.Select(log => $"{log.Time} | {log.Who.PadLeft(totalWidth: 40, paddingChar: ' ')} | {log.Message ?? $"{log.Method} {log.Endpoint} {log.ResultCode}"}") } })
