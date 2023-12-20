@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Dmz.Exceptions;
 using Dmz.Models.Permissions;
 using Dmz.Models.Portal;
 using Rumble.Platform.Common.Exceptions;
+using Rumble.Platform.Common.Extensions;
 using Rumble.Platform.Common.Minq;
 using Rumble.Platform.Common.Models;
 
@@ -26,7 +28,13 @@ public class AccountService : MinqService<Account>
             .All()
             .ToArray();
 
-        Role[] roles = _roles.FromIds(output.SelectMany(account => account.RoleIds).ToArray());
+        string[] roleIds = output
+            .Where(account => account.RoleIds != null && account.RoleIds.Length > 0)
+            .SelectMany(account => account.RoleIds)
+            .Where(id => !string.IsNullOrWhiteSpace(id) && id.CanBeMongoId())
+            .ToArray();
+
+        Role[] roles = _roles.FromIds(roleIds).ToArray();
 
         foreach (Account account in output)
             account.Roles = roles
