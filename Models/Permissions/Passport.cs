@@ -125,7 +125,7 @@ public class Passport : List<PermissionGroup>
         if (READONLY_DOMAINS.Contains(data?.Domain))
             return new Passport(PassportType.Readonly);
         
-        if (PlatformEnvironment.IsProd)
+        if (PlatformEnvironment.IsProd || data == null)
             throw new PlatformException("Unauthorized.");
         
         string[] dcDomains = DynamicConfig.Instance

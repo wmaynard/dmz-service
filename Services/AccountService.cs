@@ -4,10 +4,12 @@ using System.Linq;
 using Dmz.Exceptions;
 using Dmz.Models.Permissions;
 using Dmz.Models.Portal;
+using RCL.Logging;
 using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Extensions;
 using Rumble.Platform.Common.Minq;
 using Rumble.Platform.Common.Models;
+using Rumble.Platform.Common.Utilities;
 
 namespace Dmz.Services;
 
@@ -37,9 +39,12 @@ public class AccountService : MinqService<Account>
         Role[] roles = _roles.FromIds(roleIds).ToArray();
 
         foreach (Account account in output)
+        {
+            account.RoleIds ??= Array.Empty<string>();
             account.Roles = roles
                 .Where(role => account.RoleIds.Contains(role.Id))
                 .ToArray();
+        }
 
         return output;
     }
