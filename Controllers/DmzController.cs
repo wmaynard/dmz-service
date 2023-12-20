@@ -46,4 +46,7 @@ public abstract class DmzController : PlatformController
         
         return Ok(data: response);
     }
+
+    public new OkObjectResult Ok() => Ok(new RumbleJson());
+    public override OkObjectResult Ok(object value) => base.Ok(value ?? new RumbleJson());
 }
