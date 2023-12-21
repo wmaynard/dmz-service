@@ -34,6 +34,7 @@ public class AccountService : MinqService<Account>
             .Where(account => account.RoleIds != null && account.RoleIds.Length > 0)
             .SelectMany(account => account.RoleIds)
             .Where(id => !string.IsNullOrWhiteSpace(id) && id.CanBeMongoId())
+            .Distinct()
             .ToArray();
 
         Role[] roles = _roles.FromIds(roleIds).ToArray();
