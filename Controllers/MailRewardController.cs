@@ -34,9 +34,8 @@ public class MailRewardController : DmzController
             Forward("/mail/claim", out RumbleJson response);
 
             redirectUrl = response
-                .Optional<RumbleJson>("mailboxMessage")
-                ?.Optional<RumbleJson>("data")
-                ?.Optional<string>("successUrl")
+                .Optional<RumbleJson>("campaignMessage")
+                ?.Optional<string>("redirectUrl")
                 ?? _config.Optional<string>("mailClaimSuccessPage")
                 ?? redirectUrl;
 
