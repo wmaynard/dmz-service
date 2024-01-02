@@ -115,26 +115,28 @@ public class Passport : List<PermissionGroup>
     {
         if (data == null && token == null)
             throw new PlatformException("Unauthorized.");
-        
-        if (PlatformEnvironment.IsProd && PROD_SUPERUSERS.Contains(data?.Email ?? token.Email))
-            return new Passport(PassportType.Superuser);
 
-        if (!PlatformEnvironment.IsProd && DEV_SUPERUSERS.Contains(data?.Email ?? token.Email))
+        bool isSuperUser = PROD_SUPERUSERS.Contains(data?.Email ?? token.Email)
+            || (!PlatformEnvironment.IsProd && DEV_SUPERUSERS.Contains(data?.Email ?? token.Email));
+        
+        if (isSuperUser)
             return new Passport(PassportType.Superuser);
         
-        if (READONLY_DOMAINS.Contains(data?.Domain))
-            return new Passport(PassportType.Readonly);
-        
-        if (PlatformEnvironment.IsProd || data == null)
+        string tokenDomain = token?.Email[(token.Email.IndexOf('@') + 1)..] ?? data?.Domain;
+        if (string.IsNullOrWhiteSpace(tokenDomain))
             throw new PlatformException("Unauthorized.");
+        
+        if (READONLY_DOMAINS.Contains(tokenDomain))
+            return new Passport(PassportType.Readonly);
         
         string[] dcDomains = DynamicConfig.Instance
             ?.GetValuesFor(Audience.PlayerService)
             .Optional<string>("allowedSignupDomains")
             ?.Split(',')
             ?? Array.Empty<string>();
+
         
-        if (dcDomains.Any(domain => data.Domain.Contains(domain)))
+        if (!string.IsNullOrWhiteSpace(tokenDomain) && dcDomains.Any(domain => tokenDomain.Contains(domain)))
             return new Passport(PassportType.Readonly);
 
         throw new PlatformException("Unauthorized.");

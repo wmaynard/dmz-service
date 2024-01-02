@@ -5,6 +5,8 @@ using System.Net;
 using System.Threading.Tasks;
 using Dmz.Filters;
 using Dmz.Interop;
+using Dmz.Models.Permissions;
+using Dmz.Models.Portal;
 using Dmz.Services;
 using Dmz.Utilities;
 using DnsClient;
@@ -35,6 +37,12 @@ public class Startup : PlatformStartup
         .OnReady(_ =>
         {
             PlatformService.Optional<RoleService>()?.EnsureSuperUserExists();
+            // PlatformService.Optional<AccountService>()?.Insert(new Account
+            // {
+            //     Name = "Postman",
+            //     Email = "test@rumbleentertainment.com",
+            //     Permissions = new Passport(Passport.PassportType.Nonprivileged)
+            // });
         });
 }
 
