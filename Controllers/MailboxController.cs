@@ -84,5 +84,14 @@ public class MailboxController : DmzController
 
         return Forward("/mail/admin/messages/expire");
     }
+
+    [HttpPatch, Route("inbox/age")]
+    public ActionResult SetAccountAge()
+    {
+        Require(Permissions.Mail.Modify_Inbox);
+
+        return Forward("/mail/admin/inboxAge");
+    }
+
     #endregion
 }
