@@ -109,16 +109,4 @@ public class AccountService : MinqService<Account>
     public long RemoveRole(string roleId) => mongo
         .All()
         .Update(query => query.RemoveItems(account => account.RoleIds, roleId));
-
-    public AuditLog[] GetActivityLogs() => mongo
-        .All()
-        .Project(account => account.Activity)
-        .SelectMany(_ => _)
-        .OrderByDescending(log => log.Time)
-        .ToArray();
-
-    public bool AddLog(AuditLog log) => mongo
-        .ExactId(log.PortalAccountId)
-        .Update(update => update.AddItems(account => account.Activity, limitToKeep: 1_000, log)) == 1;
-
 }

@@ -23,5 +23,7 @@ public class ForwardingExceptionFilter : PlatformFilter, IExceptionFilter
             : new BadRequestObjectResult(fex.Data);
         
         context.ExceptionHandled = true;
+        
+        AuditFilter.CaptureLog(context, 400);
     }
 }

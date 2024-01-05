@@ -75,11 +75,6 @@ public class Account : PlatformCollectionDocument
             keySelector: pair => pair.Key,
             elementSelector: pair => pair.Value
         );
-    
-    [BsonElement(DB_KEY_ACTIVITY), BsonIgnoreIfNull]
-    // [JsonInclude, JsonPropertyName(FRIENDLY_KEY_ACTIVITY)]
-    [JsonIgnore]
-    public AuditLog[] Activity { get; set; }
 
     public static Account FromSsoData(SsoData data) => new()
    {

@@ -32,17 +32,11 @@ public class Startup : PlatformStartup
         .DisableFeatures(CommonFeature.ConsoleObjectPrinting)
         .DisableFilters(CommonFilter.Performance)
         .AddFilter<PermissionsFilter>()
-        .AddFilter<AuditFilter>()
         .AddFilter<ForwardingExceptionFilter>()
+        .AddFilter<AuditFilter>()
         .OnReady(_ =>
         {
             PlatformService.Optional<RoleService>()?.EnsureSuperUserExists();
-            // PlatformService.Optional<AccountService>()?.Insert(new Account
-            // {
-            //     Name = "Postman",
-            //     Email = "test@rumbleentertainment.com",
-            //     Permissions = new Passport(Passport.PassportType.Nonprivileged)
-            // });
         });
 }
 

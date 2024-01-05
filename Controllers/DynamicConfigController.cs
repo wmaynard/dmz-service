@@ -47,56 +47,7 @@ public class DynamicConfigController : DmzController
     {
         Require(Permissions.Config.Manage);
 
-        const string PREVIOUS = "previousValue";
-        const string PREVIOUS_COMMENT = "previousComment";
-        string name = Optional<string>("name");
-        string key = Optional<string>("key");
-        object value = Optional<object>("value");
-        object comment = Optional<object>("comment");
-
-        RumbleJson data = Body.Copy();
-        string[] names = Enum
-            .GetValues<Audience>()
-            .Select(aud => aud.GetDisplayName())
-            .ToArray();
-        Audience audience = Enum
-            .GetValues<Audience>()
-            .Where(aud => aud.GetDisplayName() != null)
-            .FirstOrDefault(aud => aud.GetDisplayName() == Optional<string>("name"));
-
-        RumbleJson previous = new RumbleJson();
-        if (audience != default)
-            previous = DynamicConfig.GetValuesFor(audience) ?? new RumbleJson();
-
-        ActionResult output = Forward("/config/settings/update");
-
-        if (!previous.ContainsKey(key))
-        {
-            string fallback = DynamicConfig.Optional<string>(key);
-            data[PREVIOUS] = fallback;
-            AuditFilter.UpdateLog(
-                message: $"{Token.Email} updated DynamicConfig: {name}.{key}",
-                data: data
-            );
-        }
-        else if (!value.Equals(previous[key]))
-        {
-            data[PREVIOUS] = previous[key];
-            AuditFilter.UpdateLog(
-                message: $"{Token.Email} changed a value in DynamicConfig: {name}.{key}",
-                data: data
-            );
-        }
-        else
-        {
-            data[PREVIOUS_COMMENT] = comment;
-            AuditFilter.UpdateLog(
-                message: $"{Token.Email} changed a comment in DynamicConfig: {name}.{key}",
-                data: data
-            );
-        }
-
-        return output;
+        return Forward("/config/settings/update");
     }
   
     // Delete a variable
@@ -111,7 +62,7 @@ public class DynamicConfigController : DmzController
         string key = Optional<string>("key");
         AuditFilter.UpdateLog(
             message: $"{Token.Email} deleted a value in DynamicConfig: {name}.{key}",
-            data: Body
+            additionalData: Body
         );
         
         return output;
