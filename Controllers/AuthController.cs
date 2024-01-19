@@ -92,7 +92,8 @@ public class AuthController : PlatformController
             { "rumbleSecret", PlatformEnvironment.RumbleSecret },
             { "gitlabPat", PlatformEnvironment.Optional<string>("GITLAB_PAT") ?? "not found" },
             { "whitelistUpdated", whitelisted },
-            { "whitelistUpdateFailed", whitelistUpdateFailed }
+            { "whitelistUpdateFailed", whitelistUpdateFailed },
+            { "ipAddress", GeoIPData.IPAddress }
         });
     }
 
