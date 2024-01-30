@@ -3,3 +3,4 @@ appsettings.Development.json
 obj
 bin
 .DS_Store
+GeoIP2-Country.mmdb

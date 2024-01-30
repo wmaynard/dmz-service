@@ -34,6 +34,7 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
 
     private enum BanReason
     {
+        GeoBanned = 451,
         NoMxRecord = 998,
         FailedValidation = 999
     }
@@ -236,11 +237,16 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
     public void EnsureNotBanned(string email)
     {
         string domain = email[(email.IndexOf('@') + 1)..];
-        bool noMxRecord = !DomainLookup.HasMxRecord(domain);
 
-        if (noMxRecord)
+        if (!DomainLookup.HasMxRecord(domain))
         {
             RegisterValidationBan(email, BanReason.NoMxRecord);
+            throw new EmailBannedException(email);
+        }
+
+        if (DomainLookup.IsGeoBlocked(domain))
+        {
+            RegisterValidationBan(email, BanReason.GeoBanned);
             throw new EmailBannedException(email);
         }
 

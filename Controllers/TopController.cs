@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Net;
 using Dmz.Interop;
 using Dmz.Models.Portal;
 using Dmz.Services;
@@ -61,7 +62,19 @@ public class TopController : DmzController
 
         PlatformAlertEmail.SendAlert(email, alert);
         
-
         return Ok();
+    }
+
+    [HttpGet, Route("mx")]
+    public ActionResult CheckEmailMx()
+    {
+        string email = Require<string>("email");
+
+        return !DomainLookup.IsGeoBlocked(email)
+            ? Ok()
+            : new BadRequestObjectResult(new RumbleJson())
+            {
+                StatusCode = (int) HttpStatusCode.UnavailableForLegalReasons
+            };
     }
 }

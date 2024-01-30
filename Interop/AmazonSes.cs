@@ -45,7 +45,7 @@ public static class AmazonSes
     public static async Task CreateOrUpdateTemplate(string name, string subject, string html, string backupText)
     {
         Cleanse(ref name);
-        EmailTemplateContent content = new EmailTemplateContent
+        EmailTemplateContent content = new()
         {
             Html = html,
             Subject = subject,
