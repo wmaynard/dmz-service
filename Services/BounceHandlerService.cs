@@ -208,7 +208,7 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
                         {
                             Log.Error(Owner.Will, "Unable to process bounce notification", data: new
                             {
-                                BounceNotification = notif
+                                BounceRecipient = recipient
                             }, exception: e);
                         }
                     break;
