@@ -70,7 +70,10 @@ private readonly RoleService    _roles;
     {
         Require(Permissions.Portal.ManagePermissions);
 
-        return Ok(_roles.List());
+        return Ok(new RumbleJson
+        {
+            { "roles", _roles.List() }
+        });
     }
     
     // New role

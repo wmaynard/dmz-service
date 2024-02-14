@@ -181,25 +181,35 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
             {
                 case "Bounce":
                     foreach (BounceRecipient recipient in notif.BounceMessage.Recipients)
-                        switch (recipient.Code)
+                        try
                         {
-                            case 0:
-                                Log.Warn(Owner.Will, "Unknown bounce code", data: new
-                                {
-                                    sqsNotif = notif
-                                });
-                                break;
-                            case < 500: // soft bounces
-                            case 522: // Mailbox is full
-                            case 552: // Mailbox limit exceeded
-                            case > 560: // Others that seem rare
-                                RegisterBounce(recipient, notif.Timestamp, isHardBounce: false);
-                                break;
+                            switch (recipient.Code)
+                            {
+                                case 0:
+                                    Log.Warn(Owner.Will, "Unknown bounce code", data: new
+                                    {
+                                        sqsNotif = notif
+                                    });
+                                    break;
+                                case < 500: // soft bounces
+                                case 522: // Mailbox is full
+                                case 552: // Mailbox limit exceeded
+                                case > 560: // Others that seem rare
+                                    RegisterBounce(recipient, notif.Timestamp, isHardBounce: false);
+                                    break;
                             
-                            default:
-                                // block the user
-                                RegisterBounce(recipient, notif.Timestamp, isHardBounce: true);
-                                break;
+                                default:
+                                    // block the user
+                                    RegisterBounce(recipient, notif.Timestamp, isHardBounce: true);
+                                    break;
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Error(Owner.Will, "Unable to process bounce notification", data: new
+                            {
+                                BounceNotification = notif
+                            }, exception: e);
                         }
                     break;
                 case "Complaint": //??
@@ -233,6 +243,21 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
             }, exception: e);
         }
     }
+
+    private static bool IsGeoBanned(string domain)
+    {
+        string key = $"geoban_{domain}";
+
+        CacheService _cache = Optional<CacheService>();
+
+        if (_cache?.HasValue(key, out bool geoban) ?? false)
+            return geoban;
+        
+        bool output = DomainLookup.IsGeoBlocked(domain);
+        _cache?.Store(key, output, Rumble.Platform.Common.Utilities.IntervalMs.TwelveHours);
+        
+        return output;
+    }
     
     public void EnsureNotBanned(string email)
     {
@@ -244,7 +269,7 @@ public class BounceHandlerService : PlatformMongoTimerService<BounceData>
             throw new EmailBannedException(email);
         }
 
-        if (DomainLookup.IsGeoBlocked(domain))
+        if (IsGeoBanned(domain))
         {
             RegisterValidationBan(email, BanReason.GeoBanned);
             throw new EmailBannedException(email);

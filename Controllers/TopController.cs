@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Net;
+using System.Runtime.Intrinsics.Arm;
 using Dmz.Interop;
 using Dmz.Models.Portal;
 using Dmz.Services;
@@ -20,6 +21,7 @@ public class TopController : DmzController
 {
     #pragma warning disable
     private readonly ActivityLogService _activities;
+    private readonly BounceHandlerService _bounces;
     #pragma warning restore
     
     [HttpGet, Route("env"), RequireAuth]
@@ -69,12 +71,15 @@ public class TopController : DmzController
     public ActionResult CheckEmailMx()
     {
         string email = Require<string>("email");
-
-        return !DomainLookup.IsGeoBlocked(email)
-            ? Ok()
-            : new BadRequestObjectResult(new RumbleJson())
+        
+        if (DomainLookup.IsGeoBlocked(email))
+            return new BadRequestObjectResult(new RumbleJson())
             {
                 StatusCode = (int) HttpStatusCode.UnavailableForLegalReasons
             };
+
+        _bounces.EnsureNotBanned(email);
+
+        return Ok();
     }
 }

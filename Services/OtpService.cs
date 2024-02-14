@@ -55,9 +55,10 @@ public class OtpService : PlatformMongoService<StoredValue>
             if (output != null)
                 return output;
 
-            StoredValue used = _collection.Find(stored => stored.Id == id).FirstOrDefault();
-            if (used == null)
-                throw new PlatformException("Value does not exist.", code: ErrorCode.MongoRecordNotFound);
+            StoredValue used = _collection
+                .Find(stored => stored.Id == id)
+                .FirstOrDefault()
+                ?? throw new PlatformException("OTP does not exist", code: ErrorCode.MongoRecordNotFound);
             
             // Log.Error(Owner.Will, "OTP was used more than once.  Ensure frontend is not requesting it multiple times.", data: new
             // {
