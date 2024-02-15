@@ -20,6 +20,7 @@ using RCL.Logging;
 using Rumble.Platform.Common.Enums;
 using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Extensions;
+using Rumble.Platform.Common.Interop;
 using Rumble.Platform.Common.Services;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Data;
@@ -83,19 +84,28 @@ public static class AmazonSes
                 // to the user before, but they're banned now.  Send an alert, because this almost certainly will correspond
                 // with a CS ticket.
                 if (templateName != PlayerServiceEmail.TEMPLATE_CONFIRMATION)
+                {
+                    RumbleJson eventData = new()
+                    {
+                        { "address", email },
+                        { "template", templateName }
+                    };
                     ApiService.Instance.Alert(
-                        title: "Confirmed account unable to receive email",
-                        message: "A confirmed email address is no longer able to receive email.  It saw a hard bounce in the past and was banned.",
-                        countRequired: 1,
-                        timeframe: 3_000,
+                        title: "Potential widespread email delivery outage",
+                        message: "A significant number of once-confirmed email addresses were previously blacklisted and are unable to receive email.  This could be the result of one account spamming or a bigger problem.",
+                        countRequired: 15,
+                        timeframe: Interval.FiveMinutes,
                         owner: Owner.Will,
                         impact: ImpactType.IndividualPlayer,
-                        data: new RumbleJson
-                        {
-                            { "address", email },
-                            { "template", templateName }
-                        }
+                        data: eventData
                     );
+                    SlackDiagnostics
+                        .Log("A confirmed account is unable to receive email", "It saw a hard bounce in the past and was blacklisted.")
+                        .Attach("data.json", eventData)
+                        .Send()
+                        .Wait();
+                }
+
                 throw;
             }
 
