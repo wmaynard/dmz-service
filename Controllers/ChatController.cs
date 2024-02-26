@@ -63,7 +63,7 @@ public class ChatController : DmzController
     {
         Require(Permissions.Chat.ViewRooms);
 
-        return Forward("chat/rooms");
+        return Forward("chat/admin/rooms");
     }
 
     [HttpPatch, Route("rooms/update")]
@@ -71,6 +71,6 @@ public class ChatController : DmzController
     {
         Require(Permissions.Chat.EditRooms);
 
-        return Forward("chat/rooms/update");
+        return Forward("chat/admin/rooms/update");
     }
 }
