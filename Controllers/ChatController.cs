@@ -1,4 +1,5 @@
 using Dmz.Extensions;
+using Dmz.Models.Permissions;
 using Microsoft.AspNetCore.Mvc;
 using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Utilities;
@@ -9,115 +10,67 @@ namespace Dmz.Controllers;
 [Route("dmz/chat"), RequireAuth(AuthType.ADMIN_TOKEN)]
 public class ChatController : DmzController
 {
-    #region Announcements
-    // Gets all announcements
-    [HttpGet, Route("announcements")]
-    public ActionResult Announcements()
+    [HttpPost, Route("messages/broadcast")]
+    public ActionResult Broadcast()
     {
-        Require(Permissions.Chat.View);
+        Require(Permissions.Chat.SendAnnouncements);
 
-        return Forward("/chat/admin/messages/sticky");
+        return Forward("chat/admin/broadcast");
     }
 
-    // Send a chat announcement
-    [HttpPost, Route("announcements/send")]
-    public ActionResult AnnouncementsSend()
+    [HttpPut, Route("messages/update")]
+    public ActionResult EditMessage()
     {
-        Require(Permissions.Chat.Send_Announcements);
+        Require(Permissions.Chat.EditMessages);
 
-        return Forward("/chat/admin/messages/sticky");
-    }
-    
-    // Edit a Chat announcement
-    [HttpPatch, Route("announcements/edit")]
-    public ActionResult AnnouncementsEdit()
-    {
-        Require(Permissions.Chat.Send_Announcements);
-
-        return Forward(""); // TODO fill out when endpoint is implemented
+        return Forward("chat/admin/messages/update");
     }
 
-    // Deletes a chat announcement
-    // TODO should be changed to DELETE
-    [HttpPost, Route("announcements/delete")]
-    public ActionResult AnnouncementsDelete()
+    [HttpDelete, Route("messages/delete")]
+    public ActionResult DeleteMessage()
     {
-        Require(Permissions.Chat.Delete_Announcements);
+        Require(Permissions.Chat.DeleteMessages);
 
-        return Forward("/chat/admin/messages/unsticky");
+        return Forward("chat/admin/messages/delete");
     }
-    #endregion
-  
-    #region Player lookup
-    // Gets player specific chat reports and bans
-    [HttpGet, Route("player")]
-    public ActionResult Player()
+
+    [HttpGet, Route("messages/search")]
+    public ActionResult SearchMessages()
     {
-        Require(Permissions.Chat.View);
+        Require(Permissions.Chat.ViewMessages);
 
-        return Forward("/chat/admin/playerDetails");
+        return Forward("chat/admin/messages/search");
     }
-    #endregion
-  
-    #region Reports
-    // Gets all reports
+
     [HttpGet, Route("reports")]
-    public ActionResult Reports()
+    public ActionResult GetReports()
     {
-        Require(Permissions.Chat.View);
+        Require(Permissions.Chat.ViewReports);
 
-        return Forward("/chat/admin/reports/list");
+        return Forward("chat/admin/reports");
     }
-  
-    // Ignores a report for a player
-    [HttpPost, Route("reports/ignore")]
-    public ActionResult ReportsIgnore()
+
+    [HttpPatch, Route("reports/update")]
+    public ActionResult UpdateReport()
     {
-        Require(Permissions.Chat.Ignore_Reports);
+        Require(Permissions.Chat.EditReports);
 
-        return Forward("/chat/admin/reports/ignore");
+        return Forward("chat/reports/update");
     }
-  
-    // Deletes a report for a player
-    // TODO should be changed to DELETE
-    [HttpPost, Route("reports/delete")]
-    public ActionResult ReportsDelete()
+
+    [HttpGet, Route("rooms")]
+    public ActionResult ListRooms()
     {
-        Require(Permissions.Chat.Delete_Reports);
+        Require(Permissions.Chat.ViewRooms);
 
-        return Forward("/chat/admin/reports/delete");
+        return Forward("chat/rooms");
     }
-    #endregion
-  
-    #region Chat bans
-    // Chat bans a player
-    [HttpPost, Route("ban")]
-    public ActionResult Ban()
+
+    [HttpPatch, Route("rooms/update")]
+    public ActionResult UpdateRoom()
     {
-        Require(Permissions.Chat.Ban);
-        
-        string aid = Require<string>(key: "aid");
-        _apiService.ForceRefresh(aid);
+        Require(Permissions.Chat.EditRooms);
 
-        return Forward("/chat/admin/ban/player");
+        return Forward("chat/rooms/update");
     }
-  
-    // Chat unbans a player
-    [HttpPost, Route("unban")]
-    public ActionResult Unban()
-    {
-        Require(Permissions.Chat.Unban);
-
-        return Forward("/chat/admin/ban/lift");
-    }
-    
-    // List chat bans
-    [HttpGet, Route("bans")]
-    public ActionResult Bans()
-    {
-        Require(Permissions.Chat.View);
-
-        return Forward("/chat/admin/ban/list");
-    }
-    #endregion
 }

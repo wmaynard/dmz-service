@@ -9,11 +9,13 @@ namespace Dmz.Models.Permissions;
 public class ChatPermissions : PermissionGroup
 {
     public override string Name => "Chat Service";
-  
-    public bool Send_Announcements   { get; set; }
-    public bool Delete_Announcements { get; set; }
-    public bool Ban                  { get; set; }
-    public bool Unban                { get; set; }
-    public bool Ignore_Reports       { get; set; }
-    public bool Delete_Reports       { get; set; }
+    
+    public bool SendAnnouncements { get; set; }
+    public bool DeleteMessages { get; set; }
+    public bool EditMessages { get; set; }
+    public bool ViewMessages { get; set; }
+    public bool ViewReports { get; set; }
+    public bool EditReports { get; set; }
+    public bool ViewRooms { get; set; }
+    public bool EditRooms { get; set; }
 }
