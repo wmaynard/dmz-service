@@ -10,6 +10,13 @@ namespace Dmz.Controllers;
 [Route("dmz/chat"), RequireAuth(AuthType.ADMIN_TOKEN)]
 public class ChatController : DmzController
 {
+    [HttpGet, Route("messages")]
+    public ActionResult ListMessages()
+    {
+        Require(Permissions.Chat.ViewMessages);
+
+        return Forward("chat/admin/messages");
+    }
     [HttpPost, Route("messages/broadcast")]
     public ActionResult Broadcast()
     {
