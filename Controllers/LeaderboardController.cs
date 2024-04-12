@@ -217,7 +217,7 @@ public class LeaderboardController : DmzController
         return Forward("/leaderboard/admin/ladder/scores");
     }
 
-    [HttpPatch, Route("/leaderboard/admin/ladder/score")]
+    [HttpPatch, Route("/ladder/score")]
     public ActionResult UpdateLadderScore()
     {
         Require(Permissions.Leaderboard.UpdateLadderScores);
