@@ -209,7 +209,7 @@ public class LeaderboardController : DmzController
     
     #region Ladder
 
-    [HttpGet, Route("/ladder/list")]
+    [HttpGet, Route("ladder/list")]
     public ActionResult ListLadderScores()
     {
         Require(Permissions.Leaderboard.View);
@@ -217,7 +217,7 @@ public class LeaderboardController : DmzController
         return Forward("/leaderboard/admin/ladder/scores");
     }
 
-    [HttpPatch, Route("/ladder/score")]
+    [HttpPatch, Route("ladder/score")]
     public ActionResult UpdateLadderScore()
     {
         Require(Permissions.Leaderboard.UpdateLadderScores);
