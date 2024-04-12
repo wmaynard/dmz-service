@@ -7,7 +7,7 @@
         <Deterministic>false</Deterministic>
         <RootNamespace>Dmz</RootNamespace>
         <LangVersion>10</LangVersion>
-        <Configurations>Debug;Release;Local</Configurations>
+        <Configurations>Debug;Release;Local;UnitTest</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 

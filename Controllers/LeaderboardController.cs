@@ -206,4 +206,23 @@ public class LeaderboardController : DmzController
         
     }
     #endregion
+    
+    #region Ladder
+
+    [HttpGet, Route("/ladder/list")]
+    public ActionResult ListLadderScores()
+    {
+        Require(Permissions.Leaderboard.View);
+
+        return Forward("/leaderboard/admin/ladder/scores");
+    }
+
+    [HttpPatch, Route("/leaderboard/admin/ladder/score")]
+    public ActionResult UpdateLadderScore()
+    {
+        Require(Permissions.Leaderboard.UpdateLadderScores);
+
+        return Forward("leaderboard/admin/ladder/score");
+    }
+    #endregion
 }

@@ -9,4 +9,5 @@ namespace Dmz.Models.Permissions;
 public class LeaderboardsPermissions : PermissionGroup
 {
     public override string Name => "Leaderboards";
+    public bool UpdateLadderScores { get; set; }
 }
