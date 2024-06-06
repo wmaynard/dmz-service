@@ -97,7 +97,8 @@ public static class AmazonSes
                         timeframe: Interval.FiveMinutes,
                         owner: Owner.Will,
                         impact: ImpactType.IndividualPlayer,
-                        data: eventData
+                        data: eventData,
+                        confluenceLink: "N/A" //TODO make confluence page and add link here
                     );
                     SlackDiagnostics
                         .Log("A confirmed account is unable to receive email", "It saw a hard bounce in the past and was blacklisted.")
