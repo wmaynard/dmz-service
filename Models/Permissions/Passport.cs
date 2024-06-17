@@ -32,11 +32,8 @@ public class Passport : List<PermissionGroup>
     };
     private static readonly string[] DEV_SUPERUSERS =
     {
-        "nathan.mac@rumbleentertainment.com",
         "william.maynard@rumbleentertainment.com",
-        "william.maynard@rumblegames.com",
-        "mark.spenner@rumbleentertainment.com",
-        "david.bethune@rumbleentertainment.com"
+        "william.maynard@rumblegames.com"
     };
 
     private static readonly string[] READONLY_DOMAINS =
