@@ -41,16 +41,16 @@ public class PermissionsFilter : PlatformFilter, IActionFilter
 
         if (param.Any())
             context.HttpContext.Items[KEY_PARAMETERS] = param;
-        
-        if (context.GetControllerAttributes<NoAuth>().Any())
-        {
-            Log.Verbose(Owner.Default, message: "NoAuth attribute found on endpoint; Permissions cannot be loaded.");
-            return;
-        }
+
+        // This appears to have been from an early version of the permissions system and may not be needed.
+        // if (context.GetControllerAttributes<NoAuth>().Any())
+        // {
+        //     Log.Verbose(Owner.Default, message: "NoAuth attribute found on endpoint; Permissions cannot be loaded.");
+        //     return;
+        // }
 
         if (Token == null || !Token.IsAdmin)
             return;
-        
 
         // If the token is an admin token, it needs to load permissions.  Permissions are not applicable to player tokens.
         AccountService _accounts = PlatformService.Require<AccountService>();
