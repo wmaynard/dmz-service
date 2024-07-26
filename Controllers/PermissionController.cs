@@ -5,12 +5,11 @@ using Dmz.Models.Permissions;
 using Dmz.Models.Portal;
 using Dmz.Services;
 using Microsoft.AspNetCore.Mvc;
-using RCL.Logging;
 using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Extensions;
 using Rumble.Platform.Common.Utilities;
-using Rumble.Platform.Data;
+using Rumble.Platform.Common.Utilities.JsonTools;
 
 // ReSharper disable ArrangeAttributes
 

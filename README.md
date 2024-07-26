@@ -1,7 +1,29 @@
 # Tower Portal Backend
+
 A service to support the Tower Portal frontend.
 
+## Acknowledgment
+
+DMZ Service was originally created for Rumble Entertainment (which later became R Studios), a mobile gaming company.  This was a bit of a monolithic umbrella for all of platform services for our web applications.  Originally, this was intended to be our internal web project built on .NET MVC for Platform management ("Portal") before we had a web engineer on staff.  After we hired an engineer, we split the frontend into TypeScript and kept this project as the pure backend.  We had a few goals in mind:
+
+1. Security through obscurity; since all code from a JS web application is publicly inspectable, all URLs in this project are assumed to be known.  Routing the requests to different paths to respective microservices hides API crawlers.
+2. In rare occasions, intercept and modify requests before routing to end services.  This could either be additional validation for request safety or create divergent endpoint behavior for the web applications.  While strongly discouraged, there were a few times we needed to get something working very quickly but couldn't make breaking changes in the core services, which the game client was dependent on.
+3. Act as an intermediary additional security layer, particularly for our internal users.  Portal has a much more robust permission system than our regular admin tokens; every internal user has both a set of permissions for every major feature and any number of roles (each with their own permission set).
+4. Keep other services light / more secure and shoulder the burden of third-party packages not required by other microservices.  Most of our services, for example, don't need the AWS SDK to send emails.  The few that did routed their requests to DMZ to handle it instead.
+5. Create a changelog of all changes that internal site administrators make to anything in our systems.  This gave us the ability to easily audit who broke a release with a bad config update.
+
+R Studios unfortunately closed its doors in July 2024.  This project has been released as open source with permission.
+
+As of this writing, there may still be existing references to Rumble's resources, such as Confluence links, but their absence doesn't have any significant impact.  Some documentation will also be missing until it can be recreated here, since with the company closure any feature specs and explainer articles originally written for Confluence / Slack channels were lost.
+
+While Rumble is shutting down, I'm grateful for the opportunities and human connections I had working there.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE.txt) file for details.
+
 # Introduction
+
 This service contains endpoints that route to other services that the Tower Portal requires functionality for. The service also 
 allows for a customized security policy as well as supporting permissions for users on the Tower Portal.
 

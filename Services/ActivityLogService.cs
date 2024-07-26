@@ -1,5 +1,5 @@
 using Dmz.Models.Portal;
-using RCL.Logging;
+using Rumble.Platform.Common.Enums;
 using Rumble.Platform.Common.Minq;
 using Rumble.Platform.Common.Utilities;
 

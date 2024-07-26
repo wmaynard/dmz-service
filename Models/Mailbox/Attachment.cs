@@ -2,7 +2,7 @@ using System;
 using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Models;
-using Rumble.Platform.Data;
+using Rumble.Platform.Common.Utilities.JsonTools;
 
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable ArrangeAttributes

@@ -4,7 +4,6 @@ using System.Linq;
 using Dmz.Exceptions;
 using Dmz.Models.Permissions;
 using Dmz.Models.Portal;
-using RCL.Logging;
 using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Extensions;
 using Rumble.Platform.Common.Minq;

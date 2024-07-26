@@ -1,6 +1,6 @@
 using Dmz.Models.Portal;
 using Microsoft.AspNetCore.Mvc;
-using RCL.Logging;
+using Rumble.Platform.Common.Enums;
 using Rumble.Platform.Common.Utilities;
 // ReSharper disable ArrangeAttributes
 
@@ -14,7 +14,7 @@ public class LogController : DmzController
     {
         FrontendLog log = Require<FrontendLog>("log");
         
-        Log.Critical(Owner.David, log.Message, log.Data);
+        Log.Critical(Owner.Will, log.Message, log.Data);
         return Ok();
     }
 
@@ -23,7 +23,7 @@ public class LogController : DmzController
     {
         FrontendLog log = Require<FrontendLog>("log");
         
-        Log.Error(Owner.David, message: log.Message, data: log.Data);
+        Log.Error(Owner.Will, message: log.Message, data: log.Data);
         return Ok();
     }
 
@@ -32,7 +32,7 @@ public class LogController : DmzController
     {
         FrontendLog log = Require<FrontendLog>("log");
         
-        Log.Info(Owner.David, log.Message, log.Data);
+        Log.Info(Owner.Will, log.Message, log.Data);
         return Ok();
     }
 
@@ -41,7 +41,7 @@ public class LogController : DmzController
     {
         FrontendLog log = Require<FrontendLog>("log");
         
-        Log.Warn(Owner.David, log.Message, log.Data);
+        Log.Warn(Owner.Will, log.Message, log.Data);
         return Ok();
     }
     
@@ -50,7 +50,7 @@ public class LogController : DmzController
     {
         FrontendLog log = Require<FrontendLog>("log");
         
-        Log.Verbose(Owner.David, log.Message, log.Data);
+        Log.Verbose(Owner.Will, log.Message, log.Data);
         return Ok();
     }
 }

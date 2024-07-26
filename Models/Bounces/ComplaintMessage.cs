@@ -1,4 +1,4 @@
-using Rumble.Platform.Data;
+using Rumble.Platform.Common.Utilities.JsonTools;
 
 namespace Dmz.Models.Bounces;
 

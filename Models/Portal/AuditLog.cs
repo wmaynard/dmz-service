@@ -3,7 +3,7 @@ using Amazon.Auth.AccessControlPolicy;
 using MongoDB.Bson.Serialization.Attributes;
 using Rumble.Platform.Common.Attributes;
 using Rumble.Platform.Common.Models;
-using Rumble.Platform.Data;
+using Rumble.Platform.Common.Utilities.JsonTools;
 
 namespace Dmz.Models.Portal;
 

@@ -2,7 +2,7 @@ using Dmz.Interop;
 using Rumble.Platform.Common.Extensions;
 using Rumble.Platform.Common.Models.Alerting;
 using Rumble.Platform.Common.Utilities;
-using Rumble.Platform.Data;
+using Rumble.Platform.Common.Utilities.JsonTools;
 
 namespace Dmz.Utilities;
 

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using Amazon.SQS.Model;
 using Dmz.Services;
-using Rumble.Platform.Data;
+using Rumble.Platform.Common.Utilities.JsonTools;
 
 namespace Dmz.Models.Bounces;
 
